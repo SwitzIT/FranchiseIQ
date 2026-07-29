@@ -1,0 +1,30 @@
+# Competitor Templates — FranchiseIQ
+# ----------------------------------
+# Pre-filled competitor lists by (country, category). Used in option (c)
+# onboarding flow: platform shows these as suggestions, tenant can edit
+# (add / remove brands) before saving their final list.
+#
+# Add new countries / categories here as the product expands.
+# This file is loaded once at startup and cached.
+# Format:
+#   <Country>:
+#     <Category>:
+#       - Brand Name
+#       - Brand Name
+
+India:
+  Bakery:
+    - Monginis            # the giant; 650+ stores nationally, re-entered Kolkata via Ganguram
+    - Sugar & Spice       # 125 outlets in West Bengal, ISO 9001:2008 certified
+    - Cake Bee            # pan-India franchise chain
+    - Kookie Jar          # premium Kolkata bakery
+    - K.C. Das            # Bengali sweets institution, overlaps in confectionery
+    - Theobroma           # premium pan-India, urban centres
+
+Sri Lanka:
+  Bakery:
+    - Perera & Sons       # the giant; ~200 outlets across 7 provinces, since 1902
+    - The Fab             # significant Colombo chain
+    - Sponge              # premium bakery/cafe chain
+    - Cake Studio         # cake-focused
+    - Sumanadisi          # older institution, still active

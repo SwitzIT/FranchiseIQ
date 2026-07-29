@@ -1,0 +1,339 @@
+"""
+OSM Geographic Service — roads & land-use enrichment
+====================================================
+Adds two NEW features to each location (lat, lng):
+  1. dist_to_nearest_road_m   - distance to nearest retail-viable road
+  2. is_commercial / is_residential / is_industrial /
+     is_agricultural / is_natural    (5 binary land-use indicators)
+
+Designed to prevent the "model recommends a candidate in the middle of a
+forest because a highway passes nearby" failure mode.
+
+Cache strategy (mirrors amenities_service):
+  - GeoJSON file per (country, state) in AMENITIES_DIR
+  - One file for roads, one for landuse
+  - Filenames: roads_<country>_<state>.geojson
+              landuse_<country>_<state>.geojson
+"""
+from __future__ import annotations
+import time
+from pathlib import Path
+
+import geopandas as gpd
+import numpy as np
+import pandas as pd
+from shapely.geometry import Point
+
+from app.config import AMENITIES_DIR, OSM_RETRY_LIMIT
+from app.utils import get_logger
+
+log = get_logger("osm_geographic_service")
+
+
+# ─────────────────────────────────────────────────────────────────────────
+# CONFIG — what counts as a viable retail road / which landuse maps to what
+# ─────────────────────────────────────────────────────────────────────────
+
+# Roads where Mio could plausibly have a shop with frontage / customer access.
+# Excludes: motorway/link (no access), service (driveways), track (rural),
+# footway/cycleway/path/steps (pedestrian-only, non-vehicular).
+RETAIL_VIABLE_HIGHWAYS: set[str] = {
+    "trunk",
+    "primary",
+    "secondary",
+    "tertiary",
+    "unclassified",
+    "residential",
+    "living_street",
+    "pedestrian",
+}
+
+# OSM landuse=* values mapped to our binary columns
+LANDUSE_TO_BINARY: dict[str, str] = {
+    # Commercial
+    "commercial":   "is_commercial",
+    "retail":       "is_commercial",
+    # Residential
+    "residential":  "is_residential",
+    # Industrial
+    "industrial":   "is_industrial",
+    "quarry":       "is_industrial",
+    "depot":        "is_industrial",
+    "landfill":     "is_industrial",
+    "port":         "is_industrial",
+    # Agricultural
+    "farmland":     "is_agricultural",
+    "farmyard":     "is_agricultural",
+    "orchard":      "is_agricultural",
+    "vineyard":     "is_agricultural",
+    "meadow":       "is_agricultural",
+    "allotments":   "is_agricultural",
+    # Natural (the disqualifiers for a bakery)
+    "forest":       "is_natural",
+    "forestry":     "is_natural",
+}
+
+# OSM natural=* values that should set is_natural = 1
+NATURAL_TAGS: set[str] = {
+    "wood", "tree_row", "scrub", "heath", "grassland",
+    "water", "wetland", "bay", "coastline", "beach", "reef",
+    "bare_rock", "scree", "cliff",
+}
+
+BINARY_COLS: list[str] = [
+    "is_commercial", "is_residential",
+    "is_industrial", "is_agricultural", "is_natural",
+]
+
+# How close to a landuse polygon we look. 500m matches a bakery's pedestrian catchment.
+LANDUSE_BUFFER_M = 500
+# How far we look for a road. >250m from any retail road = effectively inaccessible.
+ROAD_SEARCH_RADIUS_M = 5000
+
+
+# ─────────────────────────────────────────────────────────────────────────
+# PUBLIC API
+# ─────────────────────────────────────────────────────────────────────────
+
+def get_roads_and_landuse(
+    country: str, state: str
+) -> tuple[gpd.GeoDataFrame, gpd.GeoDataFrame]:
+    """
+    Returns (roads_gdf, landuse_gdf).
+
+    Cache hit → loads from GeoJSON.
+    Cache miss → fetches via OSMnx, saves, returns.
+
+    Falls back gracefully to empty GeoDataFrames if OSM fetch fails — so
+    the rest of the pipeline still runs (with default neutral feature values).
+    """
+    roads_path   = _roads_cache_path(country, state)
+    landuse_path = _landuse_cache_path(country, state)
+
+    # Roads
+    if roads_path.exists():
+        log.info(f"[Geo] Roads cache hit -> {roads_path.name}")
+        try:
+            roads_gdf = gpd.read_file(roads_path)
+            roads_gdf = _ensure_crs(roads_gdf)
+        except Exception as e:
+            log.warning(f"[Geo] Roads cache read failed: {e}; refetching")
+            roads_gdf = _fetch_roads(country, state)
+            _save(roads_gdf, roads_path)
+    else:
+        roads_gdf = _fetch_roads(country, state)
+        _save(roads_gdf, roads_path)
+
+    # Landuse
+    if landuse_path.exists():
+        log.info(f"[Geo] Landuse cache hit -> {landuse_path.name}")
+        try:
+            landuse_gdf = gpd.read_file(landuse_path)
+            landuse_gdf = _ensure_crs(landuse_gdf)
+        except Exception as e:
+            log.warning(f"[Geo] Landuse cache read failed: {e}; refetching")
+            landuse_gdf = _fetch_landuse(country, state)
+            _save(landuse_gdf, landuse_path)
+    else:
+        landuse_gdf = _fetch_landuse(country, state)
+        _save(landuse_gdf, landuse_path)
+
+    return roads_gdf, landuse_gdf
+
+
+def enrich_with_geography(
+    points_df: pd.DataFrame,
+    roads_gdf: gpd.GeoDataFrame,
+    landuse_gdf: gpd.GeoDataFrame,
+) -> pd.DataFrame:
+    """
+    For each row in points_df (must have Latitude, Longitude) computes:
+      - dist_to_nearest_road_m
+      - is_commercial / is_residential / is_industrial / is_agricultural / is_natural
+    """
+    df = points_df.copy()
+    n = len(df)
+
+    if n == 0:
+        for c in ["dist_to_nearest_road_m"] + BINARY_COLS:
+            df[c] = 0
+        return df
+
+    # Default neutral values
+    df["dist_to_nearest_road_m"] = 99999.0
+    for c in BINARY_COLS:
+        df[c] = 0
+
+    # Build a single point GeoDataFrame in metric CRS
+    pts = gpd.GeoDataFrame(
+        df[["Latitude", "Longitude"]].copy(),
+        geometry=gpd.points_from_xy(df["Longitude"], df["Latitude"]),
+        crs="EPSG:4326",
+    ).to_crs(epsg=3857)
+
+    # ── (1) Distance to nearest road ────────────────────────────────────
+    if roads_gdf is not None and not roads_gdf.empty:
+        try:
+            roads_proj = roads_gdf.to_crs(epsg=3857).reset_index(drop=True)
+            # sjoin_nearest uses the spatial index internally — fast
+            joined = gpd.sjoin_nearest(
+                pts[["geometry"]].reset_index(),
+                roads_proj[["geometry"]],
+                how="left",
+                distance_col="dist_m",
+                max_distance=ROAD_SEARCH_RADIUS_M,
+            )
+            # If a point has multiple matches at equal distance, take the first
+            joined = joined.drop_duplicates(subset=["index"], keep="first").sort_values("index")
+            dist = joined["dist_m"].fillna(ROAD_SEARCH_RADIUS_M).values
+            df["dist_to_nearest_road_m"] = dist
+            log.info(f"[Geo] road-distance: median={np.median(dist):.0f}m, p95={np.percentile(dist, 95):.0f}m")
+        except Exception as e:
+            log.warning(f"[Geo] road distance computation failed: {e}")
+    else:
+        log.warning("[Geo] No roads data — using default 99999m")
+
+    # ── (2) Land-use binary indicators ──────────────────────────────────
+    if landuse_gdf is not None and not landuse_gdf.empty:
+        try:
+            landuse_proj = landuse_gdf.to_crs(epsg=3857).reset_index(drop=True)
+            # Classify each landuse polygon into one of our binary buckets
+            landuse_proj["_binary"] = landuse_proj.apply(_classify_landuse_row, axis=1)
+            landuse_proj = landuse_proj[landuse_proj["_binary"].notna()].copy()
+
+            if not landuse_proj.empty:
+                # Buffer each point by LANDUSE_BUFFER_M and find intersecting polygons
+                pts_buf = pts.copy()
+                pts_buf["geometry"] = pts_buf.geometry.buffer(LANDUSE_BUFFER_M)
+                pts_buf = pts_buf.reset_index().rename(columns={"index": "_pt_idx"})
+
+                joined = gpd.sjoin(
+                    landuse_proj[["geometry", "_binary"]],
+                    pts_buf[["_pt_idx", "geometry"]],
+                    how="inner",
+                    predicate="intersects",
+                )
+
+                # For each point, set each binary column to 1 if any intersection
+                for binary_col in BINARY_COLS:
+                    hits = joined[joined["_binary"] == binary_col]["_pt_idx"].unique()
+                    df.loc[df.index[hits], binary_col] = 1
+
+                hits_per_col = {c: int(df[c].sum()) for c in BINARY_COLS}
+                log.info(f"[Geo] landuse hits: {hits_per_col}")
+        except Exception as e:
+            log.warning(f"[Geo] landuse classification failed: {e}")
+    else:
+        log.warning("[Geo] No landuse data — all binaries default to 0")
+
+    return df
+
+
+# ─────────────────────────────────────────────────────────────────────────
+# OSM FETCHERS
+# ─────────────────────────────────────────────────────────────────────────
+
+def _fetch_roads(country: str, state: str) -> gpd.GeoDataFrame:
+    """Fetch retail-viable roads from OSM via OSMnx."""
+    from app.config import get_state_config
+    osm_query = get_state_config(country, state)["osm_query"]
+    log.info(f"[Geo] Fetching roads for '{osm_query}' (this may take 5-15 min on first run)")
+
+    tags = {"highway": list(RETAIL_VIABLE_HIGHWAYS)}
+    gdf = _osmnx_fetch_with_retry(osm_query, tags)
+
+    if gdf is None or gdf.empty:
+        log.warning("[Geo] OSM roads fetch returned empty")
+        return gpd.GeoDataFrame(columns=["highway", "geometry"], geometry="geometry", crs="EPSG:4326")
+
+    # Keep only LineString / MultiLineString — roads are linear
+    gdf = gdf[gdf.geometry.geom_type.isin(["LineString", "MultiLineString"])].copy()
+    keep = [c for c in ["highway", "name", "geometry"] if c in gdf.columns]
+    gdf = gdf[keep]
+    log.info(f"[Geo] Roads fetched: {len(gdf)} ways")
+    return gdf
+
+
+def _fetch_landuse(country: str, state: str) -> gpd.GeoDataFrame:
+    """Fetch landuse + natural polygons from OSM."""
+    from app.config import get_state_config
+    osm_query = get_state_config(country, state)["osm_query"]
+    log.info(f"[Geo] Fetching landuse for '{osm_query}' (this may take 5-15 min on first run)")
+
+    tags = {
+        "landuse": list({*LANDUSE_TO_BINARY.keys()}),
+        "natural": list(NATURAL_TAGS),
+    }
+    gdf = _osmnx_fetch_with_retry(osm_query, tags)
+
+    if gdf is None or gdf.empty:
+        log.warning("[Geo] OSM landuse fetch returned empty")
+        return gpd.GeoDataFrame(
+            columns=["landuse", "natural", "geometry"], geometry="geometry", crs="EPSG:4326",
+        )
+
+    # Polygon types only
+    gdf = gdf[gdf.geometry.geom_type.isin(["Polygon", "MultiPolygon"])].copy()
+    keep = [c for c in ["landuse", "natural", "geometry"] if c in gdf.columns]
+    gdf = gdf[keep]
+    log.info(f"[Geo] Landuse fetched: {len(gdf)} polygons")
+    return gdf
+
+
+def _osmnx_fetch_with_retry(query: str, tags: dict) -> gpd.GeoDataFrame | None:
+    """Wraps OSMnx features_from_place with exponential back-off."""
+    attempt = 0
+    while attempt < OSM_RETRY_LIMIT:
+        attempt += 1
+        try:
+            import osmnx as ox
+            gdf = ox.features_from_place(query, tags=tags)
+            gdf = _ensure_crs(gdf)
+            return gdf
+        except Exception as e:
+            log.warning(f"[Geo] OSMnx attempt {attempt} failed: {e}")
+            time.sleep(2 ** attempt)
+    log.error(f"[Geo] OSMnx exhausted retries for query='{query}'")
+    return None
+
+
+# ─────────────────────────────────────────────────────────────────────────
+# HELPERS
+# ─────────────────────────────────────────────────────────────────────────
+
+def _classify_landuse_row(row) -> str | None:
+    """Maps an OSM polygon row to one of our binary column names, or None."""
+    landuse = row.get("landuse")
+    if landuse and isinstance(landuse, str) and landuse in LANDUSE_TO_BINARY:
+        return LANDUSE_TO_BINARY[landuse]
+    natural = row.get("natural")
+    if natural and isinstance(natural, str) and natural in NATURAL_TAGS:
+        return "is_natural"
+    return None
+
+
+def _roads_cache_path(country: str, state: str) -> Path:
+    key = f"{country.lower().replace(' ', '_')}_{state.lower().replace(' ', '_')}"
+    return AMENITIES_DIR / f"roads_{key}.geojson"
+
+
+def _landuse_cache_path(country: str, state: str) -> Path:
+    key = f"{country.lower().replace(' ', '_')}_{state.lower().replace(' ', '_')}"
+    return AMENITIES_DIR / f"landuse_{key}.geojson"
+
+
+def _save(gdf: gpd.GeoDataFrame, path: Path) -> None:
+    if gdf is None or gdf.empty:
+        log.warning(f"[Geo] Not saving empty cache to {path.name}")
+        return
+    path.parent.mkdir(parents=True, exist_ok=True)
+    gdf.to_file(str(path), driver="GeoJSON")
+    log.info(f"[Geo] Saved {path.name} ({path.stat().st_size // 1024} KB)")
+
+
+def _ensure_crs(gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
+    if gdf is None:
+        return gdf
+    if gdf.crs is None:
+        gdf = gdf.set_crs(epsg=4326)
+    return gdf

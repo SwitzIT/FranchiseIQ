@@ -1,0 +1,513 @@
+2026-07-28 11:42:46 | INFO     | main | 🚀 FranchiseIQ v5.0.0 starting up
+2026-07-28 11:42:46 | INFO     | main | ✅ Database tables ready
+2026-07-28 11:43:00 | INFO     | main | 🚀 FranchiseIQ v5.0.0 starting up
+2026-07-28 11:43:00 | INFO     | main | ✅ Database tables ready
+2026-07-28 11:47:06 | INFO     | routes.country | [Country] session=23cbe25a-580a-49d4-95e3-e62e7edf6ee1 country=India
+2026-07-28 11:47:08 | INFO     | routes.country | [State] session=23cbe25a-580a-49d4-95e3-e62e7edf6ee1 state=West Bengal
+2026-07-28 11:47:08 | INFO     | demographics_service | [Demographics] Loading: C:\Users\Rajeev\OneDrive\Desktop\Franchise_IQ\data\india\west_bengal\demographics.xlsx
+2026-07-28 11:47:08 | INFO     | demographics_service | [Demographics] Loading: C:\Users\Rajeev\OneDrive\Desktop\Franchise_IQ\data\india\west_bengal\demographics.xlsx
+2026-07-28 11:47:10 | INFO     | demographics_service | [Demographics] Loaded 23 rows from demographics.xlsx
+2026-07-28 11:47:10 | INFO     | demographics_service | [Demographics] Loaded 23 rows from demographics.xlsx
+2026-07-28 11:47:11 | INFO     | routes.data | [Data Preloaded] session=23cbe25a-580a-49d4-95e3-e62e7edf6ee1 stores=384 requests=0 bu=3
+2026-07-28 11:47:11 | INFO     | routes.data | [Data Preloaded] session=23cbe25a-580a-49d4-95e3-e62e7edf6ee1 stores=384 requests=0 bu=3
+2026-07-28 11:47:13 | ERROR    | main | Unhandled: No local amenities file configured/found for India/West Bengal. Expected a CSV/XLSX at the path returned by get_amenities_source_path() — check app/config.py's AMENITIES_SOURCE_DIR and the state's 'amenities_file' entry.
+Traceback (most recent call last):
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\starlette\middleware\cors.py", line 93, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\starlette\middleware\cors.py", line 148, in simple_response
+    await self.app(scope, receive, send)
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\starlette\middleware\exceptions.py", line 65, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\starlette\_exception_handler.py", line 64, in wrapped_app
+    raise exc
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\starlette\routing.py", line 756, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\starlette\routing.py", line 776, in app
+    await route.handle(scope, receive, send)
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\starlette\routing.py", line 297, in handle
+    await self.app(scope, receive, send)
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\starlette\routing.py", line 77, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\starlette\_exception_handler.py", line 64, in wrapped_app
+    raise exc
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\starlette\routing.py", line 72, in app
+    response = await func(request)
+               ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\fastapi\routing.py", line 278, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\fastapi\routing.py", line 193, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\starlette\concurrency.py", line 42, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func, *args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\anyio\to_thread.py", line 65, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\anyio\_backends\_asyncio.py", line 2641, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\anyio\_backends\_asyncio.py", line 1033, in run
+    result = context.run(func, *args)
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rajeev\OneDrive\Desktop\Franchise_IQ\backend\app\routes\amenities.py", line 32, in fetch_amenities
+    gdf, was_cached = get_amenities(country, state)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rajeev\OneDrive\Desktop\Franchise_IQ\backend\app\services\amenities_service.py", line 70, in get_amenities
+    raise FileNotFoundError(
+FileNotFoundError: No local amenities file configured/found for India/West Bengal. Expected a CSV/XLSX at the path returned by get_amenities_source_path() — check app/config.py's AMENITIES_SOURCE_DIR and the state's 'amenities_file' entry.
+2026-07-28 11:47:20 | ERROR    | main | Unhandled: No local amenities file configured/found for India/West Bengal. Expected a CSV/XLSX at the path returned by get_amenities_source_path() — check app/config.py's AMENITIES_SOURCE_DIR and the state's 'amenities_file' entry.
+Traceback (most recent call last):
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\starlette\middleware\cors.py", line 93, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\starlette\middleware\cors.py", line 148, in simple_response
+    await self.app(scope, receive, send)
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\starlette\middleware\exceptions.py", line 65, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\starlette\_exception_handler.py", line 64, in wrapped_app
+    raise exc
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\starlette\routing.py", line 756, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\starlette\routing.py", line 776, in app
+    await route.handle(scope, receive, send)
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\starlette\routing.py", line 297, in handle
+    await self.app(scope, receive, send)
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\starlette\routing.py", line 77, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\starlette\_exception_handler.py", line 64, in wrapped_app
+    raise exc
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\starlette\routing.py", line 72, in app
+    response = await func(request)
+               ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\fastapi\routing.py", line 278, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\fastapi\routing.py", line 193, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\starlette\concurrency.py", line 42, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func, *args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\anyio\to_thread.py", line 65, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\anyio\_backends\_asyncio.py", line 2641, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\anyio\_backends\_asyncio.py", line 1033, in run
+    result = context.run(func, *args)
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rajeev\OneDrive\Desktop\Franchise_IQ\backend\app\routes\amenities.py", line 32, in fetch_amenities
+    gdf, was_cached = get_amenities(country, state)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rajeev\OneDrive\Desktop\Franchise_IQ\backend\app\services\amenities_service.py", line 70, in get_amenities
+    raise FileNotFoundError(
+FileNotFoundError: No local amenities file configured/found for India/West Bengal. Expected a CSV/XLSX at the path returned by get_amenities_source_path() — check app/config.py's AMENITIES_SOURCE_DIR and the state's 'amenities_file' entry.
+2026-07-28 11:49:28 | INFO     | main | 👋 FranchiseIQ shutting down
+2026-07-28 11:52:02 | INFO     | main | 🚀 FranchiseIQ v5.0.0 starting up
+2026-07-28 11:52:02 | INFO     | main | ✅ Database tables ready
+2026-07-28 11:52:05 | INFO     | routes.country | [Country] session=23a68bce-4c5b-4643-85f7-81411152474e country=India
+2026-07-28 11:52:08 | INFO     | routes.country | [State] session=23a68bce-4c5b-4643-85f7-81411152474e state=West Bengal
+2026-07-28 11:52:08 | INFO     | demographics_service | [Demographics] Loading: C:\Users\Rajeev\OneDrive\Desktop\Franchise_IQ\data\india\west_bengal\demographics.xlsx
+2026-07-28 11:52:08 | INFO     | demographics_service | [Demographics] Loading: C:\Users\Rajeev\OneDrive\Desktop\Franchise_IQ\data\india\west_bengal\demographics.xlsx
+2026-07-28 11:52:09 | INFO     | demographics_service | [Demographics] Loaded 23 rows from demographics.xlsx
+2026-07-28 11:52:09 | INFO     | demographics_service | [Demographics] Loaded 23 rows from demographics.xlsx
+2026-07-28 11:52:10 | INFO     | routes.data | [Data Preloaded] session=23a68bce-4c5b-4643-85f7-81411152474e stores=384 requests=0 bu=3
+2026-07-28 11:52:10 | INFO     | routes.data | [Data Preloaded] session=23a68bce-4c5b-4643-85f7-81411152474e stores=384 requests=0 bu=3
+2026-07-28 11:52:13 | INFO     | amenities_service | [Amenities] Parsing local source → C:\Users\Rajeev\OneDrive\Desktop\Franchise_IQ\amenities\AmenitiesWB.csv
+2026-07-28 11:52:14 | INFO     | amenities_service | [Amenities] Parsed 44144 amenity points from AmenitiesWB.csv | buckets={'health': 15424, 'education': 8588, 'finance': 7758, 'food': 6145, 'leisure': 3255, 'hospitality': 1594, 'civic': 1380}
+2026-07-28 11:52:32 | INFO     | amenities_service | [Amenities] Cached parsed amenities → C:\Users\Rajeev\OneDrive\Desktop\Franchise_IQ\amenities_cache\india_west_bengal.geojson
+2026-07-28 11:52:32 | INFO     | routes.amenities | [Amenities] session=23a68bce-4c5b-4643-85f7-81411152474e cached=False n=44144
+2026-07-28 11:59:01 | INFO     | main | 👋 FranchiseIQ shutting down
+2026-07-28 11:59:16 | INFO     | main | 🚀 FranchiseIQ v5.0.0 starting up
+2026-07-28 11:59:16 | INFO     | main | ✅ Database tables ready
+2026-07-28 12:00:38 | INFO     | routes.auth | [Auth] new user registered: rajeevk@switzgroup.com
+2026-07-28 12:00:46 | INFO     | routes.country | [Country] session=b6c29af9-20b3-4548-abc5-460e31eb823b country=India
+2026-07-28 12:00:58 | INFO     | routes.country | [State] session=b6c29af9-20b3-4548-abc5-460e31eb823b state=West Bengal
+2026-07-28 12:00:58 | INFO     | demographics_service | [Demographics] Loading: C:\Users\Rajeev\OneDrive\Desktop\Franchise_IQ\data\india\west_bengal\demographics.xlsx
+2026-07-28 12:00:58 | INFO     | demographics_service | [Demographics] Loading: C:\Users\Rajeev\OneDrive\Desktop\Franchise_IQ\data\india\west_bengal\demographics.xlsx
+2026-07-28 12:00:59 | INFO     | demographics_service | [Demographics] Loaded 23 rows from demographics.xlsx
+2026-07-28 12:00:59 | INFO     | demographics_service | [Demographics] Loaded 23 rows from demographics.xlsx
+2026-07-28 12:00:59 | INFO     | routes.data | [Data Preloaded] session=b6c29af9-20b3-4548-abc5-460e31eb823b stores=384 requests=0 bu=3
+2026-07-28 12:00:59 | INFO     | routes.data | [Data Preloaded] session=b6c29af9-20b3-4548-abc5-460e31eb823b stores=384 requests=0 bu=3
+2026-07-28 12:01:01 | INFO     | amenities_service | [Amenities] GeoJSON cache hit → C:\Users\Rajeev\OneDrive\Desktop\Franchise_IQ\amenities_cache\india_west_bengal.geojson
+2026-07-28 12:01:10 | INFO     | routes.amenities | [Amenities] session=b6c29af9-20b3-4548-abc5-460e31eb823b cached=True n=44144
+2026-07-28 12:01:10 | INFO     | scoring_service | [Pipeline] India/West Bengal | stores=384 | requests=0 | BU=True
+2026-07-28 12:01:10 | INFO     | real_estate_service | Loaded 63 real estate records with indices.
+2026-07-28 12:01:13 | INFO     | local_competitor_service | [Competitors] Loaded 6250 competitor locations from Mio_competitor.xlsx
+2026-07-28 12:01:13 | INFO     | scoring_service | [Pipeline] ENABLE_OSM_GEO_FEATURES=false — skipping road/landuse enrichment, no network calls made
+2026-07-28 12:01:13 | INFO     | amenities_service | [Amenities] Counting within 10000m for 384 points
+2026-07-28 12:01:21 | INFO     | clustering_service | [Clustering] Assigning 384 locations → 3 BUs
+2026-07-28 12:01:29 | INFO     | amenities_service | [Amenities] Counting within 10000m for 279 points
+2026-07-28 12:01:32 | INFO     | clustering_service | [Clustering] Assigning 279 locations → 3 BUs
+2026-07-28 12:01:33 | INFO     | affinity_model | [AffinityModel] trained on 384 stores | archetype_n=96 | val=knn_lookalike_holdout | R2_test=0.115 | MAE_test=5357389 | median_rev=13114103
+2026-07-28 12:01:33 | INFO     | scoring_service | [Pipeline] Model R²=0.11502123404852815 MAE=5357388.794920797 method=knn_lookalike_holdout
+2026-07-28 12:01:33 | INFO     | scoring_service | [Calibration] Mio store density (500m cluster) - n=384, median=17, p10=0, p25=3, mean=36.7
+2026-07-28 12:01:33 | INFO     | scoring_service | [Calibration] using min_cluster_threshold=5 (max of 5 floor and Mio p10)
+2026-07-28 12:01:33 | INFO     | scoring_service | [Viability] 279 candidates -> 231 viable (min_amenities=5, min_population=1000)
+2026-07-28 12:01:33 | INFO     | scoring_service | [Diversity] requested n=30, min_distance_km=15.0, picked=29 from 231 ranked candidates
+2026-07-28 12:01:33 | INFO     | scoring_service | [Snap] SNAP (22.5500,88.4500) -> (22.5723,88.4329) 77 amenities in 500m
+2026-07-28 12:01:33 | INFO     | scoring_service | [Snap] SNAP (22.6500,88.3000) -> (22.6551,88.3247) 23 amenities in 500m
+2026-07-28 12:01:34 | INFO     | scoring_service | [Snap] SNAP (22.7500,88.4500) -> (22.7247,88.4743) 27 amenities in 500m
+2026-07-28 12:01:34 | INFO     | scoring_service | [Snap] SNAP (22.5000,88.3000) -> (22.4879,88.2837) 40 amenities in 500m
+2026-07-28 12:01:34 | INFO     | scoring_service | [Snap] DROP (22.6500,88.5500) - densest cluster only 1 amenities (need 5)
+2026-07-28 12:01:35 | INFO     | scoring_service | [Snap] SNAP (22.9000,88.4500) -> (22.9215,88.4359) 65 amenities in 500m
+2026-07-28 12:01:35 | INFO     | scoring_service | [Snap] DROP (22.9000,88.3000) - no amenities in hex
+2026-07-28 12:01:35 | INFO     | scoring_service | [Snap] DROP (22.3000,88.0000) - densest cluster only 0 amenities (need 5)
+2026-07-28 12:01:35 | INFO     | scoring_service | [Snap] DROP (22.1500,88.4500) - densest cluster only 0 amenities (need 5)
+2026-07-28 12:01:35 | INFO     | scoring_service | [Snap] DROP (22.3000,87.8500) - densest cluster only 4 amenities (need 5)
+2026-07-28 12:01:35 | INFO     | scoring_service | [Snap] DROP (23.4000,88.4500) - densest cluster only 1 amenities (need 5)
+2026-07-28 12:01:35 | INFO     | scoring_service | [Snap] SNAP (22.4500,87.3500) -> (22.4265,87.3258) 50 amenities in 500m
+2026-07-28 12:01:35 | INFO     | scoring_service | [Snap] DROP (26.5500,88.7000) - densest cluster only 3 amenities (need 5)
+2026-07-28 12:01:35 | INFO     | scoring_service | [Snap] SNAP (22.3500,87.2500) -> (22.3478,87.2741) 24 amenities in 500m
+2026-07-28 12:01:35 | INFO     | scoring_service | [Snap] DROP (22.4500,86.9500) - densest cluster only 1 amenities (need 5)
+2026-07-28 12:01:35 | INFO     | scoring_service | [Snap] SNAP (23.2500,87.1000) -> (23.2316,87.0774) 53 amenities in 500m
+2026-07-28 12:01:35 | INFO     | scoring_service | [Snap] SNAP (23.6500,86.9500) -> (23.6756,86.9700) 27 amenities in 500m
+2026-07-28 12:01:35 | INFO     | scoring_service | [Snap] DROP (23.8500,87.5500) - densest cluster only 1 amenities (need 5)
+2026-07-28 12:01:35 | INFO     | scoring_service | [Snap] DROP (23.9500,87.4500) - densest cluster only 0 amenities (need 5)
+2026-07-28 12:01:35 | INFO     | scoring_service | [Snap] DROP (23.7500,87.0500) - densest cluster only 0 amenities (need 5)
+2026-07-28 12:01:35 | INFO     | scoring_service | [Snap] SNAP (25.0000,88.1000) -> (25.0060,88.1226) 12 amenities in 500m
+2026-07-28 12:01:37 | INFO     | scoring_service | [Snap] SNAP (23.3500,86.3500) -> (23.3302,86.3641) 213 amenities in 500m
+2026-07-28 12:01:38 | INFO     | scoring_service | [Snap] SNAP (25.2500,88.8000) -> (25.2287,88.7796) 163 amenities in 500m
+2026-07-28 12:01:38 | INFO     | scoring_service | [Snap] DROP (26.2000,88.1500) - densest cluster only 0 amenities (need 5)
+2026-07-28 12:01:38 | INFO     | scoring_service | [Snap] DROP (26.5000,89.5000) - densest cluster only 0 amenities (need 5)
+2026-07-28 12:01:38 | INFO     | scoring_service | [Snap] DROP (26.3500,89.4500) - densest cluster only 3 amenities (need 5)
+2026-07-28 12:01:38 | INFO     | scoring_service | [Snap] DROP (27.1000,88.5500) - densest cluster only 1 amenities (need 5)
+2026-07-28 12:01:38 | INFO     | scoring_service | [Snap] DROP (27.1000,88.3000) - no amenities in hex
+2026-07-28 12:01:38 | INFO     | scoring_service | [Snap] DROP (26.9500,88.3000) - densest cluster only 1 amenities (need 5)
+2026-07-28 12:01:38 | INFO     | scoring_service | [Snap] 12 snapped, 17 dropped (threshold=5)
+2026-07-28 12:02:07 | INFO     | routes.predict | [Predict] user=rajeevk@switzgroup.com session=b6c29af9-20b3-4548-abc5-460e31eb823b top_picks=10
+2026-07-28 12:03:23 | INFO     | services.district_aggregation | district rollup: 14 districts, 384 stores, net avg 14253339.27
+2026-07-28 12:39:32 | INFO     | routes.country | [Country] session=588bd0a3-0ddb-45c1-8381-d34ecd212632 country=India
+2026-07-28 12:39:34 | INFO     | routes.country | [State] session=588bd0a3-0ddb-45c1-8381-d34ecd212632 state=West Bengal
+2026-07-28 12:39:34 | INFO     | demographics_service | [Demographics] Loading: C:\Users\Rajeev\OneDrive\Desktop\Franchise_IQ\data\india\west_bengal\demographics.xlsx
+2026-07-28 12:39:34 | INFO     | demographics_service | [Demographics] Loading: C:\Users\Rajeev\OneDrive\Desktop\Franchise_IQ\data\india\west_bengal\demographics.xlsx
+2026-07-28 12:39:35 | INFO     | demographics_service | [Demographics] Loaded 23 rows from demographics.xlsx
+2026-07-28 12:39:35 | INFO     | demographics_service | [Demographics] Loaded 23 rows from demographics.xlsx
+2026-07-28 12:39:35 | INFO     | routes.data | [Data Preloaded] session=588bd0a3-0ddb-45c1-8381-d34ecd212632 stores=384 requests=0 bu=3
+2026-07-28 12:39:35 | INFO     | routes.data | [Data Preloaded] session=588bd0a3-0ddb-45c1-8381-d34ecd212632 stores=384 requests=0 bu=3
+2026-07-28 12:39:40 | INFO     | amenities_service | [Amenities] In-memory cache hit for India|West Bengal
+2026-07-28 12:39:40 | INFO     | routes.amenities | [Amenities] session=588bd0a3-0ddb-45c1-8381-d34ecd212632 cached=True n=44144
+2026-07-28 12:39:41 | INFO     | scoring_service | [Pipeline] India/West Bengal | stores=384 | requests=0 | BU=True
+2026-07-28 12:39:41 | INFO     | real_estate_service | Loaded 63 real estate records with indices.
+2026-07-28 12:39:41 | INFO     | scoring_service | [Pipeline] ENABLE_OSM_GEO_FEATURES=false — skipping road/landuse enrichment, no network calls made
+2026-07-28 12:39:41 | INFO     | amenities_service | [Amenities] Counting within 10000m for 384 points
+2026-07-28 12:39:49 | INFO     | clustering_service | [Clustering] Assigning 384 locations → 3 BUs
+2026-07-28 12:39:55 | INFO     | amenities_service | [Amenities] Counting within 10000m for 279 points
+2026-07-28 12:39:57 | INFO     | clustering_service | [Clustering] Assigning 279 locations → 3 BUs
+2026-07-28 12:39:58 | INFO     | affinity_model | [AffinityModel] trained on 384 stores | archetype_n=96 | val=knn_lookalike_holdout | R2_test=0.115 | MAE_test=5357389 | median_rev=13114103
+2026-07-28 12:39:58 | INFO     | scoring_service | [Pipeline] Model R²=0.11502123404852815 MAE=5357388.794920797 method=knn_lookalike_holdout
+2026-07-28 12:39:58 | INFO     | scoring_service | [Calibration] Mio store density (500m cluster) - n=384, median=17, p10=0, p25=3, mean=36.7
+2026-07-28 12:39:58 | INFO     | scoring_service | [Calibration] using min_cluster_threshold=5 (max of 5 floor and Mio p10)
+2026-07-28 12:39:58 | INFO     | scoring_service | [Viability] 279 candidates -> 231 viable (min_amenities=5, min_population=1000)
+2026-07-28 12:39:58 | INFO     | scoring_service | [Diversity] requested n=30, min_distance_km=15.0, picked=29 from 231 ranked candidates
+2026-07-28 12:39:59 | INFO     | scoring_service | [Snap] SNAP (22.5500,88.4500) -> (22.5723,88.4329) 77 amenities in 500m
+2026-07-28 12:39:59 | INFO     | scoring_service | [Snap] SNAP (22.6500,88.3000) -> (22.6551,88.3247) 23 amenities in 500m
+2026-07-28 12:39:59 | INFO     | scoring_service | [Snap] SNAP (22.7500,88.4500) -> (22.7247,88.4743) 27 amenities in 500m
+2026-07-28 12:39:59 | INFO     | scoring_service | [Snap] SNAP (22.5000,88.3000) -> (22.4879,88.2837) 40 amenities in 500m
+2026-07-28 12:39:59 | INFO     | scoring_service | [Snap] DROP (22.6500,88.5500) - densest cluster only 1 amenities (need 5)
+2026-07-28 12:40:00 | INFO     | scoring_service | [Snap] SNAP (22.9000,88.4500) -> (22.9215,88.4359) 65 amenities in 500m
+2026-07-28 12:40:00 | INFO     | scoring_service | [Snap] DROP (22.9000,88.3000) - no amenities in hex
+2026-07-28 12:40:00 | INFO     | scoring_service | [Snap] DROP (22.3000,88.0000) - densest cluster only 0 amenities (need 5)
+2026-07-28 12:40:00 | INFO     | scoring_service | [Snap] DROP (22.1500,88.4500) - densest cluster only 0 amenities (need 5)
+2026-07-28 12:40:00 | INFO     | scoring_service | [Snap] DROP (22.3000,87.8500) - densest cluster only 4 amenities (need 5)
+2026-07-28 12:40:00 | INFO     | scoring_service | [Snap] DROP (23.4000,88.4500) - densest cluster only 1 amenities (need 5)
+2026-07-28 12:40:00 | INFO     | scoring_service | [Snap] SNAP (22.4500,87.3500) -> (22.4265,87.3258) 50 amenities in 500m
+2026-07-28 12:40:00 | INFO     | scoring_service | [Snap] DROP (26.5500,88.7000) - densest cluster only 3 amenities (need 5)
+2026-07-28 12:40:00 | INFO     | scoring_service | [Snap] SNAP (22.3500,87.2500) -> (22.3478,87.2741) 24 amenities in 500m
+2026-07-28 12:40:00 | INFO     | scoring_service | [Snap] DROP (22.4500,86.9500) - densest cluster only 1 amenities (need 5)
+2026-07-28 12:40:00 | INFO     | scoring_service | [Snap] SNAP (23.2500,87.1000) -> (23.2316,87.0774) 53 amenities in 500m
+2026-07-28 12:40:00 | INFO     | scoring_service | [Snap] SNAP (23.6500,86.9500) -> (23.6756,86.9700) 27 amenities in 500m
+2026-07-28 12:40:00 | INFO     | scoring_service | [Snap] DROP (23.8500,87.5500) - densest cluster only 1 amenities (need 5)
+2026-07-28 12:40:00 | INFO     | scoring_service | [Snap] DROP (23.9500,87.4500) - densest cluster only 0 amenities (need 5)
+2026-07-28 12:40:00 | INFO     | scoring_service | [Snap] DROP (23.7500,87.0500) - densest cluster only 0 amenities (need 5)
+2026-07-28 12:40:00 | INFO     | scoring_service | [Snap] SNAP (25.0000,88.1000) -> (25.0060,88.1226) 12 amenities in 500m
+2026-07-28 12:40:02 | INFO     | scoring_service | [Snap] SNAP (23.3500,86.3500) -> (23.3302,86.3641) 213 amenities in 500m
+2026-07-28 12:40:03 | INFO     | scoring_service | [Snap] SNAP (25.2500,88.8000) -> (25.2287,88.7796) 163 amenities in 500m
+2026-07-28 12:40:03 | INFO     | scoring_service | [Snap] DROP (26.2000,88.1500) - densest cluster only 0 amenities (need 5)
+2026-07-28 12:40:03 | INFO     | scoring_service | [Snap] DROP (26.5000,89.5000) - densest cluster only 0 amenities (need 5)
+2026-07-28 12:40:03 | INFO     | scoring_service | [Snap] DROP (26.3500,89.4500) - densest cluster only 3 amenities (need 5)
+2026-07-28 12:40:03 | INFO     | scoring_service | [Snap] DROP (27.1000,88.5500) - densest cluster only 1 amenities (need 5)
+2026-07-28 12:40:03 | INFO     | scoring_service | [Snap] DROP (27.1000,88.3000) - no amenities in hex
+2026-07-28 12:40:03 | INFO     | scoring_service | [Snap] DROP (26.9500,88.3000) - densest cluster only 1 amenities (need 5)
+2026-07-28 12:40:03 | INFO     | scoring_service | [Snap] 12 snapped, 17 dropped (threshold=5)
+2026-07-28 12:40:26 | INFO     | routes.predict | [Predict] user=rajeevk@switzgroup.com session=588bd0a3-0ddb-45c1-8381-d34ecd212632 top_picks=10
+2026-07-28 13:09:18 | INFO     | session_store | [Session] Purged 1 expired sessions
+2026-07-28 13:49:18 | INFO     | session_store | [Session] Purged 1 expired sessions
+2026-07-28 14:53:48 | INFO     | main | 👋 FranchiseIQ shutting down
+2026-07-28 14:54:03 | INFO     | main | 🚀 FranchiseIQ v5.0.0 starting up
+2026-07-28 14:54:03 | INFO     | main | ✅ Database tables ready
+2026-07-28 14:55:10 | INFO     | routes.auth | [Auth] login success: teammate@switzgroup.com
+2026-07-28 14:55:22 | INFO     | routes.country | [Country] session=d592a0a7-486a-4ede-ba63-c2086be93f7d country=India
+2026-07-28 14:55:24 | INFO     | routes.country | [State] session=d592a0a7-486a-4ede-ba63-c2086be93f7d state=West Bengal
+2026-07-28 14:55:24 | INFO     | demographics_service | [Demographics] Loading: C:\Users\Rajeev\OneDrive\Desktop\Franchise_IQ\data\india\west_bengal\demographics.xlsx
+2026-07-28 14:55:24 | INFO     | demographics_service | [Demographics] Loading: C:\Users\Rajeev\OneDrive\Desktop\Franchise_IQ\data\india\west_bengal\demographics.xlsx
+2026-07-28 14:55:25 | INFO     | demographics_service | [Demographics] Loaded 23 rows from demographics.xlsx
+2026-07-28 14:55:25 | INFO     | demographics_service | [Demographics] Loaded 23 rows from demographics.xlsx
+2026-07-28 14:55:25 | INFO     | routes.data | [Data Preloaded] session=d592a0a7-486a-4ede-ba63-c2086be93f7d stores=384 requests=0 bu=3
+2026-07-28 14:55:25 | INFO     | routes.data | [Data Preloaded] session=d592a0a7-486a-4ede-ba63-c2086be93f7d stores=384 requests=0 bu=3
+2026-07-28 14:58:54 | INFO     | amenities_service | [Amenities] GeoJSON cache hit → C:\Users\Rajeev\OneDrive\Desktop\Franchise_IQ\amenities_cache\india_west_bengal.geojson
+2026-07-28 14:59:05 | INFO     | routes.amenities | [Amenities] session=d592a0a7-486a-4ede-ba63-c2086be93f7d cached=True n=44144
+2026-07-28 14:59:05 | INFO     | scoring_service | [Pipeline] India/West Bengal | stores=384 | requests=0 | BU=True
+2026-07-28 14:59:05 | INFO     | real_estate_service | Loaded 63 real estate records with indices.
+2026-07-28 14:59:07 | INFO     | local_competitor_service | [Competitors] Loaded 6250 competitor locations from Mio_competitor.xlsx
+2026-07-28 14:59:07 | INFO     | scoring_service | [Pipeline] ENABLE_OSM_GEO_FEATURES=false — skipping road/landuse enrichment, no network calls made
+2026-07-28 14:59:07 | INFO     | amenities_service | [Amenities] Counting within 10000m for 384 points
+2026-07-28 14:59:12 | INFO     | clustering_service | [Clustering] Assigning 384 locations → 3 BUs
+2026-07-28 14:59:18 | INFO     | amenities_service | [Amenities] Counting within 10000m for 279 points
+2026-07-28 14:59:20 | INFO     | clustering_service | [Clustering] Assigning 279 locations → 3 BUs
+2026-07-28 14:59:20 | INFO     | affinity_model | [AffinityModel] trained on 384 stores | archetype_n=96 | val=knn_lookalike_holdout | R2_test=0.115 | MAE_test=5357389 | median_rev=13114103
+2026-07-28 14:59:20 | INFO     | scoring_service | [Pipeline] Model R²=0.11502123404852815 MAE=5357388.794920797 method=knn_lookalike_holdout
+2026-07-28 14:59:21 | INFO     | scoring_service | [Calibration] Mio store density (500m cluster) - n=384, median=17, p10=0, p25=3, mean=36.7
+2026-07-28 14:59:21 | INFO     | scoring_service | [Calibration] using min_cluster_threshold=5 (max of 5 floor and Mio p10)
+2026-07-28 14:59:21 | INFO     | scoring_service | [Viability] 279 candidates -> 231 viable (min_amenities=5, min_population=1000)
+2026-07-28 14:59:21 | INFO     | scoring_service | [Diversity] requested n=30, min_distance_km=15.0, picked=29 from 231 ranked candidates
+2026-07-28 14:59:21 | INFO     | scoring_service | [Snap] SNAP (22.5500,88.4500) -> (22.5723,88.4329) 77 amenities in 500m
+2026-07-28 14:59:21 | INFO     | scoring_service | [Snap] SNAP (22.6500,88.3000) -> (22.6551,88.3247) 23 amenities in 500m
+2026-07-28 14:59:21 | INFO     | scoring_service | [Snap] SNAP (22.7500,88.4500) -> (22.7247,88.4743) 27 amenities in 500m
+2026-07-28 14:59:21 | INFO     | scoring_service | [Snap] SNAP (22.5000,88.3000) -> (22.4879,88.2837) 40 amenities in 500m
+2026-07-28 14:59:21 | INFO     | scoring_service | [Snap] DROP (22.6500,88.5500) - densest cluster only 1 amenities (need 5)
+2026-07-28 14:59:22 | INFO     | scoring_service | [Snap] SNAP (22.9000,88.4500) -> (22.9215,88.4359) 65 amenities in 500m
+2026-07-28 14:59:22 | INFO     | scoring_service | [Snap] DROP (22.9000,88.3000) - no amenities in hex
+2026-07-28 14:59:22 | INFO     | scoring_service | [Snap] DROP (22.3000,88.0000) - densest cluster only 0 amenities (need 5)
+2026-07-28 14:59:22 | INFO     | scoring_service | [Snap] DROP (22.1500,88.4500) - densest cluster only 0 amenities (need 5)
+2026-07-28 14:59:22 | INFO     | scoring_service | [Snap] DROP (22.3000,87.8500) - densest cluster only 4 amenities (need 5)
+2026-07-28 14:59:22 | INFO     | scoring_service | [Snap] DROP (23.4000,88.4500) - densest cluster only 1 amenities (need 5)
+2026-07-28 14:59:22 | INFO     | scoring_service | [Snap] SNAP (22.4500,87.3500) -> (22.4265,87.3258) 50 amenities in 500m
+2026-07-28 14:59:22 | INFO     | scoring_service | [Snap] DROP (26.5500,88.7000) - densest cluster only 3 amenities (need 5)
+2026-07-28 14:59:22 | INFO     | scoring_service | [Snap] SNAP (22.3500,87.2500) -> (22.3478,87.2741) 24 amenities in 500m
+2026-07-28 14:59:22 | INFO     | scoring_service | [Snap] DROP (22.4500,86.9500) - densest cluster only 1 amenities (need 5)
+2026-07-28 14:59:22 | INFO     | scoring_service | [Snap] SNAP (23.2500,87.1000) -> (23.2316,87.0774) 53 amenities in 500m
+2026-07-28 14:59:22 | INFO     | scoring_service | [Snap] SNAP (23.6500,86.9500) -> (23.6756,86.9700) 27 amenities in 500m
+2026-07-28 14:59:22 | INFO     | scoring_service | [Snap] DROP (23.8500,87.5500) - densest cluster only 1 amenities (need 5)
+2026-07-28 14:59:22 | INFO     | scoring_service | [Snap] DROP (23.9500,87.4500) - densest cluster only 0 amenities (need 5)
+2026-07-28 14:59:22 | INFO     | scoring_service | [Snap] DROP (23.7500,87.0500) - densest cluster only 0 amenities (need 5)
+2026-07-28 14:59:22 | INFO     | scoring_service | [Snap] SNAP (25.0000,88.1000) -> (25.0060,88.1226) 12 amenities in 500m
+2026-07-28 14:59:23 | INFO     | scoring_service | [Snap] SNAP (23.3500,86.3500) -> (23.3302,86.3641) 213 amenities in 500m
+2026-07-28 14:59:23 | INFO     | scoring_service | [Snap] SNAP (25.2500,88.8000) -> (25.2287,88.7796) 163 amenities in 500m
+2026-07-28 14:59:23 | INFO     | scoring_service | [Snap] DROP (26.2000,88.1500) - densest cluster only 0 amenities (need 5)
+2026-07-28 14:59:23 | INFO     | scoring_service | [Snap] DROP (26.5000,89.5000) - densest cluster only 0 amenities (need 5)
+2026-07-28 14:59:23 | INFO     | scoring_service | [Snap] DROP (26.3500,89.4500) - densest cluster only 3 amenities (need 5)
+2026-07-28 14:59:23 | INFO     | scoring_service | [Snap] DROP (27.1000,88.5500) - densest cluster only 1 amenities (need 5)
+2026-07-28 14:59:23 | INFO     | scoring_service | [Snap] DROP (27.1000,88.3000) - no amenities in hex
+2026-07-28 14:59:23 | INFO     | scoring_service | [Snap] DROP (26.9500,88.3000) - densest cluster only 1 amenities (need 5)
+2026-07-28 14:59:23 | INFO     | scoring_service | [Snap] 12 snapped, 17 dropped (threshold=5)
+2026-07-28 14:59:45 | INFO     | routes.predict | [Predict] user=teammate@switzgroup.com session=d592a0a7-486a-4ede-ba63-c2086be93f7d top_picks=10
+2026-07-28 15:44:07 | INFO     | main | 👋 FranchiseIQ shutting down
+2026-07-28 15:44:38 | INFO     | main | 🚀 FranchiseIQ v5.0.0 starting up
+2026-07-28 15:44:38 | INFO     | main | ✅ Database tables ready
+2026-07-28 15:46:59 | INFO     | main | 👋 FranchiseIQ shutting down
+2026-07-28 15:47:12 | INFO     | main | 🚀 FranchiseIQ v5.0.0 starting up
+2026-07-28 15:47:12 | INFO     | main | ✅ Database tables ready
+2026-07-28 15:47:54 | INFO     | routes.country | [Country] session=11ba534c-d988-439b-bc76-805dd70b36bb country=India
+2026-07-28 15:47:56 | INFO     | routes.country | [State] session=11ba534c-d988-439b-bc76-805dd70b36bb state=West Bengal
+2026-07-28 15:47:56 | INFO     | demographics_service | [Demographics] Loading: C:\Users\Rajeev\OneDrive\Desktop\Franchise_IQ\data\india\west_bengal\demographics.xlsx
+2026-07-28 15:47:56 | INFO     | demographics_service | [Demographics] Loading: C:\Users\Rajeev\OneDrive\Desktop\Franchise_IQ\data\india\west_bengal\demographics.xlsx
+2026-07-28 15:47:58 | INFO     | demographics_service | [Demographics] Loaded 23 rows from demographics.xlsx
+2026-07-28 15:47:58 | INFO     | demographics_service | [Demographics] Loaded 23 rows from demographics.xlsx
+2026-07-28 15:47:59 | INFO     | routes.data | [Data Preloaded] session=11ba534c-d988-439b-bc76-805dd70b36bb stores=384 requests=0 bu=3
+2026-07-28 15:47:59 | INFO     | routes.data | [Data Preloaded] session=11ba534c-d988-439b-bc76-805dd70b36bb stores=384 requests=0 bu=3
+2026-07-28 15:48:02 | INFO     | amenities_service | [Amenities] GeoJSON cache hit → C:\Users\Rajeev\OneDrive\Desktop\Franchise_IQ\amenities_cache\india_west_bengal.geojson
+2026-07-28 15:48:14 | INFO     | routes.amenities | [Amenities] session=11ba534c-d988-439b-bc76-805dd70b36bb cached=True n=44144
+2026-07-28 15:48:15 | INFO     | scoring_service | [Pipeline] India/West Bengal | stores=384 | requests=0 | BU=True
+2026-07-28 15:48:15 | INFO     | real_estate_service | Loaded 63 real estate records with indices.
+2026-07-28 15:48:17 | INFO     | local_competitor_service | [Competitors] Loaded 6250 competitor locations from Mio_competitor.xlsx
+2026-07-28 15:48:17 | INFO     | scoring_service | [Pipeline] ENABLE_OSM_GEO_FEATURES=false — skipping road/landuse enrichment, no network calls made
+2026-07-28 15:48:17 | INFO     | amenities_service | [Amenities] Counting within 10000m for 384 points
+2026-07-28 15:48:25 | INFO     | clustering_service | [Clustering] Assigning 384 locations → 3 BUs
+2026-07-28 15:48:33 | INFO     | amenities_service | [Amenities] Counting within 10000m for 279 points
+2026-07-28 15:48:35 | INFO     | clustering_service | [Clustering] Assigning 279 locations → 3 BUs
+2026-07-28 15:48:36 | INFO     | affinity_model | [AffinityModel] trained on 384 stores | archetype_n=96 | val=knn_lookalike_holdout | R2_test=0.125 | MAE_test=5328193 | median_rev=13114103
+2026-07-28 15:48:36 | INFO     | scoring_service | [Pipeline] Model R²=0.12509040871010324 MAE=5328192.598273494 method=knn_lookalike_holdout
+2026-07-28 15:48:36 | INFO     | scoring_service | [Guardrail] 0/279 candidates flagged for nearby-store underperformance (>= 3 stores within 5km averaging < ₹9,835,577), Final_Score penalized ×0.55
+2026-07-28 15:48:36 | INFO     | scoring_service | [Calibration] Mio store density (500m cluster) - n=384, median=17, p10=0, p25=3, mean=36.7
+2026-07-28 15:48:36 | INFO     | scoring_service | [Calibration] using min_cluster_threshold=5 (max of 5 floor and Mio p10)
+2026-07-28 15:48:36 | INFO     | scoring_service | [Viability] 279 candidates -> 231 viable (min_amenities=5, min_population=1000)
+2026-07-28 15:48:36 | INFO     | scoring_service | [Diversity] requested n=30, min_distance_km=15.0, picked=30 from 231 ranked candidates
+2026-07-28 15:48:37 | INFO     | scoring_service | [Snap] SNAP (22.5500,88.4500) -> (22.5723,88.4329) 77 amenities in 500m
+2026-07-28 15:48:37 | INFO     | scoring_service | [Snap] SNAP (22.6500,88.3000) -> (22.6551,88.3247) 23 amenities in 500m
+2026-07-28 15:48:37 | INFO     | scoring_service | [Snap] SNAP (22.7500,88.4500) -> (22.7247,88.4743) 27 amenities in 500m
+2026-07-28 15:48:37 | INFO     | scoring_service | [Snap] SNAP (22.5000,88.3000) -> (22.4879,88.2837) 40 amenities in 500m
+2026-07-28 15:48:37 | INFO     | scoring_service | [Snap] DROP (22.6500,88.5500) - densest cluster only 1 amenities (need 5)
+2026-07-28 15:48:38 | INFO     | scoring_service | [Snap] SNAP (22.9000,88.4500) -> (22.9215,88.4359) 65 amenities in 500m
+2026-07-28 15:48:38 | INFO     | scoring_service | [Snap] DROP (22.9000,88.3000) - no amenities in hex
+2026-07-28 15:48:38 | INFO     | scoring_service | [Snap] DROP (22.3000,88.0000) - densest cluster only 0 amenities (need 5)
+2026-07-28 15:48:38 | INFO     | scoring_service | [Snap] DROP (22.1500,88.4500) - densest cluster only 0 amenities (need 5)
+2026-07-28 15:48:38 | INFO     | scoring_service | [Snap] DROP (22.3000,87.8500) - densest cluster only 4 amenities (need 5)
+2026-07-28 15:48:38 | INFO     | scoring_service | [Snap] DROP (26.5500,88.7000) - densest cluster only 3 amenities (need 5)
+2026-07-28 15:48:38 | INFO     | scoring_service | [Snap] SNAP (23.4000,88.4000) -> (23.4092,88.3769) 34 amenities in 500m
+2026-07-28 15:48:38 | INFO     | scoring_service | [Snap] SNAP (22.4500,87.3500) -> (22.4265,87.3258) 50 amenities in 500m
+2026-07-28 15:48:38 | INFO     | scoring_service | [Snap] SNAP (22.3500,87.2500) -> (22.3478,87.2741) 24 amenities in 500m
+2026-07-28 15:48:38 | INFO     | scoring_service | [Snap] DROP (22.4500,87.0500) - densest cluster only 1 amenities (need 5)
+2026-07-28 15:48:38 | INFO     | scoring_service | [Snap] SNAP (23.2500,87.1000) -> (23.2316,87.0774) 53 amenities in 500m
+2026-07-28 15:48:38 | INFO     | scoring_service | [Snap] SNAP (23.6500,86.9500) -> (23.6756,86.9700) 27 amenities in 500m
+2026-07-28 15:48:38 | INFO     | scoring_service | [Snap] DROP (23.8500,87.5500) - densest cluster only 1 amenities (need 5)
+2026-07-28 15:48:38 | INFO     | scoring_service | [Snap] DROP (22.4500,86.9000) - densest cluster only 0 amenities (need 5)
+2026-07-28 15:48:38 | INFO     | scoring_service | [Snap] DROP (23.9500,87.4500) - densest cluster only 0 amenities (need 5)
+2026-07-28 15:48:38 | INFO     | scoring_service | [Snap] DROP (23.7500,87.0500) - densest cluster only 0 amenities (need 5)
+2026-07-28 15:48:38 | INFO     | scoring_service | [Snap] SNAP (25.0000,88.1000) -> (25.0060,88.1226) 12 amenities in 500m
+2026-07-28 15:48:39 | INFO     | scoring_service | [Snap] SNAP (25.2500,88.8000) -> (25.2287,88.7796) 163 amenities in 500m
+2026-07-28 15:48:41 | INFO     | scoring_service | [Snap] SNAP (23.3500,86.3500) -> (23.3302,86.3641) 213 amenities in 500m
+2026-07-28 15:48:41 | INFO     | scoring_service | [Snap] DROP (26.2000,88.1500) - densest cluster only 0 amenities (need 5)
+2026-07-28 15:48:41 | INFO     | scoring_service | [Snap] DROP (26.5000,89.5000) - densest cluster only 0 amenities (need 5)
+2026-07-28 15:48:41 | INFO     | scoring_service | [Snap] DROP (26.3500,89.4500) - densest cluster only 3 amenities (need 5)
+2026-07-28 15:48:41 | INFO     | scoring_service | [Snap] DROP (27.1500,88.4500) - no amenities in hex
+2026-07-28 15:48:41 | INFO     | scoring_service | [Snap] DROP (27.1000,88.3000) - no amenities in hex
+2026-07-28 15:48:41 | INFO     | scoring_service | [Snap] DROP (27.0000,88.4500) - densest cluster only 0 amenities (need 5)
+2026-07-28 15:48:41 | INFO     | scoring_service | [Snap] 13 snapped, 17 dropped (threshold=5)
+2026-07-28 15:48:41 | INFO     | amenities_service | [Amenities] Counting within 10000m for 13 points
+2026-07-28 15:48:42 | INFO     | clustering_service | [Clustering] Assigning 13 locations → 3 BUs
+2026-07-28 15:48:42 | INFO     | scoring_service | [Guardrail] 0/13 candidates flagged for nearby-store underperformance (>= 3 stores within 5km averaging < ₹9,835,577), Final_Score penalized ×0.55
+2026-07-28 15:49:07 | INFO     | routes.predict | [Predict] user=teammate@switzgroup.com session=11ba534c-d988-439b-bc76-805dd70b36bb top_picks=10
+2026-07-28 16:57:12 | INFO     | session_store | [Session] Purged 1 expired sessions
+2026-07-29 02:41:01 | INFO     | main | 👋 FranchiseIQ shutting down
+2026-07-29 02:41:16 | INFO     | main | 🚀 FranchiseIQ v5.0.0 starting up
+2026-07-29 02:41:16 | WARNING  | main | ⚠️  JWT_SECRET_KEY is still the insecure default from .env.example! Anyone who has seen this codebase can forge valid login tokens. Set a real random secret in .env before exposing this beyond localhost: python -c "import secrets; print(secrets.token_urlsafe(48))"
+2026-07-29 02:41:16 | INFO     | main | ✅ Database tables ready
+2026-07-29 02:41:31 | INFO     | routes.country | [Country] session=c0be6b8e-8954-415e-851c-9e2477dfbc84 country=India
+2026-07-29 02:41:33 | INFO     | routes.country | [State] session=c0be6b8e-8954-415e-851c-9e2477dfbc84 state=West Bengal
+2026-07-29 02:41:33 | INFO     | demographics_service | [Demographics] Loading: C:\Users\Rajeev\OneDrive\Desktop\Franchise_IQ\data\india\west_bengal\demographics.xlsx
+2026-07-29 02:41:33 | INFO     | demographics_service | [Demographics] Loading: C:\Users\Rajeev\OneDrive\Desktop\Franchise_IQ\data\india\west_bengal\demographics.xlsx
+2026-07-29 02:41:34 | INFO     | demographics_service | [Demographics] Loaded 23 rows from demographics.xlsx
+2026-07-29 02:41:34 | INFO     | demographics_service | [Demographics] Loaded 23 rows from demographics.xlsx
+2026-07-29 02:41:35 | INFO     | routes.data | [Data Preloaded] session=c0be6b8e-8954-415e-851c-9e2477dfbc84 stores=384 requests=0 bu=3
+2026-07-29 02:41:35 | INFO     | routes.data | [Data Preloaded] session=c0be6b8e-8954-415e-851c-9e2477dfbc84 stores=384 requests=0 bu=3
+2026-07-29 02:41:36 | INFO     | amenities_service | [Amenities] GeoJSON cache hit → C:\Users\Rajeev\OneDrive\Desktop\Franchise_IQ\amenities_cache\india_west_bengal.geojson
+2026-07-29 02:41:50 | INFO     | routes.amenities | [Amenities] session=c0be6b8e-8954-415e-851c-9e2477dfbc84 cached=True n=44144
+2026-07-29 02:41:50 | INFO     | scoring_service | [Pipeline] India/West Bengal | stores=384 | requests=0 | BU=True
+2026-07-29 02:41:50 | INFO     | real_estate_service | Loaded 63 real estate records with indices.
+2026-07-29 02:41:53 | INFO     | local_competitor_service | [Competitors] Loaded 6250 competitor locations from Mio_competitor.xlsx
+2026-07-29 02:41:53 | INFO     | scoring_service | [Pipeline] ENABLE_OSM_GEO_FEATURES=false — skipping road/landuse enrichment, no network calls made
+2026-07-29 02:41:53 | INFO     | amenities_service | [Amenities] Counting within 10000m for 384 points
+2026-07-29 02:42:00 | INFO     | clustering_service | [Clustering] Assigning 384 locations → 3 BUs
+2026-07-29 02:42:08 | INFO     | amenities_service | [Amenities] Counting within 10000m for 279 points
+2026-07-29 02:42:10 | INFO     | clustering_service | [Clustering] Assigning 279 locations → 3 BUs
+2026-07-29 02:42:10 | INFO     | affinity_model | [AffinityModel] trained on 384 stores | archetype_n=96 | val=knn_lookalike_holdout_multisplit | R2_test=0.092 | MAE_test=4544930 | median_rev=13114103
+2026-07-29 02:42:10 | INFO     | scoring_service | [Pipeline] Model R²=0.09244523604539408 MAE=4544930.139866546 method=knn_lookalike_holdout_multisplit
+2026-07-29 02:42:11 | INFO     | scoring_service | [Guardrail] 0/279 candidates flagged for nearby-store underperformance (>= 3 stores within 5km averaging < ₹9,835,577), Final_Score penalized ×0.55
+2026-07-29 02:42:11 | INFO     | scoring_service | [Calibration] Mio store density (500m cluster) - n=384, median=17, p10=0, p25=3, mean=36.7
+2026-07-29 02:42:11 | INFO     | scoring_service | [Calibration] using min_cluster_threshold=5 (max of 5 floor and Mio p10)
+2026-07-29 02:42:11 | INFO     | scoring_service | [Viability] 279 candidates -> 231 viable (min_amenities=5, min_population=1000)
+2026-07-29 02:42:11 | INFO     | scoring_service | [Diversity] requested n=30, min_distance_km=15.0, picked=30 from 231 ranked candidates
+2026-07-29 02:42:12 | INFO     | scoring_service | [Snap] SNAP (22.5500,88.4500) -> (22.5723,88.4329) 77 amenities in 500m
+2026-07-29 02:42:12 | INFO     | scoring_service | [Snap] SNAP (22.6500,88.3000) -> (22.6551,88.3247) 23 amenities in 500m
+2026-07-29 02:42:12 | INFO     | scoring_service | [Snap] SNAP (22.7500,88.4500) -> (22.7247,88.4743) 27 amenities in 500m
+2026-07-29 02:42:12 | INFO     | scoring_service | [Snap] SNAP (22.5000,88.3000) -> (22.4879,88.2837) 40 amenities in 500m
+2026-07-29 02:42:12 | INFO     | scoring_service | [Snap] DROP (22.6500,88.5500) - densest cluster only 1 amenities (need 5)
+2026-07-29 02:42:12 | INFO     | scoring_service | [Snap] DROP (26.5500,88.7000) - densest cluster only 3 amenities (need 5)
+2026-07-29 02:42:12 | INFO     | scoring_service | [Snap] SNAP (22.9000,88.4500) -> (22.9215,88.4359) 65 amenities in 500m
+2026-07-29 02:42:12 | INFO     | scoring_service | [Snap] DROP (22.9000,88.3000) - no amenities in hex
+2026-07-29 02:42:13 | INFO     | scoring_service | [Snap] SNAP (22.3000,87.9500) -> (22.2925,87.9262) 63 amenities in 500m
+2026-07-29 02:42:13 | INFO     | scoring_service | [Snap] DROP (22.1000,88.4000) - no amenities in hex
+2026-07-29 02:42:13 | INFO     | scoring_service | [Snap] SNAP (23.4000,88.4000) -> (23.4092,88.3769) 34 amenities in 500m
+2026-07-29 02:42:13 | INFO     | scoring_service | [Snap] SNAP (22.4500,87.3500) -> (22.4265,87.3258) 50 amenities in 500m
+2026-07-29 02:42:13 | INFO     | scoring_service | [Snap] SNAP (22.3500,87.2500) -> (22.3478,87.2741) 24 amenities in 500m
+2026-07-29 02:42:13 | INFO     | scoring_service | [Snap] DROP (22.4000,87.0000) - densest cluster only 3 amenities (need 5)
+2026-07-29 02:42:13 | INFO     | scoring_service | [Snap] SNAP (23.6500,87.0000) -> (23.6721,86.9891) 19 amenities in 500m
+2026-07-29 02:42:13 | INFO     | scoring_service | [Snap] DROP (23.9500,87.5500) - densest cluster only 4 amenities (need 5)
+2026-07-29 02:42:13 | INFO     | scoring_service | [Snap] DROP (27.0000,88.5000) - densest cluster only 0 amenities (need 5)
+2026-07-29 02:42:13 | INFO     | scoring_service | [Snap] DROP (26.9500,88.3000) - densest cluster only 1 amenities (need 5)
+2026-07-29 02:42:13 | INFO     | scoring_service | [Snap] DROP (26.1500,88.2000) - densest cluster only 0 amenities (need 5)
+2026-07-29 02:42:13 | INFO     | scoring_service | [Snap] DROP (26.3500,89.4000) - no amenities in hex
+2026-07-29 02:42:13 | INFO     | scoring_service | [Snap] DROP (27.1500,88.5000) - no amenities in hex
+2026-07-29 02:42:13 | INFO     | scoring_service | [Snap] DROP (26.5000,89.4500) - no amenities in hex
+2026-07-29 02:42:13 | INFO     | scoring_service | [Snap] DROP (27.1000,88.3000) - no amenities in hex
+2026-07-29 02:42:13 | INFO     | scoring_service | [Snap] DROP (22.5000,86.9000) - densest cluster only 0 amenities (need 5)
+2026-07-29 02:42:13 | INFO     | scoring_service | [Snap] DROP (25.3000,88.7500) - densest cluster only 0 amenities (need 5)
+2026-07-29 02:42:13 | INFO     | scoring_service | [Snap] DROP (23.2000,87.1500) - densest cluster only 1 amenities (need 5)
+2026-07-29 02:42:13 | INFO     | scoring_service | [Snap] DROP (25.1500,88.7500) - no amenities in hex
+2026-07-29 02:42:13 | INFO     | scoring_service | [Snap] SNAP (23.2000,87.0000) -> (23.2063,87.0208) 5 amenities in 500m
+2026-07-29 02:42:13 | INFO     | scoring_service | [Snap] DROP (25.0500,88.2000) - densest cluster only 0 amenities (need 5)
+2026-07-29 02:42:13 | INFO     | scoring_service | [Snap] DROP (25.0500,88.0500) - densest cluster only 0 amenities (need 5)
+2026-07-29 02:42:13 | INFO     | scoring_service | [Snap] 11 snapped, 19 dropped (threshold=5)
+2026-07-29 02:42:13 | INFO     | amenities_service | [Amenities] Counting within 10000m for 11 points
+2026-07-29 02:42:14 | INFO     | clustering_service | [Clustering] Assigning 11 locations → 3 BUs
+2026-07-29 02:42:14 | INFO     | scoring_service | [Guardrail] 0/11 candidates flagged for nearby-store underperformance (>= 3 stores within 5km averaging < ₹9,835,577), Final_Score penalized ×0.55
+2026-07-29 02:42:33 | INFO     | routes.predict | [Predict] user=teammate@switzgroup.com session=c0be6b8e-8954-415e-851c-9e2477dfbc84 top_picks=10
+2026-07-29 02:57:26 | INFO     | main | 👋 FranchiseIQ shutting down
+2026-07-29 11:35:05 | INFO     | main | 🚀 FranchiseIQ v5.0.0 starting up
+2026-07-29 11:35:05 | WARNING  | main | ⚠️  JWT_SECRET_KEY is still the insecure default from .env.example! Anyone who has seen this codebase can forge valid login tokens. Set a real random secret in .env before exposing this beyond localhost: python -c "import secrets; print(secrets.token_urlsafe(48))"
+2026-07-29 11:35:05 | INFO     | main | ✅ Database tables ready
+2026-07-29 11:47:50 | INFO     | main | 👋 FranchiseIQ shutting down
+2026-07-29 11:48:01 | INFO     | main | 🚀 FranchiseIQ v5.0.0 starting up
+2026-07-29 11:48:01 | WARNING  | main | ⚠️  JWT_SECRET_KEY is still the insecure default from .env.example! Anyone who has seen this codebase can forge valid login tokens. Set a real random secret in .env before exposing this beyond localhost: python -c "import secrets; print(secrets.token_urlsafe(48))"
+2026-07-29 11:48:01 | INFO     | main | ✅ Database tables ready
+2026-07-29 11:58:10 | INFO     | main | 🚀 FranchiseIQ v5.0.0 starting up
+2026-07-29 11:58:10 | WARNING  | main | ⚠️  JWT_SECRET_KEY is still the insecure default from .env.example! Anyone who has seen this codebase can forge valid login tokens. Set a real random secret in .env before exposing this beyond localhost: python -c "import secrets; print(secrets.token_urlsafe(48))"
+2026-07-29 11:58:10 | INFO     | main | ✅ Database tables ready
+2026-07-29 11:58:43 | INFO     | routes.auth | [Auth] login success: rajeevk@switzgroup.com
+2026-07-29 11:59:02 | INFO     | routes.country | [Country] session=d1b63f25-0437-4033-b51a-29b913ddd30f country=India
+2026-07-29 11:59:04 | INFO     | routes.country | [State] session=d1b63f25-0437-4033-b51a-29b913ddd30f state=West Bengal
+2026-07-29 11:59:04 | INFO     | demographics_service | [Demographics] Loading: C:\Users\Rajeev\OneDrive\Desktop\Franchise_IQ\data\india\west_bengal\demographics.xlsx
+2026-07-29 11:59:04 | INFO     | demographics_service | [Demographics] Loading: C:\Users\Rajeev\OneDrive\Desktop\Franchise_IQ\data\india\west_bengal\demographics.xlsx
+2026-07-29 11:59:05 | INFO     | demographics_service | [Demographics] Loaded 23 rows from demographics.xlsx
+2026-07-29 11:59:05 | INFO     | demographics_service | [Demographics] Loaded 23 rows from demographics.xlsx
+2026-07-29 11:59:05 | INFO     | routes.data | [Data Preloaded] session=d1b63f25-0437-4033-b51a-29b913ddd30f stores=384 requests=0 bu=3
+2026-07-29 11:59:05 | INFO     | routes.data | [Data Preloaded] session=d1b63f25-0437-4033-b51a-29b913ddd30f stores=384 requests=0 bu=3
+2026-07-29 11:59:14 | INFO     | amenities_service | [Amenities] GeoJSON cache hit → C:\Users\Rajeev\OneDrive\Desktop\Franchise_IQ\amenities_cache\india_west_bengal.geojson
+2026-07-29 11:59:24 | INFO     | routes.amenities | [Amenities] session=d1b63f25-0437-4033-b51a-29b913ddd30f cached=True n=44144
+2026-07-29 11:59:24 | INFO     | scoring_service | [Pipeline] India/West Bengal | stores=384 | requests=0 | BU=True
+2026-07-29 11:59:24 | INFO     | real_estate_service | Loaded 63 real estate records with indices.
+2026-07-29 11:59:26 | INFO     | local_competitor_service | [Competitors] Loaded 6250 competitor locations from Mio_competitor.xlsx
+2026-07-29 11:59:26 | INFO     | scoring_service | [Pipeline] ENABLE_OSM_GEO_FEATURES=false — skipping road/landuse enrichment, no network calls made
+2026-07-29 11:59:26 | INFO     | amenities_service | [Amenities] Counting within 10000m for 384 points
+2026-07-29 11:59:31 | INFO     | clustering_service | [Clustering] Assigning 384 locations → 3 BUs
+2026-07-29 11:59:36 | INFO     | amenities_service | [Amenities] Counting within 10000m for 279 points
+2026-07-29 11:59:37 | INFO     | clustering_service | [Clustering] Assigning 279 locations → 3 BUs
+2026-07-29 11:59:38 | INFO     | affinity_model | [AffinityModel] trained on 384 stores | archetype_n=96 | val=knn_lookalike_holdout_multisplit | R2_test=0.092 | MAE_test=4544930 | median_rev=13114103
+2026-07-29 11:59:38 | INFO     | scoring_service | [Pipeline] Model R²=0.09244523604539408 MAE=4544930.139866546 method=knn_lookalike_holdout_multisplit
+2026-07-29 11:59:38 | INFO     | scoring_service | [Guardrail] 0/279 candidates flagged for nearby-store underperformance (>= 3 stores within 5km averaging < ₹9,835,577), Final_Score penalized ×0.55
+2026-07-29 11:59:38 | INFO     | scoring_service | [Calibration] Mio store density (500m cluster) - n=384, median=17, p10=0, p25=3, mean=36.7
+2026-07-29 11:59:38 | INFO     | scoring_service | [Calibration] using min_cluster_threshold=5 (max of 5 floor and Mio p10)
+2026-07-29 11:59:38 | INFO     | scoring_service | [Viability] 279 candidates -> 231 viable (min_amenities=5, min_population=1000)
+2026-07-29 11:59:38 | INFO     | scoring_service | [Diversity] requested n=30, min_distance_km=15.0, picked=30 from 231 ranked candidates
+2026-07-29 11:59:38 | INFO     | scoring_service | [Snap] SNAP (22.5500,88.4500) -> (22.5723,88.4329) 77 amenities in 500m
+2026-07-29 11:59:38 | INFO     | scoring_service | [Snap] SNAP (22.6500,88.3000) -> (22.6551,88.3247) 23 amenities in 500m
+2026-07-29 11:59:39 | INFO     | scoring_service | [Snap] SNAP (22.7500,88.4500) -> (22.7247,88.4743) 27 amenities in 500m
+2026-07-29 11:59:39 | INFO     | scoring_service | [Snap] SNAP (22.5000,88.3000) -> (22.4879,88.2837) 40 amenities in 500m
+2026-07-29 11:59:39 | INFO     | scoring_service | [Snap] DROP (22.6500,88.5500) - densest cluster only 1 amenities (need 5)
+2026-07-29 11:59:39 | INFO     | scoring_service | [Snap] DROP (26.5500,88.7000) - densest cluster only 3 amenities (need 5)
+2026-07-29 11:59:39 | INFO     | scoring_service | [Snap] SNAP (22.9000,88.4500) -> (22.9215,88.4359) 65 amenities in 500m
+2026-07-29 11:59:39 | INFO     | scoring_service | [Snap] DROP (22.9000,88.3000) - no amenities in hex
+2026-07-29 11:59:39 | INFO     | scoring_service | [Snap] SNAP (22.3000,87.9500) -> (22.2925,87.9262) 63 amenities in 500m
+2026-07-29 11:59:39 | INFO     | scoring_service | [Snap] DROP (22.1000,88.4000) - no amenities in hex
+2026-07-29 11:59:39 | INFO     | scoring_service | [Snap] SNAP (23.4000,88.4000) -> (23.4092,88.3769) 34 amenities in 500m
+2026-07-29 11:59:39 | INFO     | scoring_service | [Snap] SNAP (22.4500,87.3500) -> (22.4265,87.3258) 50 amenities in 500m
+2026-07-29 11:59:39 | INFO     | scoring_service | [Snap] SNAP (22.3500,87.2500) -> (22.3478,87.2741) 24 amenities in 500m
+2026-07-29 11:59:39 | INFO     | scoring_service | [Snap] DROP (22.4000,87.0000) - densest cluster only 3 amenities (need 5)
+2026-07-29 11:59:40 | INFO     | scoring_service | [Snap] SNAP (23.6500,87.0000) -> (23.6721,86.9891) 19 amenities in 500m
+2026-07-29 11:59:40 | INFO     | scoring_service | [Snap] DROP (23.9500,87.5500) - densest cluster only 4 amenities (need 5)
+2026-07-29 11:59:40 | INFO     | scoring_service | [Snap] DROP (27.0000,88.5000) - densest cluster only 0 amenities (need 5)
+2026-07-29 11:59:40 | INFO     | scoring_service | [Snap] DROP (26.9500,88.3000) - densest cluster only 1 amenities (need 5)
+2026-07-29 11:59:40 | INFO     | scoring_service | [Snap] DROP (26.1500,88.2000) - densest cluster only 0 amenities (need 5)
+2026-07-29 11:59:40 | INFO     | scoring_service | [Snap] DROP (26.3500,89.4000) - no amenities in hex
+2026-07-29 11:59:40 | INFO     | scoring_service | [Snap] DROP (27.1500,88.5000) - no amenities in hex
+2026-07-29 11:59:40 | INFO     | scoring_service | [Snap] DROP (26.5000,89.4500) - no amenities in hex
+2026-07-29 11:59:40 | INFO     | scoring_service | [Snap] DROP (27.1000,88.3000) - no amenities in hex
+2026-07-29 11:59:40 | INFO     | scoring_service | [Snap] DROP (22.5000,86.9000) - densest cluster only 0 amenities (need 5)
+2026-07-29 11:59:40 | INFO     | scoring_service | [Snap] DROP (25.3000,88.7500) - densest cluster only 0 amenities (need 5)
+2026-07-29 11:59:40 | INFO     | scoring_service | [Snap] DROP (23.2000,87.1500) - densest cluster only 1 amenities (need 5)
+2026-07-29 11:59:40 | INFO     | scoring_service | [Snap] DROP (25.1500,88.7500) - no amenities in hex
+2026-07-29 11:59:40 | INFO     | scoring_service | [Snap] SNAP (23.2000,87.0000) -> (23.2063,87.0208) 5 amenities in 500m
+2026-07-29 11:59:40 | INFO     | scoring_service | [Snap] DROP (25.0500,88.2000) - densest cluster only 0 amenities (need 5)
+2026-07-29 11:59:40 | INFO     | scoring_service | [Snap] DROP (25.0500,88.0500) - densest cluster only 0 amenities (need 5)
+2026-07-29 11:59:40 | INFO     | scoring_service | [Snap] 11 snapped, 19 dropped (threshold=5)
+2026-07-29 11:59:40 | INFO     | amenities_service | [Amenities] Counting within 10000m for 11 points
+2026-07-29 11:59:40 | INFO     | clustering_service | [Clustering] Assigning 11 locations → 3 BUs
+2026-07-29 11:59:40 | INFO     | scoring_service | [Guardrail] 0/11 candidates flagged for nearby-store underperformance (>= 3 stores within 5km averaging < ₹9,835,577), Final_Score penalized ×0.55
+2026-07-29 11:59:56 | INFO     | routes.predict | [Predict] user=rajeevk@switzgroup.com session=d1b63f25-0437-4033-b51a-29b913ddd30f top_picks=10
+2026-07-29 12:06:00 | INFO     | routes.auth | [Auth] login success: divyaT@switzgroup.com
+2026-07-29 12:31:21 | INFO     | main | 👋 FranchiseIQ shutting down

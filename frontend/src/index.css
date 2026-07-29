@@ -1,0 +1,169 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  *, *::before, *::after { box-sizing: border-box; }
+
+  body {
+    @apply bg-app-bg text-ink font-sans antialiased;
+    font-feature-settings: "cv02","cv03","cv04","cv11";
+  }
+
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { @apply bg-ink-faint rounded-full; }
+  ::-webkit-scrollbar-thumb:hover { @apply bg-ink-subtle; }
+}
+
+@layer components {
+  /* ── Core card ───────────────────────────────── */
+  .card {
+    @apply bg-surface rounded-2xl border border-border shadow-card;
+  }
+  .card-hover {
+    @apply card transition-all duration-200 hover:shadow-card-hover hover:-translate-y-0.5;
+  }
+
+  /* ── Buttons ─────────────────────────────────── */
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2
+           px-5 py-2.5 rounded-xl font-semibold text-sm text-white
+           bg-primary hover:bg-primary-dark
+           shadow-primary
+           active:scale-[0.98] transition-all duration-150
+           disabled:opacity-40 disabled:cursor-not-allowed;
+  }
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2
+           px-5 py-2.5 rounded-xl font-medium text-sm text-ink
+           bg-surface border border-border
+           hover:border-primary/40 hover:bg-primary/5
+           active:scale-[0.98] transition-all duration-150;
+  }
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-1.5
+           px-3 py-1.5 rounded-lg text-sm text-ink-muted
+           hover:bg-surface-2 hover:text-ink
+           transition-all duration-150;
+  }
+
+  /* ── Form inputs ─────────────────────────────── */
+  .input-field {
+    @apply w-full px-4 py-2.5 rounded-xl text-sm text-ink bg-surface
+           border border-border placeholder-ink-subtle outline-none
+           focus:border-primary focus:ring-2 focus:ring-primary/10
+           transition-all duration-200;
+  }
+  .select-field {
+    @apply input-field appearance-none cursor-pointer pr-8;
+  }
+
+  /* ── Badges ──────────────────────────────────── */
+  .badge {
+    @apply inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold;
+  }
+  .badge-success { @apply badge bg-success-bg text-success; }
+  .badge-warning { @apply badge bg-warning-bg text-warning; }
+  .badge-danger  { @apply badge bg-danger-bg text-danger; }
+  .badge-primary { @apply badge bg-primary/10 text-primary; }
+  .badge-neutral { @apply badge bg-surface-2 text-ink-muted; }
+
+  /* ── Score badge ─────────────────────────────── */
+  .score-badge {
+    @apply inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold border;
+  }
+
+  /* ── Nav item ────────────────────────────────── */
+  .nav-item {
+    @apply flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium
+           text-ink-muted transition-all duration-150
+           hover:bg-primary/10 hover:text-ink cursor-pointer select-none;
+  }
+  .nav-item.active {
+    @apply bg-primary/10 text-primary font-semibold;
+  }
+
+  /* ── Pill filter ─────────────────────────────── */
+  .filter-pill {
+    @apply inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium
+           border border-border bg-surface text-ink-muted
+           hover:border-primary/30 hover:bg-primary/5 hover:text-primary
+           cursor-pointer transition-all duration-150 select-none;
+  }
+  .filter-pill.active {
+    @apply border-primary/40 bg-primary/10 text-primary;
+  }
+
+  /* ── Legacy alias – keep map + homepage compiling */
+  .glass-card {
+    @apply card;
+  }
+  .glass-card-hover {
+    @apply card-hover;
+  }
+  .neon-text {
+    @apply font-bold bg-gradient-to-r from-primary to-primary-light bg-clip-text text-transparent;
+  }
+}
+
+/* ── Leaflet overrides – light map theme ──────────────────── */
+.leaflet-container {
+  background: #e8eaed !important;
+  font-family: 'Inter', sans-serif !important;
+}
+.leaflet-popup-content-wrapper {
+  background: #ffffff !important;
+  border: 1px solid #EAECEF !important;
+  border-radius: 14px !important;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06) !important;
+  color: #111827 !important;
+  padding: 0 !important;
+}
+.leaflet-popup-tip { background: #ffffff !important; }
+.leaflet-popup-content { margin: 0 !important; }
+.leaflet-control-zoom {
+  border: 1px solid #EAECEF !important;
+  border-radius: 10px !important;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08) !important;
+}
+.leaflet-control-zoom a {
+  background: #ffffff !important;
+  color: #6B7280 !important;
+  border-color: #EAECEF !important;
+  font-size: 16px !important;
+  line-height: 28px !important;
+  width: 28px !important;
+  height: 28px !important;
+}
+.leaflet-control-zoom a:hover {
+  background: #F7F8FC !important;
+  color: #6C4CF1 !important;
+}
+
+/* Cluster bubbles */
+.marker-cluster-small,
+.marker-cluster-medium,
+.marker-cluster-large {
+  background-color: rgba(108,76,241,0.12) !important;
+  border: 2px solid rgba(108,76,241,0.3) !important;
+}
+.marker-cluster-small div,
+.marker-cluster-medium div,
+.marker-cluster-large div {
+  background-color: rgba(108,76,241,0.85) !important;
+  color: #fff !important;
+  font-weight: 700;
+  font-size: 12px;
+  border-radius: 50%;
+}
+
+/* Smooth page transitions */
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-page { animation: fadeSlideIn 0.3s ease-out both; }

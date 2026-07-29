@@ -1,0 +1,90 @@
+version: "3.9"
+
+services:
+
+  db:
+    image: postgres:16-alpine
+    container_name: franchiseiq_db
+    environment:
+      - POSTGRES_USER=franchiseiq
+      - POSTGRES_PASSWORD=franchiseiq_dev_password   # CHANGE before any real deployment
+      - POSTGRES_DB=franchiseiq
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U franchiseiq"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ../
+      dockerfile: backend/Dockerfile
+    container_name: franchiseiq_backend
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      # Data paths — these directories are baked into the image via COPY
+      # in backend/Dockerfile, so no volume mount is required for them to
+      # exist. Mounting the same paths below just lets you edit the raw
+      # source files locally without rebuilding the image every time.
+      - DATA_DIR=/app/data
+      - AMENITIES_DIR=/app/amenities_cache
+      - AMENITIES_SOURCE_DIR=/app/amenities
+      - COMPETITOR_DIR=/app/competitor
+      - DOWNLOADS_DIR=/app/downloads
+      - REAL_ESTATE_DIR=/app/real_estate_data
+      - UPLOADS_DIR=/app/uploads
+      - OUTPUTS_DIR=/app/outputs
+      - LOGS_DIR=/app/logs
+      - USERS_FILE=/app/users.json
+      - CORS_ORIGINS=http://localhost:3000,http://localhost:5173,http://frontend:80
+      - DATABASE_URL=postgresql+psycopg2://franchiseiq:franchiseiq_dev_password@db:5432/franchiseiq
+      - JWT_SECRET_KEY=change-this-to-a-long-random-value-in-production
+      - JWT_ALGORITHM=HS256
+      - ACCESS_TOKEN_EXPIRE_MINUTES=1440
+    volumes:
+      - ../data:/app/data
+      - ../amenities:/app/amenities
+      - ../competitor:/app/competitor
+      - ../downloads:/app/downloads
+      - ../real_estate_data:/app/real_estate_data
+      - ../backend/users.json:/app/users.json
+      - amenities_cache:/app/amenities_cache
+      - uploads:/app/uploads
+      - outputs:/app/outputs
+      - logs:/app/logs
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  frontend:
+    build:
+      context: ../frontend
+      args:
+        # v6.6 — Vite bakes this in at BUILD time (see frontend/Dockerfile).
+        # Passing it under `environment:` below does nothing for a static
+        # build; it must be a build arg.
+        VITE_API_URL: http://localhost:8000
+    container_name: franchiseiq_frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+  amenities_cache:
+  uploads:
+  outputs:
+  logs:

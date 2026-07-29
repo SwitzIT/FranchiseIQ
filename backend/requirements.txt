@@ -1,0 +1,28 @@
+fastapi==0.111.0
+uvicorn[standard]==0.29.0
+pydantic==2.7.1
+python-multipart==0.0.9
+python-dotenv==1.0.1
+
+# Core data / ML stack (stable on Python 3.11)
+numpy==1.26.4
+pandas==2.2.2
+openpyxl==3.1.2
+pyarrow==19.0.1
+scikit-learn==1.4.2
+scipy==1.13.0
+
+# Geospatial stack (IMPORTANT: use wheel-compatible versions)
+geopandas==0.14.4
+shapely==2.0.7
+pyproj==3.6.1
+osmnx==1.9.3
+
+# H3 hex aggregation
+h3==4.1.2
+
+# Utilities
+geopy==2.4.1
+PyYAML==6.0.1
+requests==2.32.3
+reverse_geocoder==1.5.1

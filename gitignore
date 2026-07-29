@@ -1,0 +1,43 @@
+# ── Secrets — never commit these ─────────────────────────────
+backend/.env
+.env
+*.env.local
+
+# ── Python ────────────────────────────────────────────────────
+__pycache__/
+*.pyc
+*.pyo
+venv/
+.venv/
+*.egg-info/
+
+# ── Database — regenerated automatically on startup ──────────
+*.db
+*.db-journal
+
+# ── Node / frontend build output ─────────────────────────────
+node_modules/
+frontend/dist/
+frontend/.vite/
+
+# ── Runtime-generated (safe to lose, regenerated on demand) ──
+backend/amenities_cache/*.geojson
+backend/uploads/*
+backend/outputs/*
+backend/logs/*.log
+!backend/uploads/.gitkeep
+!backend/outputs/.gitkeep
+!backend/logs/.gitkeep
+
+# ── OS / editor cruft ─────────────────────────────────────────
+.DS_Store
+Thumbs.db
+*.swp
+
+# ── NOTE: deliberately NOT ignored ────────────────────────────
+# backend/users.json   — must be committed for the Docker image to
+#                         include it (see README_START_HERE.md).
+#                         Passwords must be bcrypt hashes, never plaintext.
+# data/, downloads/, amenities/, competitor/, real_estate_data/
+#                       — your actual source data, must be committed so
+#                         the Docker build can COPY them into the image.

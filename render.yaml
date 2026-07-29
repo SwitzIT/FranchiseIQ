@@ -1,0 +1,78 @@
+databases:
+  - name: franchiseiq-db
+    plan: free   # ⚠️ Render free Postgres expires 30 days after creation,
+                 # then a 14-day grace period, then it's hard-deleted with
+                 # no warning. Fine for a demo; upgrade to a paid plan
+                 # (from ~$6/mo) before you rely on saved prediction runs
+                 # for anything real. See README_START_HERE.md.
+    databaseName: franchiseiq
+    user: franchiseiq
+
+services:
+  # ─── BACKEND ────────────────────────────────────────────────
+  - type: web
+    name: franchise-iq-backend
+    env: docker
+    region: ohio
+    plan: free   # ⚠️ Free web services spin down after 15 min idle;
+                 # the next request takes 30-60s to wake it back up.
+    dockerContext: .
+    dockerfilePath: ./backend/Dockerfile
+    healthCheckPath: /health
+
+    envVars:
+      - key: CORS_ORIGINS
+        value: "https://franchise-iq-frontend.onrender.com"
+      - key: DATA_DIR
+        value: "/app/data"
+      - key: AMENITIES_DIR
+        value: "/app/amenities_cache"
+      - key: AMENITIES_SOURCE_DIR
+        value: "/app/amenities"
+      - key: COMPETITOR_DIR
+        value: "/app/competitor"
+      - key: UPLOADS_DIR
+        value: "/app/uploads"
+      - key: OUTPUTS_DIR
+        value: "/app/outputs"
+      - key: LOGS_DIR
+        value: "/app/logs"
+      - key: DOWNLOADS_DIR
+        value: "/app/downloads"
+      - key: REAL_ESTATE_DIR
+        value: "/app/real_estate_data"
+      - key: USERS_FILE
+        value: "/app/users.json"
+      - key: JWT_ALGORITHM
+        value: "HS256"
+      - key: ACCESS_TOKEN_EXPIRE_MINUTES
+        value: "1440"
+      - key: JWT_SECRET_KEY
+        generateValue: true   # Render generates and stores a real random
+                               # secret — you never have to invent one or
+                               # risk leaving the insecure .env.example
+                               # default in place.
+      - key: DATABASE_URL
+        fromDatabase:
+          name: franchiseiq-db
+          property: connectionString
+
+  # ─── FRONTEND ───────────────────────────────────────────────
+  - type: web
+    name: franchise-iq-frontend
+    runtime: static
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          name: franchise-iq-backend
+          type: web
+          property: hostWithScheme
+
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
