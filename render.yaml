@@ -5,6 +5,13 @@ databases:
                  # no warning. Fine for a demo; upgrade to a paid plan
                  # (from ~$6/mo) before you rely on saved prediction runs
                  # for anything real. See README_START_HERE.md.
+    region: oregon   # v6.9 — MUST match the backend web service's region
+                      # below. Render's internal DNS for the short
+                      # dpg-xxxxxxxx hostname in connectionString only
+                      # resolves within the same region — a cross-region
+                      # mismatch here causes "could not translate host
+                      # name" at startup, which looks like a code bug but
+                      # is actually a region config issue.
     databaseName: franchiseiq
     user: franchiseiq
 
@@ -13,7 +20,13 @@ services:
   - type: web
     name: franchise-iq-backend
     env: docker
-    region: ohio
+    region: oregon   # v6.9 — was 'ohio'; changed to match the database's
+                      # region above. If your database ends up in a
+                      # different region than what's written here, change
+                      # THIS value to match the database, not the other
+                      # way around — moving an already-provisioned free
+                      # Postgres instance to a new region isn't supported;
+                      # you'd have to delete and recreate it.
     plan: free   # ⚠️ Free web services spin down after 15 min idle;
                  # the next request takes 30-60s to wake it back up.
     dockerContext: .
