@@ -6,5 +6,9 @@
   {
     "email": "divyaT@switzgroup.com",
     "password": "$2b$12$EAZ5HrM.qrOdqvApiuOlKuUdB/2LtlY6Aq0eiTM65ty7jLe0DE7ei"
+  },
+  {
+    "email": "test@switzgroup.com",
+    "password": "$2b$12$EAZ5HrM.qrOdqvApiuOlKuUdB/2LtlY6Aq0eiTM65ty7jLe0DE7ei"
   }
 ]
