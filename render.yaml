@@ -70,7 +70,7 @@ services:
         fromService:
           name: franchise-iq-backend
           type: web
-          property: hostWithScheme
+          property: host
 
     routes:
       - type: rewrite
