@@ -70,7 +70,13 @@ services:
         fromService:
           name: franchise-iq-backend
           type: web
-          property: host
+          property: host   # v6.7 — 'hostWithScheme' isn't a valid Render
+                            # property (caught by Render's own Blueprint
+                            # validator). 'host' returns a bare hostname
+                            # like franchise-iq-backend.onrender.com — the
+                            # frontend's api.js/authApi.js already detect a
+                            # missing scheme and prepend https:// themselves,
+                            # so no other change is needed.
 
     routes:
       - type: rewrite

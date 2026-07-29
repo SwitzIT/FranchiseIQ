@@ -1,6 +1,7 @@
 fastapi==0.111.0
 uvicorn[standard]==0.29.0
 pydantic==2.7.1
+pydantic[email]==2.7.1
 python-multipart==0.0.9
 python-dotenv==1.0.1
 
@@ -16,7 +17,13 @@ scipy==1.13.0
 geopandas==0.14.4
 shapely==2.0.7
 pyproj==3.6.1
-osmnx==1.9.3
+
+# v5.0 — osmnx REMOVED from default install. The app now runs entirely on
+# your local AmenitiesWB.csv / Mio_competitor.xlsx, with zero live network
+# calls. Only install osmnx (`pip install osmnx==1.9.3`) if you later set
+# ENABLE_OSM_GEO_FEATURES=true in .env to opt back into live OSM road/
+# landuse enrichment.
+# osmnx==1.9.3
 
 # H3 hex aggregation
 h3==4.1.2
@@ -25,4 +32,13 @@ h3==4.1.2
 geopy==2.4.1
 PyYAML==6.0.1
 requests==2.32.3
-reverse_geocoder==1.5.1
+reverse_geocoder==1.5.1   # fully offline — not related to the OSM live-fetch path
+
+# Database & Auth (v4.0)
+sqlalchemy==2.0.30
+psycopg2-binary==2.9.9      # Postgres driver — remove if staying on SQLite only
+alembic==1.13.1              # optional: schema migrations
+passlib[bcrypt]==1.7.4
+bcrypt==4.0.1   # IMPORTANT: passlib 1.7.4's backend self-test breaks on bcrypt>=5.0
+                 # ("password cannot be longer than 72 bytes") — pin this or auth will fail
+python-jose[cryptography]==3.3.0

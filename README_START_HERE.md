@@ -42,6 +42,16 @@ you commit to it (checked against Render's current docs, July 2026):**
   different mental model for a login-file-in-git approach on a platform
   without free persistent disks.
 
+**One more real bug caught while preparing this:** `python-dotenv` was in
+`requirements.txt` the whole time, but nothing ever actually called
+`load_dotenv()`. Every value you set in `backend/.env` — including
+`JWT_SECRET_KEY` — was silently ignored; the app was always falling back
+to hardcoded defaults. Fixed in `config.py` and defensively in `auth.py`
+too. Verified: set a custom `JWT_SECRET_KEY` in `.env`, confirmed the app
+now actually picks it up. This doesn't affect Render (which injects env
+vars directly, no `.env` file involved), but matters a lot for local dev
+and any self-hosted Docker deployment.
+
 ## v6.5 — model accuracy: real, honestly-tested improvements
 
 Tested 9 concrete options against your real data, all with the same

@@ -12,6 +12,17 @@ network fetching.
 import os
 from pathlib import Path
 
+# v6.6 — python-dotenv was already in requirements.txt but nothing ever
+# called load_dotenv(), so every value set in backend/.env was silently
+# ignored and the app always fell back to hardcoded defaults (including
+# the insecure default JWT_SECRET_KEY). This must run before any
+# os.getenv() calls in this file or elsewhere, which is why it's here,
+# first, before every other constant is computed. Harmless no-op on
+# Render/Docker, where env vars are injected directly and no .env file
+# exists — load_dotenv() just finds nothing and moves on.
+from dotenv import load_dotenv
+load_dotenv()
+
 # PROJECT_ROOT = FranchiseIQ/
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 

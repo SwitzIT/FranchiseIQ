@@ -1,29 +1,27 @@
 """
-Simpler alternative to generate_password_hash.py — no confirmation step,
-just hashes whatever you type once. Use this if you keep hitting
-"Passwords didn't match" due to hidden-input typos and want to move
-faster.
+Optional helper: generate a bcrypt hash to put in users.json instead of a
+plaintext password.
 
 Usage:
-    python generate_password_hash_simple.py
+    python generate_password_hash.py
+    (it will prompt for a password, and print the hash to paste into users.json)
 
-Optional: verify a password against an existing hash from users.json
-(useful to confirm you copied the hash correctly, or that a password you
-remember actually matches what's stored):
-    python generate_password_hash_simple.py --verify
+Either plaintext or a bcrypt hash works in users.json — auth.py detects
+which one it's looking at automatically (bcrypt hashes always start with
+$2a$/$2b$/$2y$). Plaintext is simpler to manage by hand; hashing is more
+secure if this file might ever be shared/committed/backed up somewhere you
+don't fully control.
 """
-import sys
 import getpass
 from passlib.context import CryptContext
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 if __name__ == "__main__":
-    if "--verify" in sys.argv:
-        pw = getpass.getpass("Password to check: ")
-        existing_hash = input("Paste the existing hash from users.json: ").strip()
-        print("MATCH" if pwd_context.verify(pw, existing_hash) else "NO MATCH")
+    password = getpass.getpass("Password to hash: ")
+    confirm = getpass.getpass("Confirm: ")
+    if password != confirm:
+        print("Passwords didn't match — try again.")
     else:
-        pw = getpass.getpass("Password to hash: ")
         print("\nPaste this as the \"password\" value in users.json:\n")
-        print(pwd_context.hash(pw))
+        print(pwd_context.hash(password))

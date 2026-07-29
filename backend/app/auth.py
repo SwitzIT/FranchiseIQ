@@ -29,6 +29,9 @@ import datetime as dt
 from pathlib import Path
 from typing import Optional
 
+from dotenv import load_dotenv
+load_dotenv()  # safety net — see app/config.py's v6.6 note; harmless if already loaded
+
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
