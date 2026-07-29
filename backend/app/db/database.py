@@ -11,6 +11,17 @@ from sqlalchemy.orm import sessionmaker, declarative_base
 
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./franchiseiq.db")
 
+# v6.8 — Render (and Heroku, and some other platforms) commonly hand out
+# a connection string starting with "postgres://" — SQLAlchemy 2.x flatly
+# rejects that exact scheme with NoSuchModuleError, which happens at
+# import time (create_engine() runs as soon as this module loads), so the
+# whole app fails to start before uvicorn ever binds a port. Render then
+# reports this as a generic "no open ports detected" with no Python
+# traceback at all, which is a very confusing symptom for what's actually
+# a one-character scheme mismatch. Normalize it defensively here.
+if DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql+psycopg2://", 1)
+
 _connect_args = {"check_same_thread": False} if DATABASE_URL.startswith("sqlite") else {}
 engine = create_engine(DATABASE_URL, connect_args=_connect_args, pool_pre_ping=True)
 
