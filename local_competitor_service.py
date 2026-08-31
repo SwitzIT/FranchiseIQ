@@ -1,33 +1,29 @@
 """
-Local Competitor Density Service (v8.2)
+Local Competitor Density Service (v8.1)
 ========================================
 Loads EVERY spreadsheet in COMPETITOR_DIR — not just one fixed file per
 state — and combines them into a single competitor dataset. No live Places
 API calls, no network of any kind.
 
-Supports THREE different source schemas, since real-world competitor files
-come from different collection methods:
-  1. Original schema (e.g. Mio_competitor.xlsx): Shop Lat / Shop Lon
-     columns directly.
-  2. Scraped-URL schema: only a place_url column — coordinates extracted
-     from the URL text itself (Google Maps embeds them as
-     "!3d{lat}!4d{lon}" in "data=" URLs, or "@{lat},{lon}," in share
-     URLs). A URL that matches neither pattern (e.g. a shortened
-     maps.app.goo.gl link) is skipped with a logged count, not silently
-     dropped.
-  3. Rich schema (v8.2): direct Latitude/Longitude columns PLUS metadata
-     for map display — Name, Category, Brand (canonical), Rating,
-     Reviews, Google category, Area/Neighbourhood, Address, and a
-     Google Maps URL for a clickable "open in Maps" link on the popup.
+v8.1 — supports two different source schemas, since real-world competitor
+files come from different collection methods:
+  1. Files with direct Latitude/Longitude columns (e.g. the original
+     Mio_competitor.xlsx: Shop Lat / Shop Lon).
+  2. Files with ONLY a Google Maps `place_url` column (common output from
+     scraping tools) — coordinates are extracted directly from the URL
+     text itself, no network request needed. Google Maps embeds
+     coordinates in two common formats:
+       - "data=" URLs:   ...!3d20.7063454!4d81.5462175!...  (lat, then lon)
+       - share/plain URLs: .../@20.7063,81.5462,17z/...
+     A URL that matches neither pattern (e.g. a shortened maps.app.goo.gl
+     link, which needs a network redirect to resolve) is skipped with a
+     logged count — not silently dropped without a trace.
 
 Adds two features used by the scoring model:
     Competitor_2km — count of rival shops within 2km
     Competitor_5km — count of rival shops within 5km
 Both are "lower is better" — more direct competitors nearby generally means
 a more saturated, harder market for a new franchise location.
-
-Also exposes the full loaded dataset (with metadata) for map visualization
-via scoring_service.py's _competitors_to_records().
 """
 import re
 import numpy as np
@@ -41,40 +37,29 @@ log = get_logger("local_competitor_service")
 _MEMORY_CACHE: dict[str, pd.DataFrame] = {}
 
 _RENAME = {
-    "shop lat":            "Latitude",
-    "shop lon":            "Longitude",
-    "latitude":            "Latitude",
-    "longitude":           "Longitude",
-    "lat":                 "Latitude",
-    "lon":                 "Longitude",
-    "shop name":           "Name",
-    "name":                "Name",
-    "type of shop":        "Category",
-    "category":            "Category",
-    "matched_brand":       "Brand",
-    "brand (canonical)":   "Brand",
-    "brand":               "Brand",
-    "google category":     "Google_Category",
-    "city":                "City",
-    "area / neighbourhood": "Area",
-    "area":                "Area",
-    "neighbourhood":       "Area",
-    "address":             "Address",
-    "rating":              "Rating",
-    "reviews":             "Review_Count",
-    "review_count":        "Review_Count",
-    "place_url":           "Place_URL",
-    "place url":           "Place_URL",
-    "google maps url":     "Place_URL",
+    "shop lat":       "Latitude",
+    "shop lon":       "Longitude",
+    "latitude":       "Latitude",
+    "longitude":      "Longitude",
+    "lat":            "Latitude",
+    "lon":            "Longitude",
+    "shop name":      "Name",
+    "name":           "Name",
+    "type of shop":   "Category",
+    "category":       "Category",
+    "matched_brand":  "Category",
+    "city":           "City",
+    "place_url":      "Place_URL",
+    "place url":      "Place_URL",
+    "rating":         "Rating",
+    "review_count":   "Review_Count",
+    "address":        "Address",
 }
 
 # "data=" URL format: coordinates appear as !3d{lat}!4d{lon}
 _URL_PATTERN_DATA = re.compile(r"!3d(-?\d+\.\d+)!4d(-?\d+\.\d+)")
 # Share/plain URL format: coordinates appear as @{lat},{lon},{zoom}
 _URL_PATTERN_AT = re.compile(r"@(-?\d+\.\d+),(-?\d+\.\d+),")
-
-_OUTPUT_COLS = ["Latitude", "Longitude", "Name", "Category", "Brand", "City",
-                "Area", "Address", "Rating", "Review_Count", "Place_URL", "_source_file"]
 
 
 def _extract_latlon_from_url(url: str) -> tuple[float, float] | None:
@@ -94,10 +79,6 @@ def _extract_latlon_from_url(url: str) -> tuple[float, float] | None:
     return None
 
 
-def _empty_df() -> pd.DataFrame:
-    return pd.DataFrame(columns=_OUTPUT_COLS)
-
-
 def _load_one_file(path) -> pd.DataFrame:
     """Loads and normalizes a single competitor file. Returns an empty
     DataFrame (not an error) if it can't be used, so one bad file doesn't
@@ -109,17 +90,17 @@ def _load_one_file(path) -> pd.DataFrame:
         elif suffix in (".xlsx", ".xls"):
             df = pd.read_excel(path)
         else:
-            return _empty_df()
+            return pd.DataFrame(columns=["Latitude", "Longitude", "Name", "Category", "City"])
     except Exception as e:
         log.warning(f"[Competitors] Could not read '{path.name}': {e}")
-        return _empty_df()
+        return pd.DataFrame(columns=["Latitude", "Longitude", "Name", "Category", "City"])
 
     df.columns = df.columns.astype(str).str.strip()
     rename = {c: _RENAME[c.lower()] for c in df.columns if c.lower() in _RENAME}
     df = df.rename(columns=rename)
 
     if "Latitude" in df.columns and "Longitude" in df.columns:
-        # Schemas 1 & 3: direct coordinate columns
+        # Schema 1: direct coordinate columns
         df["Latitude"] = pd.to_numeric(df["Latitude"], errors="coerce")
         df["Longitude"] = pd.to_numeric(df["Longitude"], errors="coerce")
     elif "Place_URL" in df.columns:
@@ -137,22 +118,14 @@ def _load_one_file(path) -> pd.DataFrame:
                      f"shortened link that would need a network request to resolve)")
     else:
         log.warning(f"[Competitors] '{path.name}' has no Latitude/Longitude columns "
-                     f"and no place_url/Google Maps URL column after rename — "
-                     f"found {list(df.columns)}. Skipping file.")
-        return _empty_df()
+                     f"and no place_url column after rename — found {list(df.columns)}. Skipping file.")
+        return pd.DataFrame(columns=["Latitude", "Longitude", "Name", "Category", "City"])
 
     df = df.dropna(subset=["Latitude", "Longitude"])
     df = df[(df["Latitude"] != 0) | (df["Longitude"] != 0)]
     df["_source_file"] = path.name
-
-    # Ensure every output column exists, even if this particular file
-    # didn't have it (e.g. the old schema has no Rating/Reviews).
-    for col in _OUTPUT_COLS:
-        if col not in df.columns:
-            df[col] = None
-
     log.info(f"[Competitors] Loaded {len(df)} usable competitor locations from {path.name}")
-    return df[_OUTPUT_COLS]
+    return df
 
 
 def load_competitors(country: str, state: str) -> pd.DataFrame:
@@ -160,18 +133,18 @@ def load_competitors(country: str, state: str) -> pd.DataFrame:
     into one DataFrame — not scoped per country/state, since competitor
     context is useful regardless of which region is currently selected.
     The country/state args are kept for interface compatibility with the
-    rest of the pipeline even though every state currently shares the same
-    combined dataset. Returns an empty DataFrame (not an error) if the
-    folder has nothing usable — the pipeline just skips competitor
-    features in that case."""
-    key = "ALL_FILES"  # one combined dataset, not per country/state
+    rest of the pipeline (and for the in-memory cache key) even though
+    every state currently shares the same combined dataset.
+    Returns an empty DataFrame (not an error) if the folder has nothing
+    usable — the pipeline just skips competitor features in that case."""
+    key = "ALL_FILES"  # v8.1 — one combined dataset, not per country/state
     if key in _MEMORY_CACHE:
         return _MEMORY_CACHE[key]
 
     if not COMPETITOR_DIR.exists():
         log.info(f"[Competitors] No competitor directory at {COMPETITOR_DIR} — "
                  f"Competitor_2km/5km will be 0 for all rows.")
-        df = _empty_df()
+        df = pd.DataFrame(columns=["Latitude", "Longitude", "Name", "Category", "City"])
         _MEMORY_CACHE[key] = df
         return df
 
@@ -181,12 +154,12 @@ def load_competitors(country: str, state: str) -> pd.DataFrame:
     if not files:
         log.info(f"[Competitors] No files found in {COMPETITOR_DIR} — "
                  f"Competitor_2km/5km will be 0 for all rows.")
-        df = _empty_df()
+        df = pd.DataFrame(columns=["Latitude", "Longitude", "Name", "Category", "City"])
         _MEMORY_CACHE[key] = df
         return df
 
     frames = [_load_one_file(p) for p in files]
-    combined = pd.concat(frames, ignore_index=True) if frames else _empty_df()
+    combined = pd.concat(frames, ignore_index=True) if frames else pd.DataFrame()
     combined = combined.dropna(subset=["Latitude", "Longitude"]) if len(combined) else combined
 
     log.info(f"[Competitors] Combined {len(combined)} total competitor locations "

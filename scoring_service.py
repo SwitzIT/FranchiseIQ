@@ -289,31 +289,6 @@ def run_pipeline(
             })
         return records
 
-    def _competitors_to_records(df):
-        # v8.2 — for map display: a clickable Google Maps link per point,
-        # plus whatever metadata the source file actually had (many fields
-        # will be blank for the older, leaner competitor schema, and
-        # that's fine — the frontend just doesn't show what's missing).
-        if df is None or df.empty: return []
-        records = []
-        for idx, row in df.iterrows():
-            lat, lng = row.get("Latitude"), row.get("Longitude")
-            if pd.isna(lat) or pd.isna(lng): continue
-            records.append({
-                "lat": safe_float(lat),
-                "lng": safe_float(lng),
-                "name": str(row.get("Name") or "Unknown"),
-                "category": str(row.get("Category") or ""),
-                "brand": str(row.get("Brand") or ""),
-                "city": str(row.get("City") or ""),
-                "area": str(row.get("Area") or ""),
-                "address": str(row.get("Address") or ""),
-                "rating": safe_float(row.get("Rating")) if pd.notna(row.get("Rating")) else None,
-                "review_count": safe_int(row.get("Review_Count")) if pd.notna(row.get("Review_Count")) else None,
-                "google_maps_url": str(row.get("Place_URL") or ""),
-            })
-        return records
-
     region_stats = _compute_region_stats(stores_df, cands_df, demographics_df)
 
     return {
@@ -324,7 +299,6 @@ def run_pipeline(
         "business_units": _to_records(bu_df, "bu") if has_bu else [],
         "amenities":      _amenities_to_records(amenities_gdf),
         "real_estate":    _real_estate_to_records(re_gdf) if not re_gdf.empty else [],
-        "competitors":    _competitors_to_records(competitors_df),
         "kpis":           _compute_kpis(stores_df, top_df),
         "model_metrics":  train_metrics,
         "region_stats":   region_stats,
@@ -598,14 +572,23 @@ def _apply_verdict(df):
     with the explicit guardrail/profitability/OOD flags, so the tool gives
     a clear answer rather than just a bare 0-100 number. Computed on the
     full candidate pool (before viability filtering) so percentiles are
-    consistent regardless of downstream diversity/snap selection."""
+    consistent regardless of downstream diversity/snap selection.
+
+    v8.0 — also adds Star_Rating (1-5), derived from the SAME percentile
+    rank as Verdict. The raw 0-100 Final_Score is calibrated so 50 = a
+    typical existing store and 100 = matches your best-performing stores —
+    a scale stakeholders have no reason to know, and one that reads as
+    "this is bad" when it's actually "this is your best available option
+    today." Star rating and Verdict are both rank-based, so they stay
+    consistent with each other and don't require explaining the scale."""
     if "Final_Score" not in df.columns or len(df) < 3:
         df["Verdict"] = "Insufficient Data"
         df["Caution_Reasons"] = ""
+        df["Star_Rating"] = 3
         return df
 
     score_pct = df["Final_Score"].rank(pct=True) * 100.0
-    verdicts, reasons_list = [], []
+    verdicts, reasons_list, stars = [], [], []
     for i in range(len(df)):
         cautions = []
         if bool(df["Nearby_Underperformance_Flag"].iloc[i]) if "Nearby_Underperformance_Flag" in df.columns else False:
@@ -625,8 +608,16 @@ def _apply_verdict(df):
         verdicts.append(v)
         reasons_list.append("; ".join(cautions))
 
+        if sp >= 90: base_stars = 5
+        elif sp >= 70: base_stars = 4
+        elif sp >= 40: base_stars = 3
+        elif sp >= 15: base_stars = 2
+        else: base_stars = 1
+        stars.append(max(1, base_stars - min(len(cautions), base_stars - 1)))
+
     df["Verdict"] = verdicts
     df["Caution_Reasons"] = reasons_list
+    df["Star_Rating"] = stars
     return df
 
 
@@ -695,6 +686,7 @@ def _to_records(df, kind: str):
             "revenue_percentile":  safe_float(row.get("Revenue_Percentile", None)) if row.get("Revenue_Percentile") is not None else None,
             "profitability_flag":  str(row.get("Profitability_Flag", "")),
             "verdict":             str(row.get("Verdict", "")),
+            "star_rating":         safe_int(row.get("Star_Rating", 3)),
             "caution_reasons":     str(row.get("Caution_Reasons", "")),
             "nearest_store":     str(row.get("Nearest_Store_Name", "")),
             "nearest_store_km":  safe_float(row.get("Nearest_Store_km", 0)),

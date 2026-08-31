@@ -202,7 +202,22 @@ function InfoCard({ d, avgSales, rank }) {
           )}
         </div>
         <div style={{ fontSize: 15, color: '#fff', fontWeight: 800, marginTop: 4, lineHeight: 1.3 }}>{d.name || 'Unknown'}</div>
-        {d.score > 0 && (
+
+        {d.type === 'prediction' && d.verdict ? (
+          <div style={{ marginTop: 6 }}>
+            <div style={{ fontSize: 16, letterSpacing: 1, color: '#FDE047', lineHeight: 1 }}>
+              {'★'.repeat(d.star_rating || 3)}{'☆'.repeat(5 - (d.star_rating || 3))}
+            </div>
+            <div style={{ fontSize: 13, fontWeight: 800, color: '#fff', marginTop: 3 }}>
+              {d.verdict}
+            </div>
+            {d.score > 0 && (
+              <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.65)', marginTop: 2 }}>
+                Score: {d.score?.toFixed(1)}/100 (archetype-similarity index)
+              </div>
+            )}
+          </div>
+        ) : d.score > 0 && (
           <div style={{ fontSize: 22, fontWeight: 900, color: '#fff', marginTop: 4 }}>
             {d.score?.toFixed(1)}<span style={{ fontSize: 11, fontWeight: 500 }}>/100</span>
           </div>
@@ -220,21 +235,8 @@ function InfoCard({ d, avgSales, rank }) {
         {d.type === 'prediction' && d.verdict && (
           <div style={{ marginTop: 10, paddingTop: 10, borderTop: '1px solid #F3F4F6' }}>
             <div style={{ fontSize: 9, fontWeight: 700, color: '#9CA3AF', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 8 }}>
-              AI Assessment
+              Why This Rating
             </div>
-
-            {(() => {
-              const vs = VERDICT_STYLE[d.verdict] || VERDICT_STYLE['Promising Candidate'];
-              return (
-                <div style={{
-                  display: 'inline-block', fontSize: 11, fontWeight: 700, padding: '4px 10px',
-                  borderRadius: 8, background: vs.bg, color: vs.text, border: `1px solid ${vs.border}`,
-                  marginBottom: 8,
-                }}>
-                  {vs.icon} {d.verdict}
-                </div>
-              );
-            })()}
 
             {d.caution_reasons && (
               <div style={{ fontSize: 10.5, color: '#92400E', background: '#FFFBEB', border: '1px solid #FDE68A',
@@ -367,7 +369,7 @@ export default function MapContainer_() {
   const center = stateConfig?.center || [20, 78];
   const zoom = stateConfig?.zoom || 6;
 
-  const { stores, requests, predictions, business_units, amenities, real_estate, competitors, avgSales } = useMemo(() => {
+  const { stores, requests, predictions, business_units, amenities, real_estate, avgSales } = useMemo(() => {
     const allStores = results?.stores || [];
     const allPreds = results?.top_picks || [];
 
@@ -394,7 +396,6 @@ export default function MapContainer_() {
       business_units: results?.business_units || [],
       amenities: results?.amenities || [],
       real_estate: results?.real_estate || [],
-      competitors: results?.competitors || [],
       avgSales: avg,
     };
   }, [results, storeFilter, selectedRegion, mapStoreFilter]);
@@ -515,53 +516,7 @@ export default function MapContainer_() {
         </Marker>
       ))}
 
-      {/* ── Competitors (clustered, click for name + Google Maps link) ── */}
-      {mapLayers.competitors && competitors.length > 0 && (
-        <MarkerClusterGroup chunkedLoading maxClusterRadius={50}>
-          {competitors.map((d, i) => (
-            <Marker key={`comp-${i}`} position={[d.lat, d.lng]} icon={emojiIcon('⚔️', 22)}>
-              <Popup maxWidth={280}>
-                <div style={{ fontFamily: 'Inter', minWidth: 200 }}>
-                  <div style={{ fontWeight: 800, fontSize: 13, color: '#111827' }}>{d.name}</div>
-                  {(d.brand || d.category) && (
-                    <div style={{ fontSize: 11, color: '#6B7280', marginTop: 2 }}>
-                      {[d.brand, d.category].filter(Boolean).join(' · ')}
-                    </div>
-                  )}
-                  {d.rating != null && (
-                    <div style={{ fontSize: 11, color: '#6B7280', marginTop: 2 }}>
-                      ★ {d.rating}{d.review_count != null ? ` (${d.review_count} reviews)` : ''}
-                    </div>
-                  )}
-                  {(d.address || d.area || d.city) && (
-                    <div style={{ fontSize: 11, color: '#6B7280', marginTop: 2 }}>
-                      {[d.address, d.area, d.city].filter(Boolean).join(', ')}
-                    </div>
-                  )}
-                  {d.google_maps_url && (
-                    <a
-                      href={d.google_maps_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style={{
-                        display: 'inline-block', marginTop: 8, fontSize: 11, fontWeight: 700,
-                        color: '#fff', background: '#DC2626', padding: '5px 10px', borderRadius: 6,
-                        textDecoration: 'none',
-                      }}
-                    >
-                      📍 Open in Google Maps
-                    </a>
-                  )}
-                </div>
-              </Popup>
-              <Tooltip sticky direction="top">
-                <span style={{ fontFamily: 'Inter', fontSize: 11, fontWeight: 600, color: '#111827' }}>{d.name}</span>
-              </Tooltip>
-            </Marker>
-          ))}
-        </MarkerClusterGroup>
-      )}
-
+      {/* ── Real Estate Data ────────────────────── */}
       {mapLayers.realEstate && real_estate.length > 0 && real_estate.map((d, i) => {
         const costIndex = d.property_cost_index || 50;
         const growthScore = d.property_growth_score || 50;

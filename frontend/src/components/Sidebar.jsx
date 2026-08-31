@@ -32,6 +32,8 @@ const LAYERS = [
 
   { key: 'realEstate', label: 'Real Estate Data', color: '#EC4899' },
 
+  { key: 'competitors', label: 'Competitors', color: '#DC2626' },
+
 ];
 
 export default function AppSidebar({ activeNav, setActiveNav }) {
