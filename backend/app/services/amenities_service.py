@@ -23,6 +23,7 @@ import geopandas as gpd
 from app.config import (
     get_amenities_source_path, get_amenities_cache_path,
     LOCAL_AMENITY_CATEGORY_BUCKETS, AMENITY_BUCKET_NAMES, BUFFER_RADIUS_M,
+    AMENITY_BUCKETS,
 )
 from app.utils import get_logger
 
@@ -156,6 +157,12 @@ def get_cache_status(country: str, state: str) -> dict:
 # ─────────────────────────────────────────────────────────────
 def _load_local_file(path: Path) -> gpd.GeoDataFrame:
     suffix = path.suffix.lower()
+    if suffix in (".geojson", ".json"):
+        # v9.0 — raw OSM-extract input (e.g. Sri Lanka): a totally
+        # different shape from the CSV/XLSX case below — multiple
+        # possible tag columns (amenity/shop/leisure), not a single
+        # Category/Query column, and geometry is already embedded.
+        return _load_geojson_file(path)
     if suffix == ".csv":
         df = pd.read_csv(path)
     else:
@@ -197,6 +204,66 @@ def _load_local_file(path: Path) -> gpd.GeoDataFrame:
         f"buckets={gdf['bucket'].value_counts().to_dict()}"
     )
     return gdf
+
+
+def _load_geojson_file(path: Path) -> gpd.GeoDataFrame:
+    """v9.0 — raw OSM-extract GeoJSON input (e.g. Sri Lanka's
+    sri_lanka_sri_lanka.geojson): a FeatureCollection where each feature
+    has ONE of amenity/shop/leisure as a raw OSM tag key (e.g.
+    {"amenity": "school"}), not a Category/Type/Query text column like
+    the CSV-based loader expects. Maps tag VALUES directly against
+    AMENITY_BUCKETS (exact match — OSM tag values are clean canonical
+    strings like "school"/"supermarket", not free text needing the
+    substring extraction _categorize() below does for Query-style CSVs)."""
+    gdf_raw = gpd.read_file(path)
+    if gdf_raw.empty:
+        raise ValueError(f"'{path.name}' parsed as GeoJSON but contained no features.")
+
+    tag_cols = [c for c in ("amenity", "shop", "leisure") if c in gdf_raw.columns]
+    if not tag_cols:
+        raise ValueError(
+            f"'{path.name}' has no amenity/shop/leisure tag columns to categorize by — "
+            f"found: {list(gdf_raw.columns)}"
+        )
+
+    bucket = pd.Series([None] * len(gdf_raw), index=gdf_raw.index)
+    for col in tag_cols:
+        mapped = gdf_raw[col].astype(str).str.strip().str.lower().map(AMENITY_BUCKETS)
+        bucket = bucket.fillna(mapped)
+
+    n_before = len(gdf_raw)
+    keep = bucket.notna()
+    n_dropped = n_before - int(keep.sum())
+    if n_dropped:
+        log.info(f"[Amenities] {n_dropped} rows had no recognisable category and were dropped "
+                 f"(tag value not in AMENITY_BUCKETS)")
+
+    name_col = next((c for c in gdf_raw.columns if c.strip().lower() == "name"), None)
+
+    # v9.0 — this Sri Lanka extract has a real mix of geometry types, not
+    # just points: 39% of features are Polygon/MultiPolygon (e.g. a school
+    # or park mapped as a building/area outline in OSM rather than a
+    # single point). Convert any non-Point geometry to its centroid — the
+    # same approach already used elsewhere in this codebase (see
+    # _real_estate_to_records) — since every downstream distance
+    # calculation (Competitor_2km, the snap-to-density step, etc.)
+    # requires pure Point geometries.
+    geoms = gdf_raw.geometry[keep.values].values
+    geoms = [g if g.geom_type == "Point" else g.centroid for g in geoms]
+
+    out = gpd.GeoDataFrame(
+        {
+            "bucket": bucket[keep].values,
+            "name": gdf_raw[name_col][keep].values if name_col else "",
+        },
+        geometry=geoms,
+        crs=gdf_raw.crs or "EPSG:4326",
+    )
+    log.info(
+        f"[Amenities] Parsed {len(out)} amenity points from {path.name} | "
+        f"buckets={out['bucket'].value_counts().to_dict()}"
+    )
+    return out
 
 
 def _categorize(df: pd.DataFrame) -> pd.Series:

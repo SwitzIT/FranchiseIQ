@@ -1901,3 +1901,267 @@ Traceback (most recent call last):
     raise FileNotFoundError(
 FileNotFoundError: No local amenities file configured/found for Sri Lanka/Sri Lanka. Expected a CSV/XLSX at the path returned by get_amenities_source_path() — check app/config.py's AMENITIES_SOURCE_DIR and the state's 'amenities_file' entry.
 2026-09-09 16:43:40 | INFO     | main | 👋 FranchiseIQ shutting down
+2026-09-09 16:43:52 | INFO     | main | 🚀 FranchiseIQ v5.0.0 starting up
+2026-09-09 16:43:52 | INFO     | main | ✅ Database tables ready
+2026-09-09 16:43:58 | INFO     | routes.country | [Country] session=06fd328b-4ed2-4b7f-b2f3-2f5e490e31b5 country=Sri Lanka
+2026-09-09 16:44:01 | INFO     | routes.country | [State] session=06fd328b-4ed2-4b7f-b2f3-2f5e490e31b5 state=Sri Lanka
+2026-09-09 16:44:01 | INFO     | demographics_service | [Demographics] Loading: C:\All_Projects\Franchise_IQ\data\srilanka\demographics.xlsx
+2026-09-09 16:44:01 | INFO     | demographics_service | [Demographics] Loading: C:\All_Projects\Franchise_IQ\data\srilanka\demographics.xlsx
+2026-09-09 16:44:01 | INFO     | demographics_service | [Demographics] Loaded 175 rows from demographics.xlsx
+2026-09-09 16:44:01 | INFO     | demographics_service | [Demographics] Loaded 175 rows from demographics.xlsx
+2026-09-09 16:44:01 | INFO     | routes.data | [Data Preloaded] session=06fd328b-4ed2-4b7f-b2f3-2f5e490e31b5 stores=69 requests=0 bu=1
+2026-09-09 16:44:01 | INFO     | routes.data | [Data Preloaded] session=06fd328b-4ed2-4b7f-b2f3-2f5e490e31b5 stores=69 requests=0 bu=1
+2026-09-09 16:44:03 | INFO     | amenities_service | [Amenities] GeoJSON cache hit → C:\All_Projects\Franchise_IQ\amenities_cache\sri_lanka_sri_lanka.geojson
+2026-09-09 16:44:05 | WARNING  | amenities_service | [Amenities] Cached file at C:\All_Projects\Franchise_IQ\amenities_cache\sri_lanka_sri_lanka.geojson is unreadable/stale (cached file has no usable 'bucket' data) — re-parsing from the local source file instead.
+2026-09-09 16:44:05 | ERROR    | main | Unhandled: No local amenities file configured/found for Sri Lanka/Sri Lanka. Expected a CSV/XLSX at the path returned by get_amenities_source_path() — check app/config.py's AMENITIES_SOURCE_DIR and the state's 'amenities_file' entry.
+Traceback (most recent call last):
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\starlette\middleware\cors.py", line 93, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\starlette\middleware\cors.py", line 148, in simple_response
+    await self.app(scope, receive, send)
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\starlette\middleware\exceptions.py", line 65, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\starlette\_exception_handler.py", line 64, in wrapped_app
+    raise exc
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\starlette\routing.py", line 756, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\starlette\routing.py", line 776, in app
+    await route.handle(scope, receive, send)
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\starlette\routing.py", line 297, in handle
+    await self.app(scope, receive, send)
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\starlette\routing.py", line 77, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\starlette\_exception_handler.py", line 64, in wrapped_app
+    raise exc
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\starlette\routing.py", line 72, in app
+    response = await func(request)
+               ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\fastapi\routing.py", line 278, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\fastapi\routing.py", line 193, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\starlette\concurrency.py", line 42, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func, *args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\anyio\to_thread.py", line 65, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\anyio\_backends\_asyncio.py", line 2641, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\anyio\_backends\_asyncio.py", line 1033, in run
+    result = context.run(func, *args)
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\All_Projects\Franchise_IQ\backend\app\routes\amenities.py", line 32, in fetch_amenities
+    gdf, was_cached = get_amenities(country, state)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\All_Projects\Franchise_IQ\backend\app\services\amenities_service.py", line 70, in get_amenities
+    raise FileNotFoundError(
+FileNotFoundError: No local amenities file configured/found for Sri Lanka/Sri Lanka. Expected a CSV/XLSX at the path returned by get_amenities_source_path() — check app/config.py's AMENITIES_SOURCE_DIR and the state's 'amenities_file' entry.
+2026-09-09 17:21:48 | INFO     | main | 👋 FranchiseIQ shutting down
+2026-09-09 17:21:55 | INFO     | main | 🚀 FranchiseIQ v5.0.0 starting up
+2026-09-09 17:21:55 | INFO     | main | ✅ Database tables ready
+2026-09-09 17:21:59 | INFO     | main | 🚀 FranchiseIQ v5.0.0 starting up
+2026-09-09 17:21:59 | INFO     | main | ✅ Database tables ready
+2026-09-09 17:23:03 | INFO     | routes.country | [Country] session=c6045159-e502-4081-ae38-70efbac927f6 country=Sri Lanka
+2026-09-09 17:23:05 | INFO     | routes.country | [State] session=c6045159-e502-4081-ae38-70efbac927f6 state=Sri Lanka
+2026-09-09 17:23:05 | INFO     | demographics_service | [Demographics] Loading: C:\All_Projects\Franchise_IQ\data\srilanka\demographics.xlsx
+2026-09-09 17:23:05 | INFO     | demographics_service | [Demographics] Loading: C:\All_Projects\Franchise_IQ\data\srilanka\demographics.xlsx
+2026-09-09 17:23:06 | INFO     | demographics_service | [Demographics] Loaded 175 rows from demographics.xlsx
+2026-09-09 17:23:06 | INFO     | demographics_service | [Demographics] Loaded 175 rows from demographics.xlsx
+2026-09-09 17:23:06 | INFO     | routes.data | [Data Preloaded] session=c6045159-e502-4081-ae38-70efbac927f6 stores=69 requests=0 bu=1
+2026-09-09 17:23:06 | INFO     | routes.data | [Data Preloaded] session=c6045159-e502-4081-ae38-70efbac927f6 stores=69 requests=0 bu=1
+2026-09-09 17:23:07 | INFO     | amenities_service | [Amenities] GeoJSON cache hit → C:\All_Projects\Franchise_IQ\amenities_cache\sri_lanka_sri_lanka.geojson
+2026-09-09 17:23:10 | WARNING  | amenities_service | [Amenities] Cached file at C:\All_Projects\Franchise_IQ\amenities_cache\sri_lanka_sri_lanka.geojson is unreadable/stale (cached file has no usable 'bucket' data) — re-parsing from the local source file instead.
+2026-09-09 17:23:10 | ERROR    | main | Unhandled: No local amenities file configured/found for Sri Lanka/Sri Lanka. Expected a CSV/XLSX at the path returned by get_amenities_source_path() — check app/config.py's AMENITIES_SOURCE_DIR and the state's 'amenities_file' entry.
+Traceback (most recent call last):
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\starlette\middleware\cors.py", line 93, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\starlette\middleware\cors.py", line 148, in simple_response
+    await self.app(scope, receive, send)
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\starlette\middleware\exceptions.py", line 65, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\starlette\_exception_handler.py", line 64, in wrapped_app
+    raise exc
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\starlette\routing.py", line 756, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\starlette\routing.py", line 776, in app
+    await route.handle(scope, receive, send)
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\starlette\routing.py", line 297, in handle
+    await self.app(scope, receive, send)
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\starlette\routing.py", line 77, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\starlette\_exception_handler.py", line 64, in wrapped_app
+    raise exc
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\starlette\routing.py", line 72, in app
+    response = await func(request)
+               ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\fastapi\routing.py", line 278, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\fastapi\routing.py", line 193, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\starlette\concurrency.py", line 42, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func, *args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\anyio\to_thread.py", line 65, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\anyio\_backends\_asyncio.py", line 2641, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\anyio\_backends\_asyncio.py", line 1033, in run
+    result = context.run(func, *args)
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\All_Projects\Franchise_IQ\backend\app\routes\amenities.py", line 32, in fetch_amenities
+    gdf, was_cached = get_amenities(country, state)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\All_Projects\Franchise_IQ\backend\app\services\amenities_service.py", line 71, in get_amenities
+    raise FileNotFoundError(
+FileNotFoundError: No local amenities file configured/found for Sri Lanka/Sri Lanka. Expected a CSV/XLSX at the path returned by get_amenities_source_path() — check app/config.py's AMENITIES_SOURCE_DIR and the state's 'amenities_file' entry.
+2026-09-09 17:23:46 | INFO     | main | 👋 FranchiseIQ shutting down
+2026-09-09 17:24:07 | INFO     | main | 🚀 FranchiseIQ v5.0.0 starting up
+2026-09-09 17:24:07 | INFO     | main | ✅ Database tables ready
+2026-09-09 17:24:34 | INFO     | routes.country | [Country] session=70c74038-d157-421a-a7bd-342c6f41e005 country=Sri Lanka
+2026-09-09 17:24:36 | INFO     | routes.country | [State] session=70c74038-d157-421a-a7bd-342c6f41e005 state=Sri Lanka
+2026-09-09 17:24:36 | INFO     | demographics_service | [Demographics] Loading: C:\All_Projects\Franchise_IQ\data\srilanka\demographics.xlsx
+2026-09-09 17:24:36 | INFO     | demographics_service | [Demographics] Loading: C:\All_Projects\Franchise_IQ\data\srilanka\demographics.xlsx
+2026-09-09 17:24:36 | INFO     | demographics_service | [Demographics] Loaded 175 rows from demographics.xlsx
+2026-09-09 17:24:36 | INFO     | demographics_service | [Demographics] Loaded 175 rows from demographics.xlsx
+2026-09-09 17:24:36 | INFO     | routes.data | [Data Preloaded] session=70c74038-d157-421a-a7bd-342c6f41e005 stores=69 requests=0 bu=1
+2026-09-09 17:24:36 | INFO     | routes.data | [Data Preloaded] session=70c74038-d157-421a-a7bd-342c6f41e005 stores=69 requests=0 bu=1
+2026-09-09 17:24:39 | INFO     | amenities_service | [Amenities] GeoJSON cache hit → C:\All_Projects\Franchise_IQ\amenities_cache\sri_lanka_sri_lanka.geojson
+2026-09-09 17:24:41 | WARNING  | amenities_service | [Amenities] Cached file at C:\All_Projects\Franchise_IQ\amenities_cache\sri_lanka_sri_lanka.geojson is unreadable/stale (cached file has no usable 'bucket' data) — re-parsing from the local source file instead.
+2026-09-09 17:24:41 | ERROR    | main | Unhandled: No local amenities file configured/found for Sri Lanka/Sri Lanka. Expected a CSV/XLSX at the path returned by get_amenities_source_path() — check app/config.py's AMENITIES_SOURCE_DIR and the state's 'amenities_file' entry.
+Traceback (most recent call last):
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\starlette\middleware\cors.py", line 93, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\starlette\middleware\cors.py", line 148, in simple_response
+    await self.app(scope, receive, send)
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\starlette\middleware\exceptions.py", line 65, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\starlette\_exception_handler.py", line 64, in wrapped_app
+    raise exc
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\starlette\routing.py", line 756, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\starlette\routing.py", line 776, in app
+    await route.handle(scope, receive, send)
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\starlette\routing.py", line 297, in handle
+    await self.app(scope, receive, send)
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\starlette\routing.py", line 77, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\starlette\_exception_handler.py", line 64, in wrapped_app
+    raise exc
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\starlette\routing.py", line 72, in app
+    response = await func(request)
+               ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\fastapi\routing.py", line 278, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\fastapi\routing.py", line 193, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\starlette\concurrency.py", line 42, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func, *args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\anyio\to_thread.py", line 65, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\anyio\_backends\_asyncio.py", line 2641, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "C:\Users\Rajeev\anaconda3\envs\franchiseiq\Lib\site-packages\anyio\_backends\_asyncio.py", line 1033, in run
+    result = context.run(func, *args)
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\All_Projects\Franchise_IQ\backend\app\routes\amenities.py", line 32, in fetch_amenities
+    gdf, was_cached = get_amenities(country, state)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\All_Projects\Franchise_IQ\backend\app\services\amenities_service.py", line 71, in get_amenities
+    raise FileNotFoundError(
+FileNotFoundError: No local amenities file configured/found for Sri Lanka/Sri Lanka. Expected a CSV/XLSX at the path returned by get_amenities_source_path() — check app/config.py's AMENITIES_SOURCE_DIR and the state's 'amenities_file' entry.
+2026-09-09 17:24:46 | INFO     | routes.country | [Country] session=d85c54cd-f62c-4f0c-b653-1b326a5e20d8 country=India
+2026-09-09 17:24:48 | INFO     | routes.country | [State] session=d85c54cd-f62c-4f0c-b653-1b326a5e20d8 state=West Bengal
+2026-09-09 17:24:48 | INFO     | demographics_service | [Demographics] Loading: C:\All_Projects\Franchise_IQ\data\india\west_bengal\demographics.xlsx
+2026-09-09 17:24:48 | INFO     | demographics_service | [Demographics] Loading: C:\All_Projects\Franchise_IQ\data\india\west_bengal\demographics.xlsx
+2026-09-09 17:24:48 | INFO     | demographics_service | [Demographics] Loaded 23 rows from demographics.xlsx
+2026-09-09 17:24:48 | INFO     | demographics_service | [Demographics] Loaded 23 rows from demographics.xlsx
+2026-09-09 17:24:48 | INFO     | routes.data | [Data Preloaded] session=d85c54cd-f62c-4f0c-b653-1b326a5e20d8 stores=384 requests=0 bu=3
+2026-09-09 17:24:48 | INFO     | routes.data | [Data Preloaded] session=d85c54cd-f62c-4f0c-b653-1b326a5e20d8 stores=384 requests=0 bu=3
+2026-09-09 17:24:50 | INFO     | amenities_service | [Amenities] GeoJSON cache hit → C:\All_Projects\Franchise_IQ\amenities_cache\india_west_bengal.geojson
+2026-09-09 17:24:54 | INFO     | routes.amenities | [Amenities] session=d85c54cd-f62c-4f0c-b653-1b326a5e20d8 cached=True n=44144
+2026-09-09 17:24:54 | INFO     | scoring_service | [Pipeline] India/West Bengal | stores=384 | requests=0 | BU=True
+2026-09-09 17:24:54 | INFO     | real_estate_service | Loaded 63 real estate records with indices.
+2026-09-09 17:24:55 | INFO     | local_competitor_service | [Competitors] Loaded 127 usable competitor locations from Bhilai_validation1_1.xlsx
+2026-09-09 17:24:55 | INFO     | local_competitor_service | [Competitors] Loaded 116 usable competitor locations from Bilaspur_1.xlsx
+2026-09-09 17:24:55 | INFO     | local_competitor_service | [Competitors] Loaded 17 usable competitor locations from Dhamtari_1.xlsx
+2026-09-09 17:24:56 | INFO     | local_competitor_service | [Competitors] Loaded 6250 usable competitor locations from Mio_competitor.xlsx
+2026-09-09 17:24:56 | INFO     | local_competitor_service | [Competitors] Loaded 168 usable competitor locations from Raipur_Bakery_In-scope_188.xlsx
+2026-09-09 17:24:56 | INFO     | local_competitor_service | [Competitors] Combined 6678 total competitor locations from 5 file(s): ['Bhilai_validation1_1.xlsx', 'Bilaspur_1.xlsx', 'Dhamtari_1.xlsx', 'Mio_competitor.xlsx', 'Raipur_Bakery_In-scope_188.xlsx']
+2026-09-09 17:24:56 | INFO     | scoring_service | [Pipeline] ENABLE_OSM_GEO_FEATURES=false — skipping road/landuse enrichment, no network calls made
+2026-09-09 17:24:56 | INFO     | amenities_service | [Amenities] Counting within 10000m for 384 points
+2026-09-09 17:25:00 | INFO     | clustering_service | [Clustering] Assigning 384 locations → 3 BUs
+2026-09-09 17:25:02 | INFO     | amenities_service | [Amenities] Counting within 10000m for 279 points
+2026-09-09 17:25:02 | INFO     | clustering_service | [Clustering] Assigning 279 locations → 3 BUs
+2026-09-09 17:25:03 | INFO     | affinity_model | [AffinityModel] trained on 384 stores | archetype_n=96 | val=knn_lookalike_holdout_multisplit | R2_test=0.092 | MAE_test=4544930 | median_rev=13114103
+2026-09-09 17:25:03 | INFO     | scoring_service | [Pipeline] Model R²=0.09244523604539408 MAE=4544930.139866546 method=knn_lookalike_holdout_multisplit
+2026-09-09 17:25:03 | INFO     | scoring_service | [Guardrail] 0/279 candidates flagged for nearby-store underperformance (>= 3 stores within 5km averaging < ₹9,835,577), Final_Score penalized ×0.55
+2026-09-09 17:25:03 | INFO     | scoring_service | [Calibration] Mio store density (500m cluster) - n=384, median=17, p10=0, p25=3, mean=36.7
+2026-09-09 17:25:03 | INFO     | scoring_service | [Calibration] using min_cluster_threshold=5 (max of 5 floor and Mio p10)
+2026-09-09 17:25:03 | INFO     | scoring_service | [Viability] 279 candidates -> 231 viable (min_amenities=5, min_population=1000)
+2026-09-09 17:25:03 | INFO     | scoring_service | [Diversity] requested n=30, min_distance_km=15.0, picked=30 from 231 ranked candidates
+2026-09-09 17:25:03 | INFO     | scoring_service | [Snap] SNAP (22.5500,88.4500) -> (22.5723,88.4329) 77 amenities in 500m
+2026-09-09 17:25:03 | INFO     | scoring_service | [Snap] SNAP (22.6500,88.3000) -> (22.6551,88.3247) 23 amenities in 500m
+2026-09-09 17:25:03 | INFO     | scoring_service | [Snap] SNAP (22.7500,88.4500) -> (22.7247,88.4743) 27 amenities in 500m
+2026-09-09 17:25:03 | INFO     | scoring_service | [Snap] SNAP (22.5000,88.3000) -> (22.4879,88.2837) 40 amenities in 500m
+2026-09-09 17:25:03 | INFO     | scoring_service | [Snap] DROP (22.6500,88.5500) - densest cluster only 1 amenities (need 5)
+2026-09-09 17:25:03 | INFO     | scoring_service | [Snap] DROP (26.5500,88.7000) - densest cluster only 3 amenities (need 5)
+2026-09-09 17:25:03 | INFO     | scoring_service | [Snap] SNAP (22.9000,88.4500) -> (22.9215,88.4359) 65 amenities in 500m
+2026-09-09 17:25:03 | INFO     | scoring_service | [Snap] DROP (22.9000,88.3000) - no amenities in hex
+2026-09-09 17:25:03 | INFO     | scoring_service | [Snap] SNAP (22.3000,87.9500) -> (22.2925,87.9262) 63 amenities in 500m
+2026-09-09 17:25:03 | INFO     | scoring_service | [Snap] DROP (22.1000,88.4000) - no amenities in hex
+2026-09-09 17:25:03 | INFO     | scoring_service | [Snap] SNAP (23.4000,88.4000) -> (23.4092,88.3769) 34 amenities in 500m
+2026-09-09 17:25:03 | INFO     | scoring_service | [Snap] SNAP (22.4500,87.3500) -> (22.4265,87.3258) 50 amenities in 500m
+2026-09-09 17:25:03 | INFO     | scoring_service | [Snap] SNAP (22.3500,87.2500) -> (22.3478,87.2741) 24 amenities in 500m
+2026-09-09 17:25:03 | INFO     | scoring_service | [Snap] DROP (22.4000,87.0000) - densest cluster only 3 amenities (need 5)
+2026-09-09 17:25:03 | INFO     | scoring_service | [Snap] SNAP (23.6500,87.0000) -> (23.6721,86.9891) 19 amenities in 500m
+2026-09-09 17:25:03 | INFO     | scoring_service | [Snap] DROP (23.9500,87.5500) - densest cluster only 4 amenities (need 5)
+2026-09-09 17:25:03 | INFO     | scoring_service | [Snap] DROP (27.0000,88.5000) - densest cluster only 0 amenities (need 5)
+2026-09-09 17:25:03 | INFO     | scoring_service | [Snap] DROP (26.9500,88.3000) - densest cluster only 1 amenities (need 5)
+2026-09-09 17:25:03 | INFO     | scoring_service | [Snap] DROP (26.1500,88.2000) - densest cluster only 0 amenities (need 5)
+2026-09-09 17:25:03 | INFO     | scoring_service | [Snap] DROP (26.3500,89.4000) - no amenities in hex
+2026-09-09 17:25:03 | INFO     | scoring_service | [Snap] DROP (27.1500,88.5000) - no amenities in hex
+2026-09-09 17:25:03 | INFO     | scoring_service | [Snap] DROP (26.5000,89.4500) - no amenities in hex
+2026-09-09 17:25:03 | INFO     | scoring_service | [Snap] DROP (27.1000,88.3000) - no amenities in hex
+2026-09-09 17:25:03 | INFO     | scoring_service | [Snap] DROP (22.5000,86.9000) - densest cluster only 0 amenities (need 5)
+2026-09-09 17:25:03 | INFO     | scoring_service | [Snap] DROP (25.3000,88.7500) - densest cluster only 0 amenities (need 5)
+2026-09-09 17:25:03 | INFO     | scoring_service | [Snap] DROP (23.2000,87.1500) - densest cluster only 1 amenities (need 5)
+2026-09-09 17:25:03 | INFO     | scoring_service | [Snap] DROP (25.1500,88.7500) - no amenities in hex
+2026-09-09 17:25:03 | INFO     | scoring_service | [Snap] SNAP (23.2000,87.0000) -> (23.2063,87.0208) 5 amenities in 500m
+2026-09-09 17:25:03 | INFO     | scoring_service | [Snap] DROP (25.0500,88.2000) - densest cluster only 0 amenities (need 5)
+2026-09-09 17:25:03 | INFO     | scoring_service | [Snap] DROP (25.0500,88.0500) - densest cluster only 0 amenities (need 5)
+2026-09-09 17:25:03 | INFO     | scoring_service | [Snap] 11 snapped, 19 dropped (threshold=5)
+2026-09-09 17:25:03 | INFO     | amenities_service | [Amenities] Counting within 10000m for 11 points
+2026-09-09 17:25:03 | INFO     | clustering_service | [Clustering] Assigning 11 locations → 3 BUs
+2026-09-09 17:25:03 | INFO     | scoring_service | [Guardrail] 0/11 candidates flagged for nearby-store underperformance (>= 3 stores within 5km averaging < ₹9,835,577), Final_Score penalized ×0.55
+2026-09-09 17:25:09 | INFO     | routes.predict | [Predict] user=rajeevk@switzgroup.com session=d85c54cd-f62c-4f0c-b653-1b326a5e20d8 top_picks=10
