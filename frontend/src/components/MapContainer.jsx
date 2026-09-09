@@ -202,7 +202,22 @@ function InfoCard({ d, avgSales, rank }) {
           )}
         </div>
         <div style={{ fontSize: 15, color: '#fff', fontWeight: 800, marginTop: 4, lineHeight: 1.3 }}>{d.name || 'Unknown'}</div>
-        {d.score > 0 && (
+
+        {d.type === 'prediction' && d.verdict ? (
+          <div style={{ marginTop: 6 }}>
+            <div style={{ fontSize: 16, letterSpacing: 1, color: '#FDE047', lineHeight: 1 }}>
+              {'★'.repeat(d.star_rating || 3)}{'☆'.repeat(5 - (d.star_rating || 3))}
+            </div>
+            <div style={{ fontSize: 13, fontWeight: 800, color: '#fff', marginTop: 3 }}>
+              {d.verdict}
+            </div>
+            {d.score > 0 && (
+              <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.65)', marginTop: 2 }}>
+                Score: {d.score?.toFixed(1)}/100 (archetype-similarity index)
+              </div>
+            )}
+          </div>
+        ) : d.score > 0 && (
           <div style={{ fontSize: 22, fontWeight: 900, color: '#fff', marginTop: 4 }}>
             {d.score?.toFixed(1)}<span style={{ fontSize: 11, fontWeight: 500 }}>/100</span>
           </div>
@@ -220,21 +235,8 @@ function InfoCard({ d, avgSales, rank }) {
         {d.type === 'prediction' && d.verdict && (
           <div style={{ marginTop: 10, paddingTop: 10, borderTop: '1px solid #F3F4F6' }}>
             <div style={{ fontSize: 9, fontWeight: 700, color: '#9CA3AF', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 8 }}>
-              AI Assessment
+              Why This Rating
             </div>
-
-            {(() => {
-              const vs = VERDICT_STYLE[d.verdict] || VERDICT_STYLE['Promising Candidate'];
-              return (
-                <div style={{
-                  display: 'inline-block', fontSize: 11, fontWeight: 700, padding: '4px 10px',
-                  borderRadius: 8, background: vs.bg, color: vs.text, border: `1px solid ${vs.border}`,
-                  marginBottom: 8,
-                }}>
-                  {vs.icon} {d.verdict}
-                </div>
-              );
-            })()}
 
             {d.caution_reasons && (
               <div style={{ fontSize: 10.5, color: '#92400E', background: '#FFFBEB', border: '1px solid #FDE68A',
@@ -418,10 +420,14 @@ export default function MapContainer_() {
     >
       <ZoomControl position="bottomright" />
       <FlyToLocation />
-      {/* Light CartoDB tile */}
+      {/* Light CartoDB tile — v8.3: CARTO now requires an API key on all
+          raster tile requests (a platform-wide change, not specific to
+          this app — free key at https://carto.com/basemaps/apikey).
+          Without VITE_CARTO_API_KEY set, tiles still load but show a
+          "API KEY REQUIRED" watermark. */}
       <TileLayer
-        url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
-        attribution='&copy; <a href="https://carto.com/">CARTO</a>'
+        url={`https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png${import.meta.env.VITE_CARTO_API_KEY ? `?key=${import.meta.env.VITE_CARTO_API_KEY}` : ''}`}
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>, &copy; <a href="https://carto.com/attributions">CARTO</a>'
         maxZoom={19}
       />
 

@@ -2,7 +2,7 @@ import React, { Suspense, useState, useRef, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Store, Activity, FileText, Star, Building2, Sparkles,
+  Store, Activity, FileText, Building2,
   MapPin, Bell, ChevronDown, ChevronUp, Search, Trophy,
   Layers, Eye, EyeOff, TrendingUp, TrendingDown, Filter,
   Maximize2, Minimize2, X, Menu
@@ -12,6 +12,7 @@ import AppSidebar from '../components/Sidebar';
 import KPICard from '../components/KPICard';
 import OpportunityPanel from '../components/OpportunityPanel';
 import DistrictPerformancePanel from '../components/DistrictPerformancePanel';
+import { useAuth } from '../context/AuthContext';
 
 const LazyMap = React.lazy(() => import('../components/MapContainer'));
 
@@ -266,6 +267,7 @@ export default function DashboardPage() {
     hasBU, storeFilter, setStoreFilter,
     setMobileSidebarOpen,
   } = useAppStore();
+  const { user } = useAuth();
 
   const kpis = results?.kpis || {};
   const stores = results?.stores || [];
@@ -347,11 +349,11 @@ export default function DashboardPage() {
 
             <div className="flex items-center gap-2.5 pl-2 border-l border-border cursor-pointer group">
               <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-primary-light flex items-center justify-center text-white text-sm font-bold shrink-0">
-                A
+                {(user?.email?.[0] || 'U').toUpperCase()}
               </div>
               <div className="hidden sm:block">
-                <p className="text-xs font-semibold text-ink leading-none">Admin</p>
-                <p className="text-[10px] text-ink-muted mt-0.5">Analyst</p>
+                <p className="text-xs font-semibold text-ink leading-none truncate max-w-[140px]">{user?.email || 'Signed in'}</p>
+                <p className="text-[10px] text-ink-muted mt-0.5">FranchiseIQ User</p>
               </div>
               <ChevronDown size={13} className="text-ink-subtle group-hover:text-ink transition-colors hidden sm:block" />
             </div>
@@ -386,22 +388,6 @@ export default function DashboardPage() {
                 sub="AI estimate"
                 color="#06B6D4"
                 delay={0.12}
-              />
-              <KPICard
-                icon={Star}
-                label="Best Score"
-                value={`${(kpis.max_score || 0).toFixed(1)}`}
-                sub="out of 100"
-                color="#F59E0B"
-                delay={0.18}
-              />
-              <KPICard
-                icon={Sparkles}
-                label="Avg Score"
-                value={`${(kpis.avg_score || 0).toFixed(1)}`}
-                sub="all candidates"
-                color="#8B5CF6"
-                delay={0.24}
               />
               <KPICard
                 icon={MapPin}
