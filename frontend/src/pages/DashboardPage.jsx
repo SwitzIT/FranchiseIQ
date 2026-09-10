@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Store, Activity, FileText, Building2,
-  MapPin, Bell, ChevronDown, ChevronUp, Search, Trophy,
+  MapPin, ChevronDown, ChevronUp, Search, Trophy, LogOut,
   Layers, Eye, EyeOff, TrendingUp, TrendingDown, Filter,
   Maximize2, Minimize2, X, Menu
 } from 'lucide-react';
@@ -267,7 +267,7 @@ export default function DashboardPage() {
     hasBU, storeFilter, setStoreFilter,
     setMobileSidebarOpen,
   } = useAppStore();
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
 
   const kpis = results?.kpis || {};
   const stores = results?.stores || [];
@@ -342,12 +342,7 @@ export default function DashboardPage() {
               </span>
             )}
 
-            <button className="btn-ghost p-2 rounded-xl relative">
-              <Bell size={17} className="text-ink-subtle" />
-              <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-primary" />
-            </button>
-
-            <div className="flex items-center gap-2.5 pl-2 border-l border-border cursor-pointer group">
+            <div className="flex items-center gap-2.5 pl-2 border-l border-border">
               <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-primary-light flex items-center justify-center text-white text-sm font-bold shrink-0">
                 {(user?.email?.[0] || 'U').toUpperCase()}
               </div>
@@ -355,7 +350,13 @@ export default function DashboardPage() {
                 <p className="text-xs font-semibold text-ink leading-none truncate max-w-[140px]">{user?.email || 'Signed in'}</p>
                 <p className="text-[10px] text-ink-muted mt-0.5">FranchiseIQ User</p>
               </div>
-              <ChevronDown size={13} className="text-ink-subtle group-hover:text-ink transition-colors hidden sm:block" />
+              <button
+                onClick={logout}
+                title="Log out"
+                className="btn-ghost p-2 rounded-xl text-ink-subtle hover:text-red-600 transition-colors"
+              >
+                <LogOut size={16} />
+              </button>
             </div>
           </header>
         )}
@@ -500,14 +501,6 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            {!isFullscreen && (
-              <div className="hidden lg:block w-80 shrink-0 p-4 pl-2 overflow-hidden min-h-0">
-                <OpportunityPanel
-                  onSelectPrediction={(name) => flyToPrediction(name)}
-                  selectedPrediction={selectedPrediction}
-                />
-              </div>
-            )}
           </div>
 
         </div>

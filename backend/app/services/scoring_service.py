@@ -246,6 +246,16 @@ def run_pipeline(
             snapped_df = _score_and_flag(snapped_df, model, has_bu)
 
         top_df = snapped_df.head(top_n).reset_index(drop=True)
+
+        # v9.1 — rename to "Candidate 1", "Candidate 2"... based on FINAL
+        # rank (after snap + re-score), matching the #1/#2/#3 numbering
+        # already shown on the map markers. The original "Grid Candidate
+        # {N}" name came from the raw grid-generation index (e.g. "426")
+        # — meaningless to a stakeholder and inconsistent with the map's
+        # own rank-based labels. Only applies in grid mode; uploaded
+        # request locations keep whatever real name the user gave them.
+        if "Store_Name" in top_df.columns:
+            top_df["Store_Name"] = [f"Candidate {i + 1}" for i in range(len(top_df))]
     else:
         # UPLOADED MODE: honest scoring of user-supplied locations - no filtering, no snap
         log.info(f"[Pipeline] Uploaded mode - scoring {len(cands_df)} user-supplied locations as-is (no viability filter, no diversity, no snap)")
