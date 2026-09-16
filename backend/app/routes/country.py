@@ -35,11 +35,19 @@ def select_country(body: SelectCountryRequest):
 
     states_meta = []
     for state_name, scfg in COUNTRIES[country]["states"].items():
-        from app.config import get_demographics_path
+        from app.config import get_demographics_path, get_preloaded_files
         p = get_demographics_path(country, state_name)
+        # v9.2 — has_data previously only checked demographics existed,
+        # which is misleading: Odisha has a demographics file but NO
+        # stores/BU/real-estate data at all, so the model has nothing to
+        # train on — yet it reported as "ready to analyze". A state needs
+        # its stores file too, since that's what the whole scoring model
+        # actually learns from.
+        preloaded = get_preloaded_files(country, state_name)
+        has_real_data = p.exists() and preloaded.get("stores_file") is not None
         states_meta.append({
             "name":       state_name,
-            "has_data":   p.exists(),
+            "has_data":   has_real_data,
             "center":     scfg["center"],
             "zoom":       scfg["zoom"],
         })

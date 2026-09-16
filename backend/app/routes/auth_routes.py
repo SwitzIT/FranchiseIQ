@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 from pydantic import BaseModel
 
-from app.auth import authenticate_user, create_access_token, get_current_user
+from app.auth import authenticate_user, create_access_token, get_current_user, get_user_record
 from app.utils import get_logger
 
 log = get_logger("routes.auth")
@@ -29,4 +29,11 @@ def login(form_data: OAuth2PasswordRequestForm = Depends()):
 
 @router.get("/me")
 def me(current_user: str = Depends(get_current_user)):
-    return {"email": current_user}
+    # v9.2 — company/country let the frontend auto-select the user's
+    # assigned market and skip the manual country picker on login.
+    record = get_user_record(current_user)
+    return {
+        "email": current_user,
+        "company": (record or {}).get("company"),
+        "country": (record or {}).get("country"),
+    }

@@ -78,6 +78,15 @@ def _find_user(email: str) -> Optional[dict]:
     return None
 
 
+def get_user_record(email: str) -> Optional[dict]:
+    """v9.2 — public accessor for the full users.json entry (company,
+    country, etc.), not just the email. get_current_user() still returns
+    only the email string (its return type is depended on across every
+    other route), so routes that need the extra fields — currently just
+    /auth/me — call this separately."""
+    return _find_user(email)
+
+
 def _check_password(plain_password: str, stored_password: str) -> bool:
     if isinstance(stored_password, str) and stored_password.startswith(("$2a$", "$2b$", "$2y$")):
         try:
