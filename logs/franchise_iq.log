@@ -2722,3 +2722,4 @@ FileNotFoundError: No local amenities file configured/found for Sri Lanka/Sri La
 2026-09-17 11:09:24 | INFO     | scoring_service | [Guardrail] 0/6 candidates flagged for nearby-store underperformance (>= 3 stores within 5km averaging < ₹103,228,278), Final_Score penalized ×0.55
 2026-09-17 11:09:24 | WARNING  | scoring_service | [Pipeline] Only found 6 candidates. Requested top 10.
 2026-09-17 11:09:25 | INFO     | routes.predict | [Predict] user=divyaT@switzgroup.com session=63485396-1621-41f3-a80f-aaf07aae8d35 top_picks=6
+2026-09-17 11:39:28 | INFO     | main | 👋 FranchiseIQ shutting down
