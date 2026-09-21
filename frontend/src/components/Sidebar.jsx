@@ -247,49 +247,6 @@ export default function AppSidebar({ activeNav, setActiveNav }) {
 
         )}
 
-        {/* ── Footer actions ───────────────────────── */}
-        <div className="px-3 pb-4 space-y-2 border-t border-border pt-3 shrink-0">
-
-          {user && (
-            <div className="flex items-center justify-between gap-2 px-1 pb-1">
-              <span className="text-[11px] text-ink-muted truncate">{user.email}</span>
-              <button
-                onClick={logout}
-                aria-label="Sign out"
-                title="Sign out"
-                className="p-1 rounded-lg text-ink-subtle hover:text-ink hover:bg-app-bg shrink-0"
-              >
-                <LogOut size={13} />
-              </button>
-            </div>
-          )}
-
-          {results && sessionId && (
-            <a
-
-              href={getDownloadUrl(sessionId)}
-
-              download
-
-              className="btn-secondary w-full text-xs py-2"
-            >
-              <Download size={13} />
-
-              Download Results
-            </a>
-
-          )}
-          <button
-
-            onClick={reset}
-
-            className="btn-ghost w-full text-xs text-ink-subtle"
-          >
-            <RefreshCw size={12} />
-
-            Start New Analysis
-          </button>
-        </div>
       </aside>
     </>
 
