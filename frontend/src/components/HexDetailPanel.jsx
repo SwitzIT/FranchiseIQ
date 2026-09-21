@@ -51,6 +51,8 @@ function formatCurrency(n, currency = '₹') {
 export default function HexDetailPanel() {
   const { selectedHex, setSelectedHex, hexHeatmap, currencySymbol } = useAppStore();
 
+  // Hooks must run on every render, before any early return.
+  const money = useMoney();
   if (!selectedHex) return null;
 
   const networkAvg = hexHeatmap?.network_avg || 0;
@@ -58,7 +60,6 @@ export default function HexDetailPanel() {
   const styles = classificationStyles(selectedHex.classification);
   const ClsIcon = styles.icon;
   const currency = currencySymbol || '₹';
-  const money = useMoney();
 
   const diffFromNet  = selectedHex.avg_revenue - networkAvg;
   const diffPct      = networkAvg > 0

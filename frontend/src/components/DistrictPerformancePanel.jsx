@@ -416,6 +416,8 @@ export default function DistrictPerformancePanel() {
     });
     return map;
   }, [data]);
+  // Hooks must run on every render, before any early return.
+  const money = useMoney();
   if (viewMode !== 'district') return null;
   // Currently selected names (from multi or single store kind)
   const selectedNames = (
@@ -504,7 +506,6 @@ export default function DistrictPerformancePanel() {
     }
   };
   const currency = currencySymbol || '₹';
-  const money = useMoney();
   return (
     <AnimatePresence>
       <motion.div

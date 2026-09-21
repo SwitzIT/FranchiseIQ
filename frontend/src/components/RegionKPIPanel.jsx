@@ -8,11 +8,11 @@ import { useMoney } from '../utils/money';
 export default function RegionKPIPanel() {
   const { regionKpis, selectedRegion, setSelectedRegion, currencySymbol, country } = useAppStore();
 
+  const fmtCurrency = useMoney({ tight: true });
   if (!regionKpis || !regionKpis.regions || regionKpis.regions.length === 0) return null;
 
   const { regions, best_region } = regionKpis;
 
-  const fmtCurrency = useMoney({ tight: true });
 
   const getPerfColor = (label) => {
     if (label === 'top') return '#22C55E';
