@@ -1,5 +1,6 @@
 """Prediction orchestration route."""
 from fastapi import APIRouter, HTTPException, Depends
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from app.services import run_pipeline, get_key, set_key, session_exists
 from app.utils import get_logger
@@ -63,4 +64,7 @@ def predict(body: PredictRequest, current_user: str = Depends(get_current_user))
     set_key(sid, "results", results)
     log.info(f"[Predict] user={current_user} session={sid} top_picks={len(results['top_picks'])}")
 
-    return {"success": True, **results}
+    # Return the JSON directly: the result holds ~45k amenity points, and
+    # FastAPI's default encoder makes several full copies of it first
+    # (~100 MB extra), enough to exceed a 512 MB instance.
+    return JSONResponse(content={"success": True, **results})

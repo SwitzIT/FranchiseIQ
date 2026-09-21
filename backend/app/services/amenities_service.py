@@ -17,6 +17,7 @@ West Bengal").
 import re
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 import geopandas as gpd
 
@@ -99,46 +100,46 @@ def count_amenities_near_points(
     Adds columns: cnt_food, cnt_retail, cnt_education, cnt_health,
                   cnt_leisure, cnt_transport, cnt_finance,
                   cnt_hospitality, cnt_civic, Total_Amenities
+
+    Counts only (one KD-tree per bucket, return_length=True) — the previous
+    buffer + spatial-join version materialised every (point, amenity) pair,
+    which for 384 West Bengal stores x 10 km was ~300 MB and pushed the
+    free Render instance past its 512 MB limit.
+
+    Distances are measured in Web Mercator (EPSG:3857) exactly as before,
+    so the model's features are unchanged.
     """
+    from scipy.spatial import cKDTree
+
     log.info(f"[Amenities] Counting within {buffer_m}m for {len(points_df)} points")
 
-    if amenities_gdf is None or amenities_gdf.empty:
+    if amenities_gdf is None or amenities_gdf.empty or len(points_df) == 0:
         for b in AMENITY_BUCKET_NAMES:
             points_df[f"cnt_{b}"] = 0
         points_df["Total_Amenities"] = 0
         return points_df
 
-    gdf_proj = amenities_gdf.to_crs(epsg=3857)
-    pts_gdf = gpd.GeoDataFrame(
-        points_df.copy(),
-        geometry=gpd.points_from_xy(points_df["Longitude"], points_df["Latitude"]),
-        crs="EPSG:4326",
-    ).to_crs(epsg=3857)
+    am = amenities_gdf.to_crs(epsg=3857)
+    geoms = am.geometry
+    am_xy = np.column_stack([
+        [g.x if g.geom_type == "Point" else g.centroid.x for g in geoms],
+        [g.y if g.geom_type == "Point" else g.centroid.y for g in geoms],
+    ])
+    buckets = am["bucket"].astype(str).to_numpy()
 
-    pts_gdf["_buf"] = pts_gdf.geometry.buffer(buffer_m)
-    buf_gdf = pts_gdf.set_geometry("_buf").copy()
-    buf_gdf["_idx"] = range(len(buf_gdf))
-
-    joined = gpd.sjoin(gdf_proj, buf_gdf[["_idx", "_buf"]], how="inner",
-                       predicate="intersects")
-
-    counts = (
-        joined.groupby(["_idx", "bucket"])
-        .size()
-        .unstack(fill_value=0)
-    )
+    lat = pd.to_numeric(points_df["Latitude"], errors="coerce").to_numpy(dtype=float)
+    lng = pd.to_numeric(points_df["Longitude"], errors="coerce").to_numpy(dtype=float)
+    ok = ~(np.isnan(lat) | np.isnan(lng))
+    pts = gpd.GeoSeries(gpd.points_from_xy(lng[ok], lat[ok]), crs="EPSG:4326").to_crs(epsg=3857)
+    pt_xy = np.column_stack([pts.x.to_numpy(), pts.y.to_numpy()])
 
     for b in AMENITY_BUCKET_NAMES:
-        if b not in counts.columns:
-            counts[b] = 0
-
-    n = len(points_df)
-    for b in AMENITY_BUCKET_NAMES:
-        col_name = f"cnt_{b}"
-        points_df[col_name] = [
-            int(counts.loc[i, b]) if i in counts.index else 0
-            for i in range(n)
-        ]
+        counts = np.zeros(len(points_df), dtype=int)
+        sel = buckets == b
+        if sel.any() and ok.any():
+            tree = cKDTree(am_xy[sel])
+            counts[ok] = tree.query_ball_point(pt_xy, r=buffer_m, return_length=True)
+        points_df[f"cnt_{b}"] = counts
 
     points_df["Total_Amenities"] = points_df[[f"cnt_{b}" for b in AMENITY_BUCKET_NAMES]].sum(axis=1)
     return points_df
