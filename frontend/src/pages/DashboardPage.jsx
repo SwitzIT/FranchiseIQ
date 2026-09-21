@@ -8,7 +8,9 @@ import {
   Maximize2, Minimize2, X, Menu
 } from 'lucide-react';
 import useAppStore from '../store/useAppStore';
-import AppSidebar from '../components/Sidebar';
+import AppSidebar, { layerHasData } from '../components/Sidebar';
+import CurrencyConverter from '../components/CurrencyConverter';
+import { useMoney } from '../utils/money';
 import KPICard from '../components/KPICard';
 import OpportunityPanel from '../components/OpportunityPanel';
 import DistrictPerformancePanel from '../components/DistrictPerformancePanel';
@@ -148,6 +150,7 @@ function FilterDropdown({ icon: Icon, label, items, selectedName, onSelect, plac
 // ─── Map Legend ────────────────────────────────────────────────
 function MapLegend() {
   const [open, setOpen] = useState(true);
+  const results = useAppStore(s => s.results);
   return (
     <div className="absolute bottom-5 left-5 z-[1000]">
       <AnimatePresence>
@@ -194,12 +197,13 @@ function MapLegend() {
               </div>
               <div className="space-y-1">
                 {[
-                  { color: '#3B82F6', label: 'Existing Stores' },
-                  { color: '#8B5CF6', label: 'Franchise Requests' },
-                  { color: '#D4AF37', label: '#1 Top Pick' },
-                  { color: '#A8A8A8', label: '#2-3 Top Picks' },
-                  { color: '#6C4CF1', label: '#4-10 Top Picks' },
-                ].map(({ color, label }) => (
+                  { color: '#3B82F6', label: 'Existing Stores', layer: 'stores' },
+                  { color: '#8B5CF6', label: 'Franchise Requests', layer: 'requests' },
+                  { color: '#DC2626', label: 'Competitors', layer: 'competitors' },
+                  { color: '#D4AF37', label: '#1 Top Pick', layer: 'predictions' },
+                  { color: '#A8A8A8', label: '#2-3 Top Picks', layer: 'predictions' },
+                  { color: '#6C4CF1', label: '#4-10 Top Picks', layer: 'predictions' },
+                ].filter(({ layer }) => !results || layerHasData(results, layer)).map(({ color, label }) => (
                   <div key={label} className="flex items-center gap-2 text-ink-muted">
                     <span className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: color }} />
                     <span>{label}</span>
@@ -271,14 +275,14 @@ export default function DashboardPage() {
 
   const kpis = results?.kpis || {};
   const stores = results?.stores || [];
-  const predictions = results?.top_picks || [];
+  const predictions = (results?.top_picks || []).filter(p => p.verdict !== 'Not Recommended');
 
   const [activeNav, setActiveNav] = useState('overview');
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [selectedPrediction, setSelectedPrediction] = useState(null);
 
   const storeItems = stores.map(s => ({ name: s.name }));
-  const predItems = predictions.map((p, i) => ({ name: p.name, score: p.score, rank: i + 1 }));
+  const predItems = predictions.map((p, i) => ({ name: p.name, rank: i + 1 }));
   const regionItems = regionKpis?.regions?.map(r => ({ name: r.name, score: r.avg_final_score })) || [];
 
   const flyToPrediction = (name) => {
@@ -290,17 +294,7 @@ export default function DashboardPage() {
     }
   };
 
-  const cur = (val) => {
-    if (val == null) return '—';
-    if (country === 'India') {
-      if (val >= 10000000) return `${currencySymbol}${(val / 10000000).toFixed(2)} Cr`;
-      if (val >= 100000) return `${currencySymbol}${(val / 100000).toFixed(1)} L`;
-      return `${currencySymbol}${val.toLocaleString('en-IN', { maximumFractionDigits: 0 })}`;
-    }
-    if (val >= 1000000) return `${currencySymbol}${(val / 1000000).toFixed(2)} M`;
-    if (val >= 1000) return `${currencySymbol}${(val / 1000).toFixed(1)} K`;
-    return `${currencySymbol}${val.toLocaleString('en-US', { maximumFractionDigits: 0 })}`;
-  };
+  const cur = useMoney();
 
   return (
     <div className="flex h-screen overflow-hidden bg-app-bg">
@@ -334,6 +328,8 @@ export default function DashboardPage() {
             </div>
 
             <div className="flex-1" />
+
+            <CurrencyConverter />
 
             {results && (
               <span className="hidden sm:inline-flex badge-success items-center gap-1.5">

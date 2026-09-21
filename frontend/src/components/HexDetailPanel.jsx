@@ -5,6 +5,7 @@ import {
   Store, Info,
 } from 'lucide-react';
 import useAppStore from '../store/useAppStore';
+import { useMoney } from '../utils/money';
 
 /**
  * HexDetailPanel
@@ -57,6 +58,7 @@ export default function HexDetailPanel() {
   const styles = classificationStyles(selectedHex.classification);
   const ClsIcon = styles.icon;
   const currency = currencySymbol || '₹';
+  const money = useMoney();
 
   const diffFromNet  = selectedHex.avg_revenue - networkAvg;
   const diffPct      = networkAvg > 0
@@ -115,7 +117,7 @@ export default function HexDetailPanel() {
               <span className="text-xs font-normal text-ink-muted ml-2">of network avg</span>
             </div>
             <div className="text-[11px] text-ink-subtle mt-1 font-mono">
-              {formatCurrency(selectedHex.avg_revenue, currency)} ÷ {formatCurrency(networkAvg, currency)}
+              {money(selectedHex.avg_revenue)} ÷ {money(networkAvg)}
             </div>
           </div>
 
@@ -164,7 +166,7 @@ export default function HexDetailPanel() {
                     <div className="flex-1 min-w-0">
                       <div className="text-xs font-semibold text-ink truncate">{s.name || '(unnamed)'}</div>
                       <div className="text-[10px] text-ink-muted font-mono tabular-nums">
-                        {formatCurrency(s.revenue, currency)} · {s.pct_of_network_avg.toFixed(1)}% of net
+                        {money(s.revenue)} · {s.pct_of_network_avg.toFixed(1)}% of net
                       </div>
                     </div>
                   </div>
@@ -181,13 +183,13 @@ export default function HexDetailPanel() {
             <div className="flex justify-between text-xs">
               <span className="text-ink-muted">This zone (avg)</span>
               <span className="font-mono font-semibold text-ink tabular-nums">
-                {formatCurrency(selectedHex.avg_revenue, currency)}
+                {money(selectedHex.avg_revenue)}
               </span>
             </div>
             <div className="flex justify-between text-xs">
               <span className="text-ink-muted">Network (avg)</span>
               <span className="font-mono font-semibold text-ink tabular-nums">
-                {formatCurrency(networkAvg, currency)}
+                {money(networkAvg)}
               </span>
             </div>
             <div className="h-px bg-border my-1" />

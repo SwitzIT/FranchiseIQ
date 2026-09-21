@@ -228,7 +228,13 @@ const useAppStore = create((set, get) => ({
     country, availableStates: states,
     currencySymbol: symbol || '$', currencyCode: code || 'USD',
     state: null, stateConfig: null,
+    displayCurrency: 'local', usdRate: null,
   }),
+  // Dashboard display currency: 'local' (INR/LKR, as stored) or 'USD'.
+  // usdRate = local currency units per 1 USD, set from the converter.
+  displayCurrency: 'local',
+  usdRate: null,
+  setDisplayCurrency: (mode, rate = null) => set({ displayCurrency: mode, usdRate: mode === 'USD' ? rate : null }),
   setState: (state, config) => set({ state, stateConfig: config }),
   // ── Data ─────────────────────────────────────────────────────
   nStores: 0, nRequests: 0, nDemog: 0,
@@ -357,6 +363,7 @@ const useAppStore = create((set, get) => ({
     untappedDemand: null, untappedDemandLoading: false,
     availableTerritories: {}, selectedTerritory: null, siteDiscoveryResult: null,
     chatOpen: false, loading: false, loadingMsg: '',
+    displayCurrency: 'local', usdRate: null,
     selectedStoreName: null, flyToCoords: null, storeFilter: 'all',
     mapStoreFilter: null,
     mobileSidebarOpen: false, mobileSheetOpen: false,

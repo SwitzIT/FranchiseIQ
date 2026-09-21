@@ -36,6 +36,23 @@ const LAYERS = [
 
 ];
 
+// Which results array backs each map layer.
+const LAYER_DATA_KEY = {
+  stores: 'stores',
+  requests: 'requests',
+  predictions: 'top_picks',
+  businessUnits: 'business_units',
+  amenities: 'amenities',
+  realEstate: 'real_estate',
+  competitors: 'competitors',
+};
+
+export const layerHasData = (results, key) => {
+  const dataKey = LAYER_DATA_KEY[key];
+  if (!dataKey) return true;
+  return Array.isArray(results?.[dataKey]) && results[dataKey].length > 0;
+};
+
 export default function AppSidebar({ activeNav, setActiveNav }) {
 
   const {
@@ -164,6 +181,11 @@ export default function AppSidebar({ activeNav, setActiveNav }) {
           {LAYERS.map(({ key, label, color, icon: Icon, hint }) => {
 
             if (key === 'businessUnits' && !hasBU) return null;
+
+            // Hide layers that have no data for this country/state (e.g. no
+            // franchise requests or competitor file) instead of showing an
+            // empty toggle.
+            if (results && !layerHasData(results, key)) return null;
 
             const on = mapLayers[key];
 

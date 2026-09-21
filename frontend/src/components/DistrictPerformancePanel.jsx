@@ -6,6 +6,7 @@
 //   Crosshair, Eye,
 // } from 'lucide-react';
 // import useAppStore from '../store/useAppStore';
+import { useMoney } from '../utils/money';
 // import { getDistrictPerformance } from '../services/api';
 
 // /**
@@ -180,7 +181,7 @@
 //                   Network average
 //                 </div>
 //                 <div className="text-lg font-bold text-ink tabular-nums">
-//                   {formatCurrency(data.network_avg, currency)}
+//                   {money(data.network_avg)}
 //                 </div>
 //                 <div className="text-[10px] text-ink-muted">
 //                   across {data.total_stores} stores
@@ -225,7 +226,7 @@
 //                           <div className="text-[11px] text-ink-muted flex items-center gap-1.5">
 //                             <span>{d.store_count} stores</span>
 //                             <span className="text-ink-subtle/50">·</span>
-//                             <span className="font-mono tabular-nums">{formatCurrency(d.avg_revenue, currency)} avg</span>
+//                             <span className="font-mono tabular-nums">{money(d.avg_revenue)} avg</span>
 //                           </div>
 //                         </div>
 //                         <div className="text-right shrink-0 flex items-center gap-2">
@@ -262,7 +263,7 @@
 //                                 <Store size={11} className="text-ink-subtle shrink-0" />
 //                                 <div className="flex-1 min-w-0 truncate text-ink">{s.name || '(unnamed)'}</div>
 //                                 <div className="font-mono tabular-nums text-ink-subtle text-[10px] w-20 text-right">
-//                                   {formatCurrency(s.revenue, currency)}
+//                                   {money(s.revenue)}
 //                                 </div>
 //                                 <div
 //                                   className="font-mono text-[10px] tabular-nums w-10 text-right font-semibold"
@@ -290,15 +291,15 @@
 //                           <div className="border-t border-border mt-1 pt-2 px-1 grid grid-cols-3 gap-2 text-[10px]">
 //                             <div>
 //                               <div className="text-ink-subtle">Min</div>
-//                               <div className="font-mono font-semibold text-ink">{formatCurrency(d.min_revenue, currency)}</div>
+//                               <div className="font-mono font-semibold text-ink">{money(d.min_revenue)}</div>
 //                             </div>
 //                             <div>
 //                               <div className="text-ink-subtle">Avg</div>
-//                               <div className="font-mono font-semibold text-ink">{formatCurrency(d.avg_revenue, currency)}</div>
+//                               <div className="font-mono font-semibold text-ink">{money(d.avg_revenue)}</div>
 //                             </div>
 //                             <div>
 //                               <div className="text-ink-subtle">Max</div>
-//                               <div className="font-mono font-semibold text-ink">{formatCurrency(d.max_revenue, currency)}</div>
+//                               <div className="font-mono font-semibold text-ink">{money(d.max_revenue)}</div>
 //                             </div>
 //                           </div>
 //                         </div>
@@ -503,6 +504,7 @@ export default function DistrictPerformancePanel() {
     }
   };
   const currency = currencySymbol || '₹';
+  const money = useMoney();
   return (
     <AnimatePresence>
       <motion.div
@@ -578,7 +580,7 @@ export default function DistrictPerformancePanel() {
                   Network average
                 </div>
                 <div className="text-lg font-bold text-ink tabular-nums">
-                  {formatCurrency(data.network_avg, currency)}
+                  {money(data.network_avg)}
                 </div>
                 <div className="text-[10px] text-ink-muted">
                   across {data.total_stores} stores
@@ -621,7 +623,7 @@ export default function DistrictPerformancePanel() {
                           <div className="text-[11px] text-ink-muted flex items-center gap-1.5">
                             <span>{d.store_count} stores</span>
                             <span className="text-ink-subtle/50">·</span>
-                            <span className="font-mono tabular-nums">{formatCurrency(d.avg_revenue, currency)} avg</span>
+                            <span className="font-mono tabular-nums">{money(d.avg_revenue)} avg</span>
                           </div>
                         </div>
                         <div className="text-right shrink-0 flex items-center gap-2">
@@ -683,7 +685,7 @@ export default function DistrictPerformancePanel() {
                                   <Store size={11} className="text-ink-subtle shrink-0" />
                                   <div className="flex-1 min-w-0 truncate text-ink">{s.name || '(unnamed)'}</div>
                                   <div className="font-mono tabular-nums text-ink-subtle text-[10px] w-20 text-right shrink-0">
-                                    {formatCurrency(s.revenue, currency)}
+                                    {money(s.revenue)}
                                   </div>
                                   <div
                                     className="font-mono text-[10px] tabular-nums w-10 text-right font-semibold shrink-0"
@@ -712,15 +714,15 @@ export default function DistrictPerformancePanel() {
                           <div className="border-t border-border mt-1 pt-2 px-1 grid grid-cols-3 gap-2 text-[10px]">
                             <div>
                               <div className="text-ink-subtle">Min</div>
-                              <div className="font-mono font-semibold text-ink">{formatCurrency(d.min_revenue, currency)}</div>
+                              <div className="font-mono font-semibold text-ink">{money(d.min_revenue)}</div>
                             </div>
                             <div>
                               <div className="text-ink-subtle">Avg</div>
-                              <div className="font-mono font-semibold text-ink">{formatCurrency(d.avg_revenue, currency)}</div>
+                              <div className="font-mono font-semibold text-ink">{money(d.avg_revenue)}</div>
                             </div>
                             <div>
                               <div className="text-ink-subtle">Max</div>
-                              <div className="font-mono font-semibold text-ink">{formatCurrency(d.max_revenue, currency)}</div>
+                              <div className="font-mono font-semibold text-ink">{money(d.max_revenue)}</div>
                             </div>
                           </div>
                         </div>

@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Map, TrendingUp, Star, Award, Target, ChevronRight } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import useAppStore from '../store/useAppStore';
+import { useMoney } from '../utils/money';
 
 export default function RegionKPIPanel() {
   const { regionKpis, selectedRegion, setSelectedRegion, currencySymbol, country } = useAppStore();
@@ -11,18 +12,7 @@ export default function RegionKPIPanel() {
 
   const { regions, best_region } = regionKpis;
 
-  const fmtCurrency = (val) => {
-    if (val == null) return '—';
-    const num = Number(val);
-    if (country === 'India') {
-      if (num >= 10000000) return `${currencySymbol}${(num / 10000000).toFixed(2)}Cr`;
-      if (num >= 100000)   return `${currencySymbol}${(num / 100000).toFixed(2)}L`;
-    } else {
-      if (num >= 1000000) return `${currencySymbol}${(num / 1000000).toFixed(2)}M`;
-      if (num >= 1000)    return `${currencySymbol}${(num / 1000).toFixed(1)}K`;
-    }
-    return `${currencySymbol}${num.toLocaleString()}`;
-  };
+  const fmtCurrency = useMoney({ tight: true });
 
   const getPerfColor = (label) => {
     if (label === 'top') return '#22C55E';

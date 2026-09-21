@@ -1,8 +1,9 @@
-import React, { useMemo, useEffect } from 'react';
-import { MapContainer, TileLayer, CircleMarker, Marker, Popup, Tooltip, ZoomControl, useMap } from 'react-leaflet';
+import React, { useMemo, useEffect, useState } from 'react';
+import { MapContainer, TileLayer, Circle, CircleMarker, Marker, Popup, Tooltip, ZoomControl, useMap, useMapEvents } from 'react-leaflet';
 import MarkerClusterGroup from 'react-leaflet-cluster';
 import L from 'leaflet';
 import useAppStore from '../store/useAppStore';
+import { useMoney } from '../utils/money';
 
 // ─── FlyTo on store/prediction selection ──────────────────────
 function FlyToLocation() {
@@ -16,6 +17,29 @@ function FlyToLocation() {
   }, [flyToCoords, map]);
 
   return null;
+}
+
+// ─── 2 km radius around the clicked store / prediction ────────
+// Shown when a store or prediction marker is clicked; hidden again once the
+// user zooms out past RADIUS_MIN_ZOOM (at that scale a 2 km circle is only a
+// few pixels wide and just clutters the map).
+const RADIUS_KM = 2;
+const RADIUS_MIN_ZOOM = 12;   // circle hides when zoomed out below this
+const RADIUS_FOCUS_ZOOM = 13; // clicking while zoomed out flies in to here
+
+function FocusRadius({ focus, onClear }) {
+  const map = useMapEvents({
+    zoomend: () => { if (map.getZoom() < RADIUS_MIN_ZOOM) onClear(); },
+  });
+  if (!focus) return null;
+  return (
+    <Circle
+      center={[focus.lat, focus.lng]}
+      radius={RADIUS_KM * 1000}
+      interactive={false}
+      pathOptions={{ color: focus.color, weight: 2, dashArray: '6 6', fillColor: focus.color, fillOpacity: 0.08 }}
+    />
+  );
 }
 
 // ─── Icons ────────────────────────────────────────────────────
@@ -94,73 +118,18 @@ const rankLabel = (rank) =>
       rank === 3 ? '🥉 #3 Pick' :
         `#${rank} Pick`;
 
-// ─── Human-readable labels for the raw feature names the model returns
-// in Top_Positive_Drivers / Top_Negative_Drivers — a business user should
-// never see "cnt_health" or "income_property_ratio" verbatim.
-const FEATURE_LABELS = {
-  cnt_food: 'Restaurants & Cafés Nearby',
-  cnt_retail: 'Retail Shops Nearby',
-  cnt_education: 'Schools & Colleges Nearby',
-  cnt_health: 'Clinics & Pharmacies Nearby',
-  cnt_leisure: 'Parks & Leisure Nearby',
-  cnt_transport: 'Transport Links Nearby',
-  cnt_finance: 'Banks & ATMs Nearby',
-  cnt_hospitality: 'Hotels Nearby',
-  cnt_civic: 'Civic Amenities Nearby',
-  Population: 'Local Population',
-  Income: 'Local Income Level',
-  Nearest_Store_km: 'Distance to Nearest Own Store',
-  stores_2km: 'Own Stores Within 2km',
-  stores_5km: 'Own Stores Within 5km',
-  Cannibalization_Score: 'Self-Cannibalization Risk',
-  Nearby_Store_Avg_Sales: 'Nearby Stores\' Sales Performance',
-  Competitor_2km: 'Competitor Shops Within 2km',
-  Competitor_5km: 'Competitor Shops Within 5km',
-  dist_to_nearest_road_m: 'Road Accessibility',
-  is_commercial: 'Commercial Zoning',
-  is_residential: 'Residential Zoning',
-  is_industrial: 'Industrial Zoning',
-  is_agricultural: 'Agricultural Zoning',
-  is_natural: 'Natural/Undeveloped Land',
-  income_property_ratio: 'Income-to-Property-Cost Ratio',
-  avg_property_price_3km: 'Property Price (3km avg)',
-  property_cost_index: 'Property Cost Index',
-  population_commercial_score: 'Population × Commercial Fit',
-  amenity_growth_score: 'Amenity Growth Trend',
-  market_saturation_score: 'Market Saturation',
-  franchise_density_score: 'Franchise Density',
-};
-const readableFeature = (raw) => FEATURE_LABELS[raw?.trim()] || raw;
-const readableFeatureList = (csv) =>
-  (csv || '').split(',').map((f) => readableFeature(f.trim())).filter(Boolean).join(', ');
-
-const VERDICT_STYLE = {
-  'Strong Candidate':          { bg: '#DCFCE7', text: '#166534', border: '#86EFAC', icon: '✅' },
-  'Promising Candidate':       { bg: '#DBEAFE', text: '#1E40AF', border: '#93C5FD', icon: '👍' },
-  'Viable — Review Cautions':  { bg: '#FEF3C7', text: '#92400E', border: '#FCD34D', icon: '⚠️' },
-  'Not Recommended':           { bg: '#FEE2E2', text: '#991B1B', border: '#FCA5A5', icon: '⛔' },
-};
-
 // ─── Light-theme popup card (unchanged) ────────────────────────
 function InfoCard({ d, avgSales, rank }) {
-  const { currencySymbol, country } = useAppStore();
+  const { currencySymbol, country, results } = useAppStore();
+  // Only show competitor counts when a competitor file was loaded.
+  const hasCompetitors = (results?.competitors?.length || 0) > 0;
 
   const fmt = (n) => {
     if (n == null) return '—';
     return n.toLocaleString(country === 'India' ? 'en-IN' : 'en-US', { maximumFractionDigits: 0 });
   };
 
-  const cur = (val) => {
-    if (val == null) return '—';
-    if (country === 'India') {
-      if (val >= 10000000) return `${currencySymbol}${(val / 10000000).toFixed(2)} Cr`;
-      if (val >= 100000) return `${currencySymbol}${(val / 100000).toFixed(1)} L`;
-      return `${currencySymbol}${fmt(val)}`;
-    }
-    if (val >= 1000000) return `${currencySymbol}${(val / 1000000).toFixed(2)} M`;
-    if (val >= 1000) return `${currencySymbol}${(val / 1000).toFixed(1)} K`;
-    return `${currencySymbol}${fmt(val)}`;
-  };
+  const cur = useMoney();
 
   const typeLabel = d.type === 'prediction' ? (rank ? rankLabel(rank) : 'Candidate')
     : d.type === 'store' ? 'Existing Store'
@@ -179,7 +148,7 @@ function InfoCard({ d, avgSales, rank }) {
     [d.type === 'store' ? 'Total Revenue' : 'Est. Revenue', cur(d.revenue)],
     ['Population', d.population != null ? fmt(d.population) : null],
     ['Avg Income', d.income > 0 ? cur(d.income) : null],
-    ['Property Price', d.avg_property_price_3km > 0 ? cur(d.avg_property_price_3km) : (d.avg_property_price_5km > 0 ? cur(d.avg_property_price_5km) : 'N/A')],
+    ['Property Price', d.avg_property_price_3km > 0 ? cur(d.avg_property_price_3km) : (d.avg_property_price_5km > 0 ? cur(d.avg_property_price_5km) : null)],
     ['Nearest Store', d.nearest_store ? `${d.nearest_store} (${d.nearest_store_km?.toFixed(1)} km)` : null],
     ['Business Unit', d.bu_name || null],
     ['BU Distance', (['store', 'prediction', 'request'].includes(d.type) && d.bu_name) ? `${d.bu_dist_km?.toFixed(1)} km` : null],
@@ -211,13 +180,8 @@ function InfoCard({ d, avgSales, rank }) {
             <div style={{ fontSize: 13, fontWeight: 800, color: '#fff', marginTop: 3 }}>
               {d.verdict}
             </div>
-            {d.score > 0 && (
-              <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.65)', marginTop: 2 }}>
-                Score: {d.score?.toFixed(1)}/100 (archetype-similarity index)
-              </div>
-            )}
           </div>
-        ) : d.score > 0 && (
+        ) : d.type !== 'prediction' && d.score > 0 && (
           <div style={{ fontSize: 22, fontWeight: 900, color: '#fff', marginTop: 4 }}>
             {d.score?.toFixed(1)}<span style={{ fontSize: 11, fontWeight: 500 }}>/100</span>
           </div>
@@ -232,78 +196,25 @@ function InfoCard({ d, avgSales, rank }) {
           </div>
         ))}
 
-        {d.type === 'prediction' && d.verdict && (
-          <div style={{ marginTop: 10, paddingTop: 10, borderTop: '1px solid #F3F4F6' }}>
-            <div style={{ fontSize: 9, fontWeight: 700, color: '#9CA3AF', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 8 }}>
-              Why This Rating
-            </div>
-
-            {d.caution_reasons && (
-              <div style={{ fontSize: 10.5, color: '#92400E', background: '#FFFBEB', border: '1px solid #FDE68A',
-                            borderRadius: 6, padding: '6px 8px', marginBottom: 8, lineHeight: 1.4 }}>
-                ⚠️ {d.caution_reasons}
-              </div>
-            )}
-
-            {d.top_positive_drivers && (
-              <div style={{ fontSize: 10.5, marginBottom: 4 }}>
-                <span style={{ color: '#16A34A', fontWeight: 700 }}>Helping this score: </span>
-                <span style={{ color: '#374151' }}>{readableFeatureList(d.top_positive_drivers)}</span>
-              </div>
-            )}
-            {d.top_negative_drivers && (
-              <div style={{ fontSize: 10.5, marginBottom: 8 }}>
-                <span style={{ color: '#DC2626', fontWeight: 700 }}>Hurting this score: </span>
-                <span style={{ color: '#374151' }}>{readableFeatureList(d.top_negative_drivers)}</span>
-              </div>
-            )}
-
-            {d.nearby_store_count > 0 && (
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, padding: '4px 0',
-                            borderTop: '1px solid #F3F4F6' }}>
-                <span style={{ color: '#6B7280' }}>
-                  Nearby Stores' Avg Sales ({d.nearby_store_count} within 5km)
-                  {d.nearby_underperformance_flag && ' ⚠️'}
-                </span>
-                <span style={{ fontWeight: 700, color: d.nearby_underperformance_flag ? '#DC2626' : '#111827' }}>
-                  {cur(d.nearby_store_avg_sales)}
-                </span>
-              </div>
-            )}
-
-            {d.profitability_flag && d.profitability_flag !== 'Insufficient Data' && (
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, padding: '4px 0' }}>
-                <span style={{ color: '#6B7280' }}>Cost vs. Revenue Signal</span>
-                <span style={{
-                  fontWeight: 700,
-                  color: d.profitability_flag === 'Cost-Heavy' ? '#DC2626'
-                       : d.profitability_flag === 'Cost-Efficient' ? '#16A34A' : '#111827',
-                }}>
-                  {d.profitability_flag}
-                </span>
-              </div>
-            )}
-
-            {d.comparable_stores && (
-              <div style={{ marginTop: 6 }}>
-                <div style={{ fontSize: 9.5, fontWeight: 700, color: '#9CA3AF', marginBottom: 3 }}>COMPARABLE EXISTING STORES</div>
-                <div style={{ fontSize: 10, color: '#4B5563', lineHeight: 1.5 }}>
-                  {d.comparable_stores.split(';').slice(0, 3).map((s) => s.trim()).join(' · ')}
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-
-        {d.total_amenities != null && (
+        {(d.amenities_2km || d.total_amenities != null) && (
           <div style={{ marginTop: 10, paddingTop: 8, borderTop: '1px solid #F3F4F6' }}>
-            <div style={{ fontSize: 9, fontWeight: 700, color: '#9CA3AF', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 8 }}>Key Amenities (10km)</div>
+            <div style={{ fontSize: 9, fontWeight: 700, color: '#9CA3AF', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 8 }}>Key Amenities ({d.amenities_2km ? '2km' : '10km'})</div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4px 16px' }}>
               {[
-                ['🍽️ Food', d.cnt_food], ['🛒 Retail', d.cnt_retail],
-                ['🏫 Education', d.cnt_education], ['🏥 Health', d.cnt_health],
-                ['🏨 Hospitality', d.cnt_hospitality], ['🏛️ Civic', d.cnt_civic],
-                ['⚔️ Competitors (2km)', d.competitor_2km], ['⚔️ Competitors (5km)', d.competitor_5km],
+                ...(d.amenities_2km
+                  ? [
+                      ['🍽️ Food', d.amenities_2km.food], ['🛒 Retail', d.amenities_2km.retail],
+                      ['🏫 Education', d.amenities_2km.education], ['🏥 Health', d.amenities_2km.health],
+                      ['🏨 Hospitality', d.amenities_2km.hospitality], ['🏛️ Civic', d.amenities_2km.civic],
+                    ]
+                  : [
+                      ['🍽️ Food', d.cnt_food], ['🛒 Retail', d.cnt_retail],
+                      ['🏫 Education', d.cnt_education], ['🏥 Health', d.cnt_health],
+                      ['🏨 Hospitality', d.cnt_hospitality], ['🏛️ Civic', d.cnt_civic],
+                    ]),
+                ...(hasCompetitors
+                  ? [['⚔️ Competitors (2km)', d.competitor_2km], ['⚔️ Competitors (5km)', d.competitor_5km]]
+                  : []),
               ]
                 .filter(([, v]) => v != null)
                 .map(([lbl, cnt]) => (
@@ -330,21 +241,79 @@ function InfoCard({ d, avgSales, rank }) {
   );
 }
 
-// v3.5.4: Amenity category styles (colored border + emoji)
-const getAmenityStyle = (type) => {
-  if (['hospital', 'clinic', 'pharmacy'].includes(type))
-    return { color: '#DC2626', emoji: '🏥', label: 'Healthcare' };
-  if (['school', 'college', 'university'].includes(type))
-    return { color: '#2563EB', emoji: type === 'school' ? '🏫' : '🎓', label: 'Education' };
-  if (['restaurant', 'fast_food', 'cafe'].includes(type))
-    return { color: '#EA580C', emoji: type === 'cafe' ? '☕' : '🍽️', label: 'Food' };
-  if (['supermarket', 'mall', 'department_store'].includes(type))
-    return { color: '#7C3AED', emoji: type === 'supermarket' ? '🛒' : '🏬', label: 'Retail' };
-  return { color: '#6B7280', emoji: '📍', label: 'Other' };
+// Amenity styles by category (colored border + emoji). Accepts either a
+// specific OSM tag ("school", "pharmacy") or a bucket ("education", "health").
+const AMENITY_CATEGORY_STYLE = {
+  health:      { color: '#DC2626', emoji: '🏥', label: 'Healthcare' },
+  education:   { color: '#2563EB', emoji: '🏫', label: 'Education' },
+  food:        { color: '#EA580C', emoji: '🍽️', label: 'Food & Drink' },
+  retail:      { color: '#7C3AED', emoji: '🛒', label: 'Retail' },
+  leisure:     { color: '#16A34A', emoji: '🌳', label: 'Park / Leisure' },
+  finance:     { color: '#0891B2', emoji: '🏦', label: 'Bank / ATM' },
+  hospitality: { color: '#DB2777', emoji: '🏨', label: 'Hotel' },
+  civic:       { color: '#475569', emoji: '🏛️', label: 'Civic' },
+  transport:   { color: '#CA8A04', emoji: '🚌', label: 'Transport' },
+};
+const TYPE_TO_CATEGORY = {
+  hospital: 'health', clinic: 'health', pharmacy: 'health',
+  school: 'education', college: 'education', university: 'education',
+  restaurant: 'food', fast_food: 'food', cafe: 'food',
+  supermarket: 'retail', mall: 'retail', department_store: 'retail',
+  park: 'leisure', bank: 'finance', atm: 'finance', bus_station: 'transport',
+};
+const TYPE_EMOJI = { cafe: '☕', college: '🎓', university: '🎓', mall: '🏬', department_store: '🏬', atm: '🏧' };
+
+const getAmenityStyle = (type, category) => {
+  const t = (type || '').toLowerCase();
+  const cat = (category || TYPE_TO_CATEGORY[t] || t || '').toLowerCase();
+  const base = AMENITY_CATEGORY_STYLE[cat] || { color: '#6B7280', emoji: '📍', label: 'Amenity' };
+  return { ...base, emoji: TYPE_EMOJI[t] || base.emoji };
 };
 
-const amenityIcon = (type) => {
-  const { color, emoji } = getAmenityStyle(type);
+// Name if the data has one, else a readable type ("Fast food", "School"),
+// else the category label — never "None".
+const amenityLabel = (d) => {
+  const name = (d.name || '').trim();
+  if (name && !['none', 'nan', 'null'].includes(name.toLowerCase())) return name;
+  const t = (d.type || '').trim();
+  if (t && !['none', 'nan', 'null'].includes(t.toLowerCase()) && !AMENITY_CATEGORY_STYLE[t.toLowerCase()]) {
+    const pretty = t.replace(/_/g, ' ');
+    return pretty.charAt(0).toUpperCase() + pretty.slice(1);
+  }
+  return getAmenityStyle(d.type, d.category).label;
+};
+
+// Google Maps link: the exact listing when we have its place ID
+// (West Bengal data), otherwise a pin at the amenity's coordinates.
+const amenityMapsUrl = (d) => (d.place_id
+  ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(d.name || amenityLabel(d))}&query_place_id=${d.place_id}`
+  : `https://www.google.com/maps/search/?api=1&query=${d.lat},${d.lng}`);
+
+function AmenityCard({ d }) {
+  const { color, emoji, label } = getAmenityStyle(d.type, d.category);
+  const title = amenityLabel(d);
+  const t = (d.type || '').replace(/_/g, ' ');
+  const typeText = t && t.toLowerCase() !== title.toLowerCase() && t.toLowerCase() !== (d.category || '').toLowerCase()
+    ? t.charAt(0).toUpperCase() + t.slice(1) : null;
+  return (
+    <div style={{ fontFamily: 'Inter,system-ui,sans-serif', minWidth: 200, padding: '10px 12px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 10, fontWeight: 700, color, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+        <span style={{ fontSize: 13 }}>{emoji}</span>{label}{typeText ? ` · ${typeText}` : ''}
+      </div>
+      <div style={{ fontSize: 13, fontWeight: 800, color: '#111827', marginTop: 4, lineHeight: 1.3 }}>{title}</div>
+      <a
+        href={amenityMapsUrl(d)} target="_blank" rel="noopener noreferrer"
+        style={{ display: 'inline-block', marginTop: 8, fontSize: 11, fontWeight: 700, color: '#fff',
+                 background: '#6C4CF1', padding: '5px 10px', borderRadius: 6, textDecoration: 'none' }}
+      >
+        🗺️ Open in Google Maps
+      </a>
+    </div>
+  );
+}
+
+const amenityIcon = (type, category) => {
+  const { color, emoji } = getAmenityStyle(type, category);
   return L.divIcon({
     html: `<div style="
       width:18px;height:18px;border-radius:50%;
@@ -367,11 +336,19 @@ export default function MapContainer_() {
     currencySymbol, country, mapStoreFilter,
   } = useAppStore();
   const center = stateConfig?.center || [20, 78];
+  const money = useMoney();
+  const [focus, setFocus] = useState(null); // { lat, lng, color } of the clicked marker
+  const [openAmenity, setOpenAmenity] = useState(null); // amenity whose popup is open
+  const focusOn = (d, color) => (e) => {
+    setFocus({ lat: d.lat, lng: d.lng, color });
+    const map = e.target._map;
+    if (map && map.getZoom() < RADIUS_MIN_ZOOM) map.flyTo([d.lat, d.lng], RADIUS_FOCUS_ZOOM, { duration: 0.8 });
+  };
   const zoom = stateConfig?.zoom || 6;
 
   const { stores, requests, predictions, business_units, amenities, real_estate, competitors, avgSales } = useMemo(() => {
     const allStores = results?.stores || [];
-    const allPreds = results?.top_picks || [];
+    const allPreds = (results?.top_picks || []).filter(p => p.verdict !== 'Not Recommended');
 
     const totalSales = allStores.reduce((sum, s) => sum + (s.revenue || 0), 0);
     const avg = allStores.length > 0 ? totalSales / allStores.length : 0;
@@ -420,6 +397,7 @@ export default function MapContainer_() {
     >
       <ZoomControl position="bottomright" />
       <FlyToLocation />
+      <FocusRadius focus={focus} onClear={() => setFocus(null)} />
       {/* Light CartoDB tile — v8.3: CARTO now requires an API key on all
           raster tile requests (a platform-wide change, not specific to
           this app — free key at https://carto.com/basemaps/apikey).
@@ -435,15 +413,29 @@ export default function MapContainer_() {
       {(mapLayers.amenities ?? true) && amenities.length > 0 && (
         <MarkerClusterGroup chunkedLoading maxClusterRadius={50}>
           {amenities.map((d, i) => (
-            <Marker key={`am-${i}`} position={[d.lat, d.lng]} icon={amenityIcon(d.type)}>
+            <Marker key={`am-${i}`} position={[d.lat, d.lng]} icon={amenityIcon(d.type, d.category)}
+              eventHandlers={{ click: () => setOpenAmenity(d) }}>
               <Tooltip sticky direction="top">
                 <span style={{ fontFamily: 'Inter', fontSize: 11, fontWeight: 600, color: '#111827' }}>
-                  {d.name || d.type.replace('_', ' ')}
+                  {amenityLabel(d)}
                 </span>
               </Tooltip>
             </Marker>
           ))}
         </MarkerClusterGroup>
+      )}
+
+      {/* One shared popup for whichever amenity was clicked (a Popup per
+          marker would mean tens of thousands of popup objects). */}
+      {openAmenity && (
+        <Popup
+          position={[openAmenity.lat, openAmenity.lng]}
+          offset={[0, -8]}
+          maxWidth={260}
+          eventHandlers={{ remove: () => setOpenAmenity(null) }}
+        >
+          <AmenityCard d={openAmenity} />
+        </Popup>
       )}
 
       {/* ── Existing Stores (3-state by performance) ──────────────── */}
@@ -459,7 +451,8 @@ export default function MapContainer_() {
           classification === 'above' ? 'Above network avg' :
             classification === 'below' ? 'Below network avg' : 'On target';
         return (
-          <Marker key={`store-${i}`} position={[d.lat, d.lng]} icon={storeMarkerIcon(classification)}>
+          <Marker key={`store-${i}`} position={[d.lat, d.lng]} icon={storeMarkerIcon(classification)}
+            eventHandlers={{ click: focusOn(d, color) }}>
             <Popup maxWidth={300}><InfoCard d={d} avgSales={avgSales} /></Popup>
             <Tooltip sticky direction="top">
               <div style={{ fontFamily: 'Inter' }}>
@@ -495,6 +488,7 @@ export default function MapContainer_() {
             position={[d.lat, d.lng]}
             icon={rankMarkerIcon(rank)}
             zIndexOffset={rank <= 3 ? 1000 : 500}
+            eventHandlers={{ click: focusOn(d, color) }}
           >
             <Popup maxWidth={300}><InfoCard d={d} avgSales={avgSales} rank={rank} /></Popup>
             <Tooltip sticky direction="top">
@@ -503,7 +497,7 @@ export default function MapContainer_() {
                   {rankLabel(rank)}
                 </div>
                 <div style={{ fontSize: 11, color: '#6B7280', marginTop: 2 }}>
-                  Score {d.score?.toFixed(1)}/100 · {d.name}
+                  {d.name}
                 </div>
               </div>
             </Tooltip>
@@ -582,7 +576,7 @@ export default function MapContainer_() {
               <div style={{ fontFamily: 'Inter', minWidth: 120 }}>
                 <div style={{ fontWeight: 800, fontSize: 13, color }}>Real Estate Data</div>
                 <div style={{ fontSize: 11, color: '#6B7280', marginTop: 2 }}>
-                  {d.price ? `Price: ${currencySymbol || ''}${Math.round(d.price).toLocaleString()}` : d.rent ? `Rent: ${currencySymbol || ''}${Math.round(d.rent).toLocaleString()}` : 'Price/Rent: N/A'}
+                  {d.price ? `Price: ${money(d.price)}` : d.rent ? `Rent: ${money(d.rent)}` : 'Price/Rent: N/A'}
                 </div>
                 <div style={{ fontSize: 11, color: '#6B7280' }}>Cost Index: {costIndex.toFixed(1)}</div>
                 <div style={{ fontSize: 11, color: '#6B7280' }}>Growth Score: {growthScore.toFixed(1)}</div>

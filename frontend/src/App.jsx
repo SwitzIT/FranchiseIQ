@@ -9,14 +9,18 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 
 function AuthenticatedApp() {
   const step = useAppStore(s => s.step);
+  const { user, autoSelectFailed } = useAuth();
   const isDashboard = step === 'dashboard';
+  // Users with an assigned country never see the Country picker: while
+  // their market is being selected, show only the loading overlay.
+  const autoSelectingCountry = step === 'country' && !!user?.country && !autoSelectFailed;
 
   return (
     <>
       <AnimatePresence>
         <LoadingOverlay key="loading" />
       </AnimatePresence>
-      {isDashboard ? <DashboardPage /> : <HomePage />}
+      {isDashboard ? <DashboardPage /> : autoSelectingCountry ? <div className="min-h-screen w-full" /> : <HomePage />}
     </>
   );
 }

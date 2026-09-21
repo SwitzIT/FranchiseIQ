@@ -1,28 +1,13 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Sparkles, TrendingUp, MapPin, Users, Target, ArrowRight, ChevronRight } from 'lucide-react';
+import { Sparkles, TrendingUp, MapPin, Users, ArrowRight, ChevronRight } from 'lucide-react';
 import useAppStore from '../store/useAppStore';
-
-function ScorePill({ score }) {
-  const color =
-    score >= 80 ? { text: '#22C55E', bg: '#DCFCE7', border: '#86EFAC' } :
-    score >= 60 ? { text: '#F59E0B', bg: '#FEF3C7', border: '#FCD34D' } :
-                  { text: '#EF4444', bg: '#FEE2E2', border: '#FCA5A5' };
-  return (
-    <span
-      className="text-xs font-bold px-2.5 py-1 rounded-lg border tabular-nums"
-      style={{ color: color.text, backgroundColor: color.bg, borderColor: color.border }}
-    >
-      {score?.toFixed(0)}<span className="font-normal text-[10px]">/100</span>
-    </span>
-  );
-}
+import { useMoney } from '../utils/money';
 
 const VERDICT_STYLE = {
   'Strong Candidate':          { bg: '#DCFCE7', text: '#166534', icon: '✅' },
   'Promising Candidate':       { bg: '#DBEAFE', text: '#1E40AF', icon: '👍' },
   'Viable — Review Cautions':  { bg: '#FEF3C7', text: '#92400E', icon: '⚠️' },
-  'Not Recommended':           { bg: '#FEE2E2', text: '#991B1B', icon: '⛔' },
 };
 
 function VerdictBadge({ verdict }) {
@@ -40,19 +25,9 @@ function VerdictBadge({ verdict }) {
 
 export default function OpportunityPanel({ onSelectPrediction, selectedPrediction }) {
   const { results, currencySymbol, country } = useAppStore();
-  const picks = results?.top_picks || [];
+  const picks = (results?.top_picks || []).filter(p => p.verdict !== 'Not Recommended');
 
-  const cur = (val) => {
-    if (val == null) return '—';
-    if (country === 'India') {
-      if (val >= 10000000) return `${currencySymbol}${(val / 10000000).toFixed(2)} Cr`;
-      if (val >= 100000)   return `${currencySymbol}${(val / 100000).toFixed(1)} L`;
-      return `${currencySymbol}${val.toLocaleString('en-IN', { maximumFractionDigits: 0 })}`;
-    }
-    if (val >= 1000000) return `${currencySymbol}${(val / 1000000).toFixed(2)} M`;
-    if (val >= 1000)    return `${currencySymbol}${(val / 1000).toFixed(1)} K`;
-    return `${currencySymbol}${val.toLocaleString('en-US', { maximumFractionDigits: 0 })}`;
-  };
+  const cur = useMoney();
 
   if (!picks.length) {
     return (
@@ -122,8 +97,6 @@ export default function OpportunityPanel({ onSelectPrediction, selectedPredictio
                       <p className="text-[11px] text-ink-muted truncate mt-0.5">{pick.address}</p>
                     )}
                   </div>
-
-                  <ScorePill score={pick.score} />
                 </div>
 
                 {pick.caution_reasons && (
@@ -150,13 +123,6 @@ export default function OpportunityPanel({ onSelectPrediction, selectedPredictio
                       icon={<MapPin size={11} />}
                       label="Nearest Store"
                       value={`${pick.nearest_store_km.toFixed(1)} km`}
-                    />
-                  )}
-                  {pick.score != null && (
-                    <MetricItem
-                      icon={<Target size={11} />}
-                      label="Demand Score"
-                      value={`${pick.score.toFixed(1)}`}
                     />
                   )}
                 </div>

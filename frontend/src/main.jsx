@@ -2,6 +2,11 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { Toaster } from 'react-hot-toast';
 import App from './App';
+// Leaflet styles bundled with the app (previously loaded from unpkg.com —
+// if that CDN was slow or blocked the map rendered as scattered tiles).
+import 'leaflet/dist/leaflet.css';
+import 'leaflet.markercluster/dist/MarkerCluster.css';
+import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
 import './index.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(

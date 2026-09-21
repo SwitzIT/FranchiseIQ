@@ -68,7 +68,7 @@ def distance_penalty(d):
     else: return 1.0
 
 
-def _score_and_flag(df: pd.DataFrame, model, has_bu: bool) -> pd.DataFrame:
+def _score_and_flag(df: pd.DataFrame, model, has_bu: bool, reference_scores=None) -> pd.DataFrame:
     """Runs the trained model + every guardrail/flag/verdict on df, in the
     correct order. Used for the initial grid AND again after snapping —
     the snap step moves coordinates, so everything scored against the
@@ -94,8 +94,10 @@ def _score_and_flag(df: pd.DataFrame, model, has_bu: bool) -> pd.DataFrame:
 
     df = df.sort_values("Final_Score", ascending=False).reset_index(drop=True)
 
-    # Plain-language verdict (v6.2)
-    df = _apply_verdict(df)
+    # Plain-language verdict (v6.2). reference_scores = the Final_Score of
+    # every candidate in the full grid, so a pick's rating reflects its rank
+    # among ALL candidate locations, not just among the handful of picks.
+    df = _apply_verdict(df, reference_scores=reference_scores)
     return df
 
 
@@ -166,6 +168,18 @@ def run_pipeline(
 
     # v5.0 — local competitor density (Mio_competitor.xlsx), no live Places API
     competitors_df = load_competitors(country, state)
+    # The competitor files cover several regions combined; keep only points
+    # inside this state's bounding box (plus ~11 km margin so counts near the
+    # border stay correct). A state with no competitor data of its own then
+    # gets an empty list, and the Competitors map layer is hidden.
+    gb = cfg.get("grid_bounds")
+    if gb and competitors_df is not None and not competitors_df.empty \
+            and {"Latitude", "Longitude"} <= set(competitors_df.columns):
+        m = 0.1
+        lat = pd.to_numeric(competitors_df["Latitude"], errors="coerce")
+        lng = pd.to_numeric(competitors_df["Longitude"], errors="coerce")
+        in_box = lat.between(gb[0] - m, gb[1] + m) & lng.between(gb[2] - m, gb[3] + m)
+        competitors_df = competitors_df[in_box].reset_index(drop=True)
 
     # v3.7 — OSM roads & landuse. OFF by default (v5.0): set
     # ENABLE_OSM_GEO_FEATURES=true only if you want this extra signal and are
@@ -222,30 +236,43 @@ def run_pipeline(
         log.info(f"[Calibration] using min_cluster_threshold={min_cluster_threshold} (max of 5 floor and Mio p10)")
 
         viable_df = _filter_viable_candidates(cands_df, min_amenities=5, min_population=1000)
-        diverse_df = _select_diverse_top_picks(viable_df, n=top_n * 3, min_distance_km=15.0)
-        snapped_df = _snap_or_drop_to_dense_cluster(diverse_df, amenities_gdf,
-                                                     min_cluster_size=min_cluster_threshold,
-                                                     cluster_radius_m=500, hex_half_km=3.0)
+        reference_scores = cands_df["Final_Score"] if "Final_Score" in cands_df.columns else None
 
-        # ── v6.2 — RE-ENRICH + RE-SCORE at the SNAPPED coordinates ──────
-        # Snapping moves each pick's lat/lon to a real nearby amenity
-        # anchor point — verified up to ~3km from the original grid point
-        # it was scored at. Every number shown for that pin (amenities,
-        # nearby-store performance, revenue, drivers, guardrails) must
-        # reflect the FINAL displayed coordinate, not the pre-snap one, or
-        # the explanation doesn't match the map. Re-running the same
-        # enrichment + scoring here guarantees that.
-        if snapped_df is not None and len(snapped_df) > 0:
-            snapped_df = _enrich(snapped_df, demographics_df, amenities_gdf, re_gdf, stores_df, cfg,
-                                 is_store=False, roads_gdf=roads_gdf, landuse_gdf=landuse_gdf,
-                                 competitors_df=competitors_df)
-            if has_bu:
-                snapped_df = assign_business_units(snapped_df, bu_df)
-            if "Population" in snapped_df.columns:
-                snapped_df["Population"] = snapped_df["Population"].clip(upper=500000)
-            snapped_df = _score_and_flag(snapped_df, model, has_bu)
+        # v10 — always try to return top_n picks. Many grid points get dropped
+        # by the snap step (no dense amenity cluster nearby), and "Not
+        # Recommended" picks are removed, so instead of a fixed pool of
+        # top_n*3 we consider every viable candidate and, if there are still
+        # fewer than top_n, relax the minimum spacing between picks.
+        top_df = None
+        for min_km in (15.0, 10.0, 7.0, 5.0, 3.0):
+            diverse_df = _select_diverse_top_picks(viable_df, n=len(viable_df), min_distance_km=min_km)
+            snapped_df = _snap_or_drop_to_dense_cluster(diverse_df, amenities_gdf,
+                                                         min_cluster_size=min_cluster_threshold,
+                                                         cluster_radius_m=500, hex_half_km=3.0)
 
-        top_df = snapped_df.head(top_n).reset_index(drop=True)
+            # ── v6.2 — RE-ENRICH + RE-SCORE at the SNAPPED coordinates ──────
+            # Snapping moves each pick to a real nearby amenity anchor (up to
+            # ~3km away). Every number shown for that pin must reflect the
+            # FINAL displayed coordinate, so enrichment + scoring are re-run.
+            if snapped_df is not None and len(snapped_df) > 0:
+                snapped_df = _enrich(snapped_df, demographics_df, amenities_gdf, re_gdf, stores_df, cfg,
+                                     is_store=False, roads_gdf=roads_gdf, landuse_gdf=landuse_gdf,
+                                     competitors_df=competitors_df)
+                if has_bu:
+                    snapped_df = assign_business_units(snapped_df, bu_df)
+                if "Population" in snapped_df.columns:
+                    snapped_df["Population"] = snapped_df["Population"].clip(upper=500000)
+                snapped_df = _score_and_flag(snapped_df, model, has_bu, reference_scores=reference_scores)
+
+                # Never surface "Not Recommended" candidates as predictions.
+                snapped_df = _drop_not_recommended(snapped_df)
+                # Two grid points can snap to the same town — keep picks spaced.
+                snapped_df = _select_diverse_top_picks(snapped_df, n=len(snapped_df), min_distance_km=min_km)
+
+            top_df = (snapped_df if snapped_df is not None else cands_df.iloc[0:0]).head(top_n).reset_index(drop=True)
+            log.info(f"[Pipeline] min spacing {min_km:g} km -> {len(top_df)} recommended picks")
+            if len(top_df) >= top_n:
+                break
 
         # v9.1 — rename to "Candidate 1", "Candidate 2"... based on FINAL
         # rank (after snap + re-score), matching the #1/#2/#3 numbering
@@ -259,8 +286,8 @@ def run_pipeline(
     else:
         # UPLOADED MODE: honest scoring of user-supplied locations - no filtering, no snap
         log.info(f"[Pipeline] Uploaded mode - scoring {len(cands_df)} user-supplied locations as-is (no viability filter, no diversity, no snap)")
-        top_df = cands_df.head(top_n).reset_index(drop=True)
-    
+        top_df = _drop_not_recommended(cands_df).head(top_n).reset_index(drop=True)
+
     if len(top_df) < top_n:
         log.warning(f"[Pipeline] Only found {len(top_df)} candidates. Requested top {top_n}.")
 
@@ -274,12 +301,23 @@ def run_pipeline(
             g = row.geometry
             pt = g if g.geom_type == 'Point' else g.centroid
             
-            cat = row.get("amenity") or row.get("shop") or row.get("leisure")
+            def _clean(v):
+                # NaN / None / "None" / "nan" -> "" so the map never shows "None"
+                if v is None or (isinstance(v, float) and np.isnan(v)):
+                    return ""
+                v = str(v).strip()
+                return "" if v.lower() in ("none", "nan", "null") else v
+
+            bucket = _clean(row.get("bucket"))
+            osm_type = (_clean(row.get("type")) or _clean(row.get("amenity"))
+                        or _clean(row.get("shop")) or _clean(row.get("leisure")))
             records.append({
                 "lat": safe_float(pt.y),
                 "lng": safe_float(pt.x),
-                "type": str(cat),
-                "name": str(row.get("name", "")),
+                "type": osm_type or bucket,   # specific tag (e.g. "school") if known
+                "category": bucket,           # food / retail / education / health ...
+                "name": _clean(row.get("name")),
+                "place_id": _clean(row.get("place_id")),  # Google Maps place ID, if known
             })
         return records
 
@@ -323,6 +361,13 @@ def run_pipeline(
                 "google_maps_url": str(row.get("Place_URL") or ""),
             })
         return records
+
+    # Popup "Key Amenities" counts use a 2 km radius (the model itself still
+    # scores on the wider BUFFER_RADIUS_M counts in cnt_*).
+    stores_df = _add_display_amenity_counts(stores_df, amenities_gdf)
+    top_df = _add_display_amenity_counts(top_df, amenities_gdf)
+    if requests_df is not None and not requests_df.empty:
+        requests_df = _add_display_amenity_counts(requests_df, amenities_gdf)
 
     region_stats = _compute_region_stats(stores_df, cands_df, demographics_df)
 
@@ -603,7 +648,7 @@ def _apply_profitability_flag(df, cost_col_candidates=("avg_property_price_3km",
     return df
 
 
-def _apply_verdict(df):
+def _apply_verdict(df, reference_scores=None):
     """v6.2 — plain-language recommendation combining the statistical score
     with the explicit guardrail/profitability/OOD flags, so the tool gives
     a clear answer rather than just a bare 0-100 number. Computed on the
@@ -617,13 +662,25 @@ def _apply_verdict(df):
     "this is bad" when it's actually "this is your best available option
     today." Star rating and Verdict are both rank-based, so they stay
     consistent with each other and don't require explaining the scale."""
-    if "Final_Score" not in df.columns or len(df) < 3:
+    ref = None
+    if reference_scores is not None:
+        ref = np.sort(pd.to_numeric(pd.Series(reference_scores), errors="coerce").dropna().to_numpy())
+        if len(ref) < 3:
+            ref = None
+    if "Final_Score" not in df.columns or (ref is None and len(df) < 3):
         df["Verdict"] = "Insufficient Data"
         df["Caution_Reasons"] = ""
         df["Star_Rating"] = 3
         return df
 
-    score_pct = df["Final_Score"].rank(pct=True) * 100.0
+    if ref is not None:
+        # Percentile of each score within the full candidate pool.
+        score_pct = pd.Series(
+            np.searchsorted(ref, df["Final_Score"].to_numpy(), side="right") / len(ref) * 100.0,
+            index=df.index,
+        )
+    else:
+        score_pct = df["Final_Score"].rank(pct=True) * 100.0
     verdicts, reasons_list, stars = [], [], []
     for i in range(len(df)):
         cautions = []
@@ -655,6 +712,56 @@ def _apply_verdict(df):
     df["Caution_Reasons"] = reasons_list
     df["Star_Rating"] = stars
     return df
+
+
+DISPLAY_AMENITY_RADIUS_M = 2000
+
+
+def _add_display_amenity_counts(df, amenities_gdf, radius_m: int = DISPLAY_AMENITY_RADIUS_M):
+    """Adds cnt2km_<bucket> and Total_Amenities_2km columns: the number of
+    amenities within radius_m (exact great-circle distance), shown in the
+    map popups. Leaves the model's cnt_* columns untouched."""
+    if df is None or df.empty or amenities_gdf is None or amenities_gdf.empty \
+            or not {"Latitude", "Longitude"} <= set(df.columns):
+        return df
+    from sklearn.neighbors import BallTree
+    from app.config import AMENITY_BUCKET_NAMES
+
+    geoms = amenities_gdf.geometry
+    pts = [g if g.geom_type == "Point" else g.centroid for g in geoms]
+    am_xy = np.radians(np.array([[p.y, p.x] for p in pts]))
+    buckets = amenities_gdf["bucket"].astype(str).to_numpy()
+    tree = BallTree(am_xy, metric="haversine")
+
+    df = df.copy()
+    lat = pd.to_numeric(df["Latitude"], errors="coerce").to_numpy()
+    lng = pd.to_numeric(df["Longitude"], errors="coerce").to_numpy()
+    ok = ~(np.isnan(lat) | np.isnan(lng))
+    counts = {b: np.zeros(len(df), dtype=int) for b in AMENITY_BUCKET_NAMES}
+    if ok.any():
+        idx = tree.query_radius(np.radians(np.column_stack([lat[ok], lng[ok]])),
+                                r=radius_m / 6_371_008.8)
+        rows = np.flatnonzero(ok)
+        for row, hits in zip(rows, idx):
+            for bkt in buckets[hits]:
+                if bkt in counts:
+                    counts[bkt][row] += 1
+    for b in AMENITY_BUCKET_NAMES:
+        df[f"cnt2km_{b}"] = counts[b]
+    df["Total_Amenities_2km"] = sum(counts.values())
+    return df
+
+
+def _drop_not_recommended(df):
+    """Remove candidates whose verdict is "Not Recommended" so they never
+    appear in the top picks (map markers, filters and the Top Picks sheet)."""
+    if df is None or df.empty or "Verdict" not in df.columns:
+        return df
+    kept = df[df["Verdict"] != "Not Recommended"].reset_index(drop=True)
+    dropped = len(df) - len(kept)
+    if dropped:
+        log.info(f"[Pipeline] Excluded {dropped} 'Not Recommended' candidate(s) from predictions")
+    return kept
 
 
 def _add_adjusted_sales(df):
@@ -713,6 +820,12 @@ def _to_records(df, kind: str):
             "cnt_health":   safe_int(row.get("cnt_health", 0)),
             "cnt_hospitality": safe_int(row.get("cnt_hospitality", 0)),
             "cnt_civic":       safe_int(row.get("cnt_civic", 0)),
+            # 2 km counts for the map popup (see _add_display_amenity_counts)
+            "amenities_2km": ({
+                b: safe_int(row.get(f"cnt2km_{b}", 0))
+                for b in ("food", "retail", "education", "health", "hospitality", "civic",
+                          "leisure", "finance", "transport")
+            } if "Total_Amenities_2km" in row.index else None),
             "competitor_2km":  safe_int(row.get("Competitor_2km", 0)),
             "competitor_5km":  safe_int(row.get("Competitor_5km", 0)),
             "nearby_store_avg_sales": safe_float(row.get("Nearby_Store_Avg_Sales", 0)),

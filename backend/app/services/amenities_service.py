@@ -58,6 +58,12 @@ def get_amenities(country: str, state: str) -> tuple[gpd.GeoDataFrame, bool]:
             gdf = _ensure_crs(gdf)
             if "bucket" not in gdf.columns or gdf.empty:
                 raise ValueError("cached file has no usable 'bucket' data")
+            src = get_amenities_source_path(country, state)
+            if "type" not in gdf.columns and src and src.exists():
+                raise ValueError("cached file predates amenity 'type' labels")
+            if "place_id" not in gdf.columns and src and src.exists() \
+                    and src.suffix.lower() in (".csv", ".xlsx", ".xls"):
+                raise ValueError("cached file predates Google place IDs")
             _MEMORY_CACHE[key] = gdf
             return gdf, True
         except Exception as e:
@@ -183,6 +189,12 @@ def _load_local_file(path: Path) -> gpd.GeoDataFrame:
     df = df[(df[lat_col] != 0) | (df[lon_col] != 0)]
 
     df["bucket"] = _categorize(df)
+    df["type"] = _raw_type(df)
+    # Google Maps place ID (e.g. "ChIJ344e...") from a "Place URL" column, so
+    # the map can open the exact listing for each amenity.
+    url_col = next((c for c in df.columns if c.strip().lower() in ("place url", "place_url", "url", "google maps url")), None)
+    df["place_id"] = (df[url_col].astype(str).str.extract(r"!19s(ChIJ[\w-]+)")[0]
+                      if url_col else None)
     n_before = len(df)
     df = df[df["bucket"].notna()].copy()
     n_dropped = n_before - len(df)
@@ -194,7 +206,9 @@ def _load_local_file(path: Path) -> gpd.GeoDataFrame:
     gdf = gpd.GeoDataFrame(
         {
             "bucket": df["bucket"].values,
-            "name": df[name_col].values if name_col else "",
+            "type": df["type"].values,
+            "place_id": df["place_id"].values,
+            "name": df[name_col].fillna("").astype(str).values if name_col else "",
         },
         geometry=gpd.points_from_xy(df[lon_col], df[lat_col]),
         crs="EPSG:4326",
@@ -227,8 +241,13 @@ def _load_geojson_file(path: Path) -> gpd.GeoDataFrame:
         )
 
     bucket = pd.Series([None] * len(gdf_raw), index=gdf_raw.index)
+    raw_type = pd.Series([None] * len(gdf_raw), index=gdf_raw.index)
     for col in tag_cols:
-        mapped = gdf_raw[col].astype(str).str.strip().str.lower().map(AMENITY_BUCKETS)
+        vals = gdf_raw[col].astype(str).str.strip().str.lower()
+        mapped = vals.map(AMENITY_BUCKETS)
+        # Keep the specific OSM tag (e.g. "school", "pharmacy") alongside the
+        # bucket so the map can label amenities that have no name.
+        raw_type = raw_type.fillna(vals.where(mapped.notna()))
         bucket = bucket.fillna(mapped)
 
     n_before = len(gdf_raw)
@@ -254,7 +273,8 @@ def _load_geojson_file(path: Path) -> gpd.GeoDataFrame:
     out = gpd.GeoDataFrame(
         {
             "bucket": bucket[keep].values,
-            "name": gdf_raw[name_col][keep].values if name_col else "",
+            "type": raw_type[keep].values,
+            "name": gdf_raw[name_col][keep].fillna("").astype(str).values if name_col else "",
         },
         geometry=geoms,
         crs=gdf_raw.crs or "EPSG:4326",
@@ -290,12 +310,37 @@ def _categorize(df: pd.DataFrame) -> pd.Series:
             return None
         text = raw.lower()
         head = re.split(r"\s+in\s+", text, maxsplit=1)[0].strip()
+        # Match on the category part ("hotel" in "hotel in Bankura, West
+        # Bengal") before looking at the whole text. Checking the full text
+        # first matched place names — "Bankura" contains "bank", so hotels,
+        # police stations and post offices there were counted as banks.
+        if head in LOCAL_AMENITY_CATEGORY_BUCKETS:
+            return LOCAL_AMENITY_CATEGORY_BUCKETS[head]
         for keyword, bucket in LOCAL_AMENITY_CATEGORY_BUCKETS.items():
-            if keyword in head or keyword in text:
+            if keyword in head:
+                return bucket
+        for keyword, bucket in LOCAL_AMENITY_CATEGORY_BUCKETS.items():
+            if re.search(rf"\b{re.escape(keyword)}\b", text):
                 return bucket
         return None
 
     return df[cat_col].apply(_match)
+
+
+def _raw_type(df: pd.DataFrame) -> pd.Series:
+    """The specific place type searched for, e.g. "hospital" from
+    "hospital in Kolkata, West Bengal" — kept alongside the bucket so the
+    map can label points and counts can be checked per type."""
+    cat_col = next(
+        (c for c in df.columns if c.strip().lower() in
+         ("category", "type", "type of shop", "amenity", "query")),
+        None,
+    )
+    if cat_col is None:
+        return pd.Series([None] * len(df), index=df.index)
+    head = (df[cat_col].astype(str).str.lower()
+            .str.split(r"\s+in\s+", n=1, regex=True).str[0].str.strip())
+    return head.where(head.isin(list(LOCAL_AMENITY_CATEGORY_BUCKETS)), None)
 
 
 def _save_cache(gdf: gpd.GeoDataFrame, path: Path) -> None:

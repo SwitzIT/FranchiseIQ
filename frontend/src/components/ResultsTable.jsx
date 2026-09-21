@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Trophy, TrendingUp, MapPin, Users, Building2, Star } from 'lucide-react';
 import useAppStore from '../store/useAppStore';
+import { useMoney } from '../utils/money';
 
 const scoreColor = (s) => {
   if (s >= 80) return { text: 'text-green',   bg: 'bg-green/10',   border: 'border-green/30' };
@@ -26,20 +27,7 @@ export default function ResultsTable() {
     return n.toLocaleString(locale, { maximumFractionDigits: 0 });
   };
 
-  const cur = (val) => {
-    if (val == null) return '—';
-    let formatted = '';
-    if (country === 'India') {
-      if (val >= 10000000) formatted = (val / 10000000).toFixed(2) + ' Cr';
-      else if (val >= 100000) formatted = (val / 100000).toFixed(2) + ' L';
-      else formatted = fmt(val);
-    } else {
-      if (val >= 1000000) formatted = (val / 1000000).toFixed(2) + ' M';
-      else if (val >= 1000) formatted = (val / 1000).toFixed(1) + ' K';
-      else formatted = fmt(val);
-    }
-    return `${currencySymbol}${formatted}`;
-  };
+  const cur = useMoney();
 
   if (!picks.length) return null;
 
