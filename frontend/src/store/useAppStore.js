@@ -259,13 +259,14 @@ const useAppStore = create((set, get) => ({
   setResults: (r) => set({ results: r }),
   // ── Map UI State ─────────────────────────────────────────────
   mapLayers: {
+    // Only Existing Stores is on by default; users switch the rest on from the sidebar.
     stores: true,
-    requests: true,
-    predictions: true,
-    businessUnits: true,
-    amenities: true,
-    realEstate: true,
-    competitors: true,   // v8.2: individual competitor points (name + Google Maps link)
+    requests: false,
+    predictions: false,
+    businessUnits: false,
+    amenities: false,
+    realEstate: false,
+    competitors: false,   // v8.2: individual competitor points (name + Google Maps link)
     hexHeatmap: true,   // v2: performance heatmap
     competitorDensity: true,  // v3: competitor hex layer
     untappedDemand: true,   // v3: opportunity hex layer
