@@ -65,6 +65,9 @@ OSM_RETRY_LIMIT   = int(os.getenv("OSM_RETRY_LIMIT",   "2"))   # only used if th
 COUNTRIES: dict = {
     "India": {
         "code": "IN",
+        # [lat_min, lat_max, lon_min, lon_max] — only competitors inside the
+        # logged-in country's box are shown on the map.
+        "bounds": [6.5, 37.5, 68.0, 97.5],
         "currency_symbol": "₹",
         "currency_code": "INR",
         "states": {
@@ -100,6 +103,7 @@ COUNTRIES: dict = {
     },
     "Sri Lanka": {
         "code": "LK",
+        "bounds": [5.8, 9.9, 79.5, 82.0],
         "currency_symbol": "රු",
         "currency_code": "LKR",
         "states": {

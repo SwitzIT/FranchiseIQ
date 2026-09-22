@@ -141,6 +141,31 @@ def parse_uploaded_df(file_bytes: bytes, filename: str) -> pd.DataFrame:
 # ─────────────────────────────────────────────────────────────
 # FULL PIPELINE
 # ─────────────────────────────────────────────────────────────
+def _competitors_in_country(df, country):
+    """Keep competitor points that lie inside the country's bounding box.
+
+    Where a smaller neighbour's box sits inside this country's box (Sri Lanka
+    inside India's), points in the neighbour's box are left out too.
+    Map display only; scoring uses its own state-clipped copy.
+    """
+    if df is None or df.empty or not {"Latitude", "Longitude"} <= set(df.columns):
+        return df
+    from app.config import COUNTRIES
+    own = COUNTRIES.get(country, {}).get("bounds")
+    if not own:
+        return df
+    area = lambda b: (b[1] - b[0]) * (b[3] - b[2])
+    lat = pd.to_numeric(df["Latitude"], errors="coerce")
+    lng = pd.to_numeric(df["Longitude"], errors="coerce")
+    inside = lambda b: lat.between(b[0], b[1]) & lng.between(b[2], b[3])
+    keep = inside(own)
+    for name, c in COUNTRIES.items():
+        b = c.get("bounds")
+        if name != country and b and area(b) < area(own):
+            keep &= ~inside(b)
+    return df[keep].reset_index(drop=True)
+
+
 def run_pipeline(
     country: str,
     state: str,
@@ -168,11 +193,12 @@ def run_pipeline(
 
     # v5.0 — local competitor density (Mio_competitor.xlsx), no live Places API
     competitors_df = load_competitors(country, state)
-    # Every competitor from every file, for the map layer.
-    all_competitors_df = competitors_df
+    # Competitors from every file, limited to the logged-in country, for the
+    # map layer (Indian competitors never appear on the Sri Lanka map).
+    all_competitors_df = _competitors_in_country(competitors_df, country)
     # For scoring and the popup counts, keep only points inside this state's
     # bounding box (plus ~11 km margin so counts near the border stay
-    # correct). The map still shows every competitor (all_competitors_df).
+    # correct). The map shows every competitor in the country (all_competitors_df).
     gb = cfg.get("grid_bounds")
     if gb and competitors_df is not None and not competitors_df.empty \
             and {"Latitude", "Longitude"} <= set(competitors_df.columns):
@@ -380,7 +406,7 @@ def run_pipeline(
         "business_units": _to_records(bu_df, "bu") if has_bu else [],
         "amenities":      _amenities_to_records(amenities_gdf),
         "real_estate":    _real_estate_to_records(re_gdf) if not re_gdf.empty else [],
-        # Map shows competitors from ALL files (any region); scoring and the
+        # Map shows competitors from all files within this country; scoring and the
         # popup counts above use only the ones in/near this state.
         "competitors":    _competitors_to_records(all_competitors_df),
         "competitors_in_state": int(len(competitors_df)) if competitors_df is not None else 0,
