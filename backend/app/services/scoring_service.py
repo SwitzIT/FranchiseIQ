@@ -168,10 +168,11 @@ def run_pipeline(
 
     # v5.0 — local competitor density (Mio_competitor.xlsx), no live Places API
     competitors_df = load_competitors(country, state)
-    # The competitor files cover several regions combined; keep only points
-    # inside this state's bounding box (plus ~11 km margin so counts near the
-    # border stay correct). A state with no competitor data of its own then
-    # gets an empty list, and the Competitors map layer is hidden.
+    # Every competitor from every file, for the map layer.
+    all_competitors_df = competitors_df
+    # For scoring and the popup counts, keep only points inside this state's
+    # bounding box (plus ~11 km margin so counts near the border stay
+    # correct). The map still shows every competitor (all_competitors_df).
     gb = cfg.get("grid_bounds")
     if gb and competitors_df is not None and not competitors_df.empty \
             and {"Latitude", "Longitude"} <= set(competitors_df.columns):
@@ -379,7 +380,10 @@ def run_pipeline(
         "business_units": _to_records(bu_df, "bu") if has_bu else [],
         "amenities":      _amenities_to_records(amenities_gdf),
         "real_estate":    _real_estate_to_records(re_gdf) if not re_gdf.empty else [],
-        "competitors":    _competitors_to_records(competitors_df),
+        # Map shows competitors from ALL files (any region); scoring and the
+        # popup counts above use only the ones in/near this state.
+        "competitors":    _competitors_to_records(all_competitors_df),
+        "competitors_in_state": int(len(competitors_df)) if competitors_df is not None else 0,
         "kpis":           _compute_kpis(stores_df, top_df),
         "model_metrics":  train_metrics,
         "region_stats":   region_stats,

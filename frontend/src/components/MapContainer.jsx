@@ -122,7 +122,7 @@ const rankLabel = (rank) =>
 function InfoCard({ d, avgSales, rank }) {
   const { currencySymbol, country, results } = useAppStore();
   // Only show competitor counts when a competitor file was loaded.
-  const hasCompetitors = (results?.competitors?.length || 0) > 0;
+  const hasCompetitors = (results?.competitors_in_state ?? results?.competitors?.length ?? 0) > 0;
 
   const fmt = (n) => {
     if (n == null) return '—';
