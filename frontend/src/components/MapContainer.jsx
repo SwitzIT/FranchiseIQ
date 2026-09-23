@@ -172,16 +172,7 @@ function InfoCard({ d, avgSales, rank }) {
         </div>
         <div style={{ fontSize: 15, color: '#fff', fontWeight: 800, marginTop: 4, lineHeight: 1.3 }}>{d.name || 'Unknown'}</div>
 
-        {d.type === 'prediction' && d.verdict ? (
-          <div style={{ marginTop: 6 }}>
-            <div style={{ fontSize: 16, letterSpacing: 1, color: '#FDE047', lineHeight: 1 }}>
-              {'★'.repeat(d.star_rating || 3)}{'☆'.repeat(5 - (d.star_rating || 3))}
-            </div>
-            <div style={{ fontSize: 13, fontWeight: 800, color: '#fff', marginTop: 3 }}>
-              {d.verdict}
-            </div>
-          </div>
-        ) : d.type !== 'prediction' && d.score > 0 && (
+        {d.type !== 'prediction' && d.score > 0 && (
           <div style={{ fontSize: 22, fontWeight: 900, color: '#fff', marginTop: 4 }}>
             {d.score?.toFixed(1)}<span style={{ fontSize: 11, fontWeight: 500 }}>/100</span>
           </div>
@@ -213,7 +204,7 @@ function InfoCard({ d, avgSales, rank }) {
                       ['🏨 Hospitality', d.cnt_hospitality], ['🏛️ Civic', d.cnt_civic],
                     ]),
                 ...(hasCompetitors
-                  ? [['⚔️ Competitors (2km)', d.competitor_2km], ['⚔️ Competitors (5km)', d.competitor_5km]]
+                  ? [['🏢 Competitors (2km)', d.competitor_2km], ['🏢 Competitors (5km)', d.competitor_5km]]
                   : []),
               ]
                 .filter(([, v]) => v != null)
@@ -519,7 +510,7 @@ export default function MapContainer_() {
       {mapLayers.competitors && competitors.length > 0 && (
         <MarkerClusterGroup chunkedLoading maxClusterRadius={50}>
           {competitors.map((d, i) => (
-            <Marker key={`comp-${i}`} position={[d.lat, d.lng]} icon={emojiIcon('⚔️', 22)}>
+            <Marker key={`comp-${i}`} position={[d.lat, d.lng]} icon={emojiIcon('🏢', 22)}>
               <Popup maxWidth={280}>
                 <div style={{ fontFamily: 'Inter', minWidth: 200 }}>
                   <div style={{ fontWeight: 800, fontSize: 13, color: '#111827' }}>{d.name}</div>

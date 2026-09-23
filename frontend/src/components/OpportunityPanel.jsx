@@ -4,25 +4,6 @@ import { Sparkles, TrendingUp, MapPin, Users, ArrowRight, ChevronRight } from 'l
 import useAppStore from '../store/useAppStore';
 import { useMoney } from '../utils/money';
 
-const VERDICT_STYLE = {
-  'Strong Candidate':          { bg: '#DCFCE7', text: '#166534', icon: '✅' },
-  'Promising Candidate':       { bg: '#DBEAFE', text: '#1E40AF', icon: '👍' },
-  'Viable — Review Cautions':  { bg: '#FEF3C7', text: '#92400E', icon: '⚠️' },
-};
-
-function VerdictBadge({ verdict }) {
-  if (!verdict) return null;
-  const vs = VERDICT_STYLE[verdict] || VERDICT_STYLE['Promising Candidate'];
-  return (
-    <span
-      className="text-[10px] font-bold px-2 py-0.5 rounded-md"
-      style={{ background: vs.bg, color: vs.text }}
-    >
-      {vs.icon} {verdict}
-    </span>
-  );
-}
-
 export default function OpportunityPanel({ onSelectPrediction, selectedPrediction }) {
   const { results, currencySymbol, country } = useAppStore();
   const picks = (results?.top_picks || []).filter(p => p.verdict !== 'Not Recommended');
@@ -90,9 +71,6 @@ export default function OpportunityPanel({ onSelectPrediction, selectedPredictio
 
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-semibold text-ink truncate">{pick.name}</p>
-                    {pick.verdict && (
-                      <div className="mt-1"><VerdictBadge verdict={pick.verdict} /></div>
-                    )}
                     {pick.address && (
                       <p className="text-[11px] text-ink-muted truncate mt-0.5">{pick.address}</p>
                     )}

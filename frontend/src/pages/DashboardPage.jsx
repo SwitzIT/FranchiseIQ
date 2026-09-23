@@ -5,7 +5,7 @@ import {
   Store, Activity, FileText, Building2,
   MapPin, ChevronDown, ChevronUp, Search, Trophy, LogOut,
   Layers, Eye, EyeOff, TrendingUp, TrendingDown, Filter,
-  Maximize2, Minimize2, X, Menu
+  Maximize2, Minimize2, X, Menu, CalendarRange
 } from 'lucide-react';
 import useAppStore from '../store/useAppStore';
 import AppSidebar, { layerHasData } from '../components/Sidebar';
@@ -263,6 +263,10 @@ function MobileBottomSheet({ children }) {
   );
 }
 
+// Reporting period shown in the header. Change these two lines when the
+// sales data covers a different span.
+const PERIOD_LABEL = 'June 2025 – June 2026';
+
 // ─── Main Dashboard ────────────────────────────────────────────
 export default function DashboardPage() {
   const {
@@ -296,6 +300,13 @@ export default function DashboardPage() {
 
   const cur = useMoney();
 
+  // Existing stores above vs below the network average, with their share of
+  // the network.
+  const avgSales = kpis.avg_sales || 0;
+  const aboveAvg = avgSales > 0 ? stores.filter(s => (s.revenue || 0) >= avgSales).length : 0;
+  const belowAvg = avgSales > 0 ? stores.length - aboveAvg : 0;
+  const pct = (n) => (stores.length ? Math.round((n / stores.length) * 100) : 0);
+
   return (
     <div className="flex h-screen overflow-hidden bg-app-bg">
       {!isFullscreen && (
@@ -326,6 +337,12 @@ export default function DashboardPage() {
                 </>
               )}
             </div>
+
+            <span className="hidden sm:inline-flex items-center gap-1.5 text-[11px] font-semibold text-ink-muted
+                             px-2.5 py-1 rounded-lg bg-app-bg border border-border shrink-0">
+              <CalendarRange size={12} className="text-ink-subtle" />
+              {PERIOD_LABEL}
+            </span>
 
             <div className="flex-1" />
 
@@ -379,12 +396,20 @@ export default function DashboardPage() {
                 delay={0.06}
               />
               <KPICard
-                icon={FileText}
-                label="Avg Predicted Sales"
-                value={cur(kpis.avg_predicted_revenue)}
-                sub="AI estimate"
-                color="#06B6D4"
+                icon={TrendingUp}
+                label="Above Avg Stores"
+                value={aboveAvg}
+                sub={`${pct(aboveAvg)}% of total`}
+                color="#22C55E"
                 delay={0.12}
+              />
+              <KPICard
+                icon={TrendingDown}
+                label="Below Avg Stores"
+                value={belowAvg}
+                sub={`${pct(belowAvg)}% of total`}
+                color="#EF4444"
+                delay={0.18}
               />
               <KPICard
                 icon={MapPin}
