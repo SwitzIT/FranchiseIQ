@@ -11,6 +11,7 @@ Orchestrates the full pipeline:
 Returns top_picks list + full results DataFrame.
 """
 import io
+import os
 import uuid
 import numpy as np
 import pandas as pd
@@ -48,6 +49,11 @@ _RENAME_MAP = {
     "longitude":      "Longitude", "lon": "Longitude", "long": "Longitude",
     "sales":          "Sales",     "sales 2025": "Sales",
     "returns":        "Returns",   "returns 2025": "Returns",
+    # v12 — reporting period carried on the store file
+    "from date":      "From_Date",  "from_date": "From_Date",
+    "start date":     "From_Date",  "period from": "From_Date",
+    "to date":        "To_Date",    "to_date":   "To_Date",
+    "end date":       "To_Date",    "period to": "To_Date",
     "district":       "District",
     "region":         "Region",
     "zone":           "Region",
@@ -112,6 +118,10 @@ def standardise_df(df: pd.DataFrame) -> pd.DataFrame:
     if "Latitude" in df.columns and "Longitude" in df.columns:
         df = df.dropna(subset=["Latitude", "Longitude"])
         df = df[(df["Latitude"] != 0) | (df["Longitude"] != 0)]
+    # v12 — the reporting period the sales figures cover
+    for col in ("From_Date", "To_Date"):
+        if col in df.columns:
+            df[col] = pd.to_datetime(df[col], errors="coerce", dayfirst=True)
     # Default Region to "Unassigned" if not present
     if "Region" not in df.columns:
         df["Region"] = "Unassigned"
@@ -275,7 +285,8 @@ def run_pipeline(
             diverse_df = _select_diverse_top_picks(viable_df, n=len(viable_df), min_distance_km=min_km)
             snapped_df = _snap_or_drop_to_dense_cluster(diverse_df, amenities_gdf,
                                                          min_cluster_size=min_cluster_threshold,
-                                                         cluster_radius_m=500, hex_half_km=3.0)
+                                                         cluster_radius_m=500, hex_half_km=3.0,
+                                                         stores_df=stores_df)
 
             # ── v6.2 — RE-ENRICH + RE-SCORE at the SNAPPED coordinates ──────
             # Snapping moves each pick to a real nearby amenity anchor (up to
@@ -396,6 +407,11 @@ def run_pipeline(
     if requests_df is not None and not requests_df.empty:
         requests_df = _add_display_amenity_counts(requests_df, amenities_gdf)
 
+    # v11 — attach the nearby existing stores so the popup can show them
+    top_df = _attach_nearby_stores(top_df, stores_df)
+    if requests_df is not None and not requests_df.empty:
+        requests_df = _attach_nearby_stores(requests_df, stores_df)
+
     region_stats = _compute_region_stats(stores_df, cands_df, demographics_df)
 
     return {
@@ -411,6 +427,8 @@ def run_pipeline(
         "competitors":    _competitors_to_records(all_competitors_df),
         "competitors_in_state": int(len(competitors_df)) if competitors_df is not None else 0,
         "kpis":           _compute_kpis(stores_df, top_df),
+        # v12 — reporting period from the store file's From Date / To Date
+        "period":         _compute_period(stores_df),
         "model_metrics":  train_metrics,
         "region_stats":   region_stats,
     }
@@ -504,6 +522,15 @@ def _compute_region_stats(stores_df: pd.DataFrame, cands_df: pd.DataFrame, demog
 # ─────────────────────────────────────────────────────────────
 # FEATURE ENGINEERING
 # ─────────────────────────────────────────────────────────────
+# v11 — minimum distance a predicted site must keep from an existing store.
+# Without it the snap step parks picks on the same junction as a store we
+# already run (Sri Lanka picks were landing 100-500 m away).
+MIN_DIST_FROM_STORE_KM = float(os.getenv("MIN_DIST_FROM_STORE_KM", "1.5"))
+# Radius used for the close-in nearby-store performance signal. The 5 km
+# ring averages a weak next-door store away behind strong ones further out.
+NEARBY_CLOSE_RADIUS_KM = float(os.getenv("NEARBY_CLOSE_RADIUS_KM", "2.0"))
+
+
 def _enrich(df, demographics_df, amenities_gdf, re_gdf, stores_df, cfg, is_store,
             roads_gdf=None, landuse_gdf=None, competitors_df=None):
     df = count_amenities_near_points(df, amenities_gdf, buffer_m=BUFFER_RADIUS_M)
@@ -515,6 +542,10 @@ def _enrich(df, demographics_df, amenities_gdf, re_gdf, stores_df, cfg, is_store
     # This is what Cannibalization_Score/stores_5km were missing: whether
     # existing stores near this point are actually selling well.
     df = _nearby_store_performance(df, stores_df, is_store=is_store)
+    # v11 — same signal at a tight radius. A weak store 300 m away must not
+    # be hidden by a strong one 5 km away.
+    df = _nearby_store_performance(df, stores_df, is_store=is_store,
+                                   radius_km=NEARBY_CLOSE_RADIUS_KM, suffix="_2km")
     # v5.0 — local competitor density (Mio_competitor.xlsx), no network call
     df = count_competitors_near_points(df, competitors_df)
     # v3.7 — geographic features (roads + landuse), only if explicitly enabled
@@ -587,7 +618,7 @@ def _cannibalization(df):
     return df
 
 
-def _nearby_store_performance(df, stores_df, is_store, radius_km: float = 5.0):
+def _nearby_store_performance(df, stores_df, is_store, radius_km: float = 5.0, suffix: str = ""):
     """v6.1 — the direct signal the model was missing: are the existing
     stores actually near this point selling WELL, not just how many are
     nearby. Cannibalization_Score/stores_2km/stores_5km only ever counted
@@ -608,7 +639,7 @@ def _nearby_store_performance(df, stores_df, is_store, radius_km: float = 5.0):
     ).fillna(0).values
     network_mean = float(np.mean(s_sales)) if len(s_sales) else 0.0
 
-    avgs, counts = [], []
+    avgs, counts, mins = [], [], []
     for enum_i, (_, row) in enumerate(df.iterrows()):
         dists = haversine_vectorized(s_lats, s_lons, row["Latitude"], row["Longitude"])
         if is_store:
@@ -617,18 +648,25 @@ def _nearby_store_performance(df, stores_df, is_store, radius_km: float = 5.0):
         n_nearby = int(np.sum(mask))
         if n_nearby > 0:
             avgs.append(float(np.mean(s_sales[mask])))
+            mins.append(float(np.min(s_sales[mask])))
         else:
             avgs.append(network_mean)
+            mins.append(network_mean)
         counts.append(n_nearby)
 
-    df["Nearby_Store_Avg_Sales"] = avgs
-    df["Nearby_Store_Count_Perf"] = counts  # how many stores that average is based on; 0 = neutral fallback used
+    df[f"Nearby_Store_Avg_Sales{suffix}"] = avgs
+    # how many stores that average is based on; 0 = neutral fallback used
+    df[f"Nearby_Store_Count_Perf{suffix}"] = counts
+    # v11 — the weakest store inside the radius, so one bad neighbour cannot
+    # be averaged away by a strong one.
+    df[f"Nearby_Store_Min_Sales{suffix}"] = mins
     return df
 
 
 def _apply_nearby_underperformance_guardrail(df, median_existing_revenue,
                                               min_nearby: int = 3, threshold_ratio: float = 0.75,
-                                              penalty_multiplier: float = 0.55):
+                                              penalty_multiplier: float = 0.55,
+                                              close_ratio: float = 0.70):
     """v6.2 — hard business rule: if >= min_nearby real existing stores
     within 5km are averaging under threshold_ratio × the network median,
     directly penalize Final_Score, don't just leave it to the model's
@@ -639,6 +677,21 @@ def _apply_nearby_underperformance_guardrail(df, median_existing_revenue,
         return df
     threshold = threshold_ratio * median_existing_revenue
     flag = (df["Nearby_Store_Count_Perf"] >= min_nearby) & (df["Nearby_Store_Avg_Sales"] < threshold)
+
+    # v11 — second rule, judged close in: if ANY store within
+    # NEARBY_CLOSE_RADIUS_KM trades below close_ratio x the network median,
+    # flag it. The 5 km average above can pass while the store on the very
+    # next corner is the weakest in the region.
+    close_threshold = close_ratio * median_existing_revenue
+    if {"Nearby_Store_Count_Perf_2km", "Nearby_Store_Min_Sales_2km"} <= set(df.columns):
+        close_flag = ((df["Nearby_Store_Count_Perf_2km"] >= 1)
+                      & (df["Nearby_Store_Min_Sales_2km"] < close_threshold))
+        try:
+            log.info(f"[Guardrail] {int(close_flag.sum())}/{len(df)} candidates flagged for a weak "
+                     f"store within {NEARBY_CLOSE_RADIUS_KM:g} km (< {close_ratio:.0%} of median)")
+        except Exception:
+            pass
+        flag = flag | close_flag
     df["Nearby_Underperformance_Flag"] = flag
     if "Final_Score" in df.columns:
         df.loc[flag, "Final_Score"] = df.loc[flag, "Final_Score"] * penalty_multiplier
@@ -826,6 +879,31 @@ def _generate_grid(cfg, demographics_df):
 # ─────────────────────────────────────────────────────────────
 # OUTPUT HELPERS
 # ─────────────────────────────────────────────────────────────
+def _attach_nearby_stores(df, stores_df, radius_km: float = 5.0, limit: int = 4):
+    """v11 — the stores we already run around a point, closest first, so the
+    popup can show how they are trading instead of only an average."""
+    if df is None or len(df) == 0:
+        return df
+    if stores_df is None or len(stores_df) == 0 or not {"Latitude", "Longitude"} <= set(stores_df.columns):
+        df["Nearby_Stores"] = [[] for _ in range(len(df))]
+        return df
+    s_lats = pd.to_numeric(stores_df["Latitude"], errors="coerce").fillna(0).values
+    s_lons = pd.to_numeric(stores_df["Longitude"], errors="coerce").fillna(0).values
+    s_sales = pd.to_numeric(
+        stores_df.get("Adjusted_Sales", stores_df.get("Sales", 0)), errors="coerce").fillna(0).values
+    s_names = stores_df.get("Store_Name", pd.Series([f"Store {i}" for i in range(len(stores_df))])).astype(str).values
+    out = []
+    for _, row in df.iterrows():
+        d = haversine_vectorized(s_lats, s_lons, row["Latitude"], row["Longitude"])
+        order = np.argsort(d)[:limit]
+        out.append([
+            {"name": str(s_names[i]), "km": round(float(d[i]), 2), "sales": safe_float(s_sales[i])}
+            for i in order if d[i] <= radius_km
+        ])
+    df["Nearby_Stores"] = out
+    return df
+
+
 def _to_records(df, kind: str):
     if df is None or (hasattr(df, "empty") and df.empty):
         return []
@@ -861,6 +939,10 @@ def _to_records(df, kind: str):
             "nearby_store_avg_sales": safe_float(row.get("Nearby_Store_Avg_Sales", 0)),
             "nearby_store_count":     safe_int(row.get("Nearby_Store_Count_Perf", 0)),
             "nearby_underperformance_flag": bool(row.get("Nearby_Underperformance_Flag", False)),
+            "nearby_store_avg_sales_2km": safe_float(row.get("Nearby_Store_Avg_Sales_2km", 0)),
+            "nearby_store_count_2km":     safe_int(row.get("Nearby_Store_Count_Perf_2km", 0)),
+            # the actual stores around this point (name, distance, sales)
+            "nearby_stores": row.get("Nearby_Stores") if isinstance(row.get("Nearby_Stores"), list) else [],
             "cost_percentile":     safe_float(row.get("Cost_Percentile", None)) if row.get("Cost_Percentile") is not None else None,
             "revenue_percentile":  safe_float(row.get("Revenue_Percentile", None)) if row.get("Revenue_Percentile") is not None else None,
             "profitability_flag":  str(row.get("Profitability_Flag", "")),
@@ -898,6 +980,41 @@ def _to_records(df, kind: str):
         }
         records.append(r)
     return records
+
+
+def _compute_period(stores_df):
+    """v12 — the period the sales figures cover, read from the From Date /
+    To Date columns on the store file. Returns None when the file carries
+    no dates, so the dashboard simply leaves the pill out."""
+    if stores_df is None or len(stores_df) == 0:
+        return None
+    if "From_Date" not in stores_df.columns and "To_Date" not in stores_df.columns:
+        return None
+    start = pd.to_datetime(stores_df.get("From_Date"), errors="coerce").min() \
+        if "From_Date" in stores_df.columns else pd.NaT
+    end = pd.to_datetime(stores_df.get("To_Date"), errors="coerce").max() \
+        if "To_Date" in stores_df.columns else pd.NaT
+    if pd.isna(start) and pd.isna(end):
+        return None
+    if pd.isna(start):
+        start = end
+    if pd.isna(end):
+        end = start
+
+    def _month(d):
+        return d.strftime("%B %Y")
+
+    if start.year == end.year and start.month == end.month:
+        label = _month(start)
+    elif start.year == end.year:
+        label = f"{start.strftime('%B')} – {_month(end)}"
+    else:
+        label = f"{_month(start)} – {_month(end)}"
+    return {
+        "from": start.strftime("%Y-%m-%d"),
+        "to": end.strftime("%Y-%m-%d"),
+        "label": label,
+    }
 
 
 def _compute_kpis(stores_df, top_df):
@@ -964,8 +1081,13 @@ _V38_AMENITY_COLS = [
 ]
 
 
-def _filter_viable_candidates(df, min_amenities: int = 5, min_population: int = 1000):
-    """Drop unviable candidates (jungles/rivers/empty land) before scoring."""
+def _filter_viable_candidates(df, min_amenities: int = 5, min_population: int = 1000,
+                              min_store_distance_km: float = MIN_DIST_FROM_STORE_KM):
+    """Drop unviable candidates (jungles/rivers/empty land) before scoring.
+
+    v11 — also drops candidates sitting on top of a store we already run:
+    a new site that close only splits an existing store's trade.
+    """
     if df is None or len(df) == 0:
         return df
     import pandas as _pd
@@ -973,6 +1095,15 @@ def _filter_viable_candidates(df, min_amenities: int = 5, min_population: int = 
     amen_sum = df[present].fillna(0).sum(axis=1) if present else _pd.Series(0, index=df.index)
     pop = _pd.to_numeric(df.get("Population", 0), errors="coerce").fillna(0)
     keep = (amen_sum >= min_amenities) & (pop >= min_population)
+    if min_store_distance_km > 0 and "Nearest_Store_km" in df.columns:
+        near = _pd.to_numeric(df["Nearest_Store_km"], errors="coerce").fillna(1e6)
+        too_close = near < min_store_distance_km
+        keep = keep & ~too_close
+        try:
+            log.info(f"[Viability] {int(too_close.sum())} candidates dropped for sitting within "
+                     f"{min_store_distance_km:g} km of an existing store")
+        except Exception:
+            pass
     out = df.loc[keep].copy()
     try:
         log.info(
@@ -1077,7 +1208,9 @@ def _v382_compute_store_density_profile(stores_df, amenities_gdf, cluster_radius
 
 
 def _snap_or_drop_to_dense_cluster(picks_df, amenities_gdf, min_cluster_size: int = 10,
-                                    cluster_radius_m: int = 500, hex_half_km: float = 3.0):
+                                    cluster_radius_m: int = 500, hex_half_km: float = 3.0,
+                                    stores_df=None,
+                                    min_store_distance_km: float = MIN_DIST_FROM_STORE_KM):
     """For each pick:
        1. Find amenities inside the hex (hex_half_km radius)
        2. Find the amenity that has the most neighbors within cluster_radius_m
@@ -1096,6 +1229,18 @@ def _snap_or_drop_to_dense_cluster(picks_df, amenities_gdf, min_cluster_size: in
     deg = hex_half_km / 111.0
     amen_lats = amenities_gdf.geometry.y.values
     amen_lons = amenities_gdf.geometry.x.values
+
+    # v11 — anchors that sit on top of an existing store are not eligible.
+    store_lats = store_lons = None
+    if (stores_df is not None and len(stores_df) > 0 and min_store_distance_km > 0
+            and {"Latitude", "Longitude"} <= set(stores_df.columns)):
+        store_lats = _pd.to_numeric(stores_df["Latitude"], errors="coerce").fillna(0).values
+        store_lons = _pd.to_numeric(stores_df["Longitude"], errors="coerce").fillna(0).values
+
+    def _far_enough(lat, lon):
+        if store_lats is None:
+            return True
+        return float(np.min(haversine_vectorized(store_lats, store_lons, lat, lon))) >= min_store_distance_km
     kept_rows = []
     n_dropped = 0
     n_snapped = 0
@@ -1119,6 +1264,8 @@ def _snap_or_drop_to_dense_cluster(picks_df, amenities_gdf, min_cluster_size: in
         best_lat = plat
         best_lon = plon
         for i in range(len(ax)):
+            if not _far_enough(float(ax[i]), float(ay[i])):
+                continue  # v11 — anchor too close to a store we already run
             count = 0
             for j in range(len(ax)):
                 if i == j:

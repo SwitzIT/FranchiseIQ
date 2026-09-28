@@ -218,6 +218,35 @@ function InfoCard({ d, avgSales, rank }) {
           </div>
         )}
 
+        {d.type === 'prediction' && Array.isArray(d.nearby_stores) && (
+          <div style={{ marginTop: 10, paddingTop: 8, borderTop: '1px solid #F3F4F6' }}>
+            <div style={{ fontSize: 9, fontWeight: 800, color: '#6B7280', letterSpacing: 0.5, marginBottom: 5 }}>
+              OUR STORES WITHIN 5 KM
+            </div>
+            {d.nearby_stores.length === 0 ? (
+              <div style={{ fontSize: 10, color: '#6B7280' }}>None — open catchment</div>
+            ) : (
+              d.nearby_stores.map((n) => {
+                const pct = avgSales > 0 ? Math.round((n.sales / avgSales) * 100) : null;
+                const weak = pct != null && pct < 100;
+                return (
+                  <div key={`${n.name}-${n.km}`} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', fontSize: 10, padding: '2px 0' }}>
+                    <span style={{ color: '#111827', fontWeight: 600, maxWidth: 140, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      {n.name}
+                    </span>
+                    <span style={{ color: '#6B7280' }}>
+                      {n.km} km ·{' '}
+                      <span style={{ fontWeight: 700, color: weak ? '#DC2626' : '#16A34A' }}>
+                        {pct != null ? `${pct}% of avg` : cur(n.sales)}
+                      </span>
+                    </span>
+                  </div>
+                );
+              })
+            )}
+          </div>
+        )}
+
         <div style={{ marginTop: 12, textAlign: 'center' }}>
           <a
             href={`https://www.google.com/maps/search/?api=1&query=${d.lat},${d.lng}`}

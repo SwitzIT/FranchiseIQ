@@ -11148,3 +11148,621 @@ FileNotFoundError: No local amenities file configured/found for Sri Lanka/Sri La
 2026-09-25 17:11:56 | INFO     | routes.predict | [Predict] user=rajeevk@switzgroup.com session=9745cf78-97fd-43f6-b9ea-659cea2e220f top_picks=10
 2026-09-25 18:14:28 | INFO     | session_store | [Session] Purged 2 expired sessions
 2026-09-28 12:33:51 | INFO     | main | 👋 FranchiseIQ shutting down
+2026-09-28 17:51:10 | INFO     | main | 🚀 FranchiseIQ v5.0.0 starting up
+2026-09-28 17:51:10 | INFO     | main | ✅ Database tables ready
+2026-09-28 17:51:59 | INFO     | routes.auth | [Auth] login success: test@switzgroup.com
+2026-09-28 17:51:59 | INFO     | routes.country | [Country] session=e5c8e531-cb5a-46a2-a3be-c49f5934b259 country=India
+2026-09-28 17:51:59 | INFO     | routes.country | [State] session=e5c8e531-cb5a-46a2-a3be-c49f5934b259 state=West Bengal
+2026-09-28 17:51:59 | INFO     | demographics_service | [Demographics] Loading: D:\Franchise_IQ\data\india\west_bengal\demographics.xlsx
+2026-09-28 17:52:03 | INFO     | demographics_service | [Demographics] Loaded 23 rows from demographics.xlsx
+2026-09-28 17:52:04 | INFO     | routes.data | [Data Preloaded] session=e5c8e531-cb5a-46a2-a3be-c49f5934b259 stores=384 requests=0 bu=3
+2026-09-28 17:52:04 | INFO     | amenities_service | [Amenities] GeoJSON cache hit → D:\Franchise_IQ\amenities_cache\india_west_bengal.geojson
+2026-09-28 17:52:17 | INFO     | routes.amenities | [Amenities] session=e5c8e531-cb5a-46a2-a3be-c49f5934b259 cached=True n=44144
+2026-09-28 17:52:17 | INFO     | scoring_service | [Pipeline] India/West Bengal | stores=384 | requests=0 | BU=True
+2026-09-28 17:52:17 | INFO     | real_estate_service | Loaded 63 real estate records with indices.
+2026-09-28 17:52:17 | INFO     | local_competitor_service | [Competitors] Loaded 127 usable competitor locations from Bhilai_validation1_1.xlsx
+2026-09-28 17:52:17 | INFO     | local_competitor_service | [Competitors] Loaded 116 usable competitor locations from Bilaspur_1.xlsx
+2026-09-28 17:52:17 | INFO     | local_competitor_service | [Competitors] Loaded 17 usable competitor locations from Dhamtari_1.xlsx
+2026-09-28 17:52:19 | INFO     | local_competitor_service | [Competitors] Loaded 6250 usable competitor locations from Mio_competitor.xlsx
+2026-09-28 17:52:20 | INFO     | local_competitor_service | [Competitors] Loaded 168 usable competitor locations from Raipur_Bakery_In-scope_188.xlsx
+2026-09-28 17:52:20 | INFO     | local_competitor_service | [Competitors] Combined 6678 total competitor locations from 5 file(s): ['Bhilai_validation1_1.xlsx', 'Bilaspur_1.xlsx', 'Dhamtari_1.xlsx', 'Mio_competitor.xlsx', 'Raipur_Bakery_In-scope_188.xlsx']
+2026-09-28 17:52:20 | INFO     | scoring_service | [Pipeline] ENABLE_OSM_GEO_FEATURES=false — skipping road/landuse enrichment, no network calls made
+2026-09-28 17:52:20 | INFO     | amenities_service | [Amenities] Counting within 10000m for 384 points
+2026-09-28 17:52:26 | INFO     | clustering_service | [Clustering] Assigning 384 locations → 3 BUs
+2026-09-28 17:52:33 | INFO     | amenities_service | [Amenities] Counting within 10000m for 279 points
+2026-09-28 17:52:39 | INFO     | clustering_service | [Clustering] Assigning 279 locations → 3 BUs
+2026-09-28 17:52:40 | INFO     | affinity_model | [AffinityModel] trained on 384 stores | archetype_n=96 | val=knn_lookalike_holdout_multisplit | R2_test=0.095 | MAE_test=4545569 | median_rev=13114103
+2026-09-28 17:52:40 | INFO     | scoring_service | [Pipeline] Model R²=0.09462428283359162 MAE=4545568.797006883 method=knn_lookalike_holdout_multisplit
+2026-09-28 17:52:40 | INFO     | scoring_service | [Guardrail] 0/279 candidates flagged for nearby-store underperformance (>= 3 stores within 5km averaging < ₹9,835,577), Final_Score penalized ×0.55
+2026-09-28 17:52:40 | INFO     | scoring_service | [Calibration] Mio store density (500m cluster) - n=384, median=17, p10=0, p25=3, mean=36.7
+2026-09-28 17:52:40 | INFO     | scoring_service | [Calibration] using min_cluster_threshold=5 (max of 5 floor and Mio p10)
+2026-09-28 17:52:40 | INFO     | scoring_service | [Viability] 279 candidates -> 231 viable (min_amenities=5, min_population=1000)
+2026-09-28 17:52:40 | INFO     | scoring_service | [Diversity] requested n=231, min_distance_km=15.0, picked=32 from 231 ranked candidates
+2026-09-28 17:52:41 | INFO     | scoring_service | [Snap] SNAP (22.5500,88.4500) -> (22.5723,88.4329) 77 amenities in 500m
+2026-09-28 17:52:41 | INFO     | scoring_service | [Snap] SNAP (22.6500,88.3000) -> (22.6551,88.3247) 23 amenities in 500m
+2026-09-28 17:52:41 | INFO     | scoring_service | [Snap] SNAP (22.7500,88.4500) -> (22.7247,88.4743) 27 amenities in 500m
+2026-09-28 17:52:41 | INFO     | scoring_service | [Snap] SNAP (22.5000,88.3000) -> (22.4879,88.2837) 40 amenities in 500m
+2026-09-28 17:52:41 | INFO     | scoring_service | [Snap] DROP (22.6500,88.5500) - densest cluster only 1 amenities (need 5)
+2026-09-28 17:52:41 | INFO     | scoring_service | [Snap] DROP (26.5500,88.7000) - densest cluster only 3 amenities (need 5)
+2026-09-28 17:52:41 | INFO     | scoring_service | [Snap] SNAP (22.9000,88.4500) -> (22.9215,88.4359) 65 amenities in 500m
+2026-09-28 17:52:41 | INFO     | scoring_service | [Snap] DROP (22.9000,88.3000) - no amenities in hex
+2026-09-28 17:52:41 | INFO     | scoring_service | [Snap] SNAP (22.3000,87.9500) -> (22.2925,87.9262) 63 amenities in 500m
+2026-09-28 17:52:41 | INFO     | scoring_service | [Snap] DROP (22.1000,88.4000) - no amenities in hex
+2026-09-28 17:52:41 | INFO     | scoring_service | [Snap] SNAP (23.4000,88.4000) -> (23.4092,88.3769) 34 amenities in 500m
+2026-09-28 17:52:41 | INFO     | scoring_service | [Snap] SNAP (22.4500,87.3500) -> (22.4265,87.3258) 50 amenities in 500m
+2026-09-28 17:52:41 | INFO     | scoring_service | [Snap] SNAP (22.3500,87.2500) -> (22.3478,87.2741) 24 amenities in 500m
+2026-09-28 17:52:41 | INFO     | scoring_service | [Snap] DROP (22.4000,87.0000) - densest cluster only 3 amenities (need 5)
+2026-09-28 17:52:41 | INFO     | scoring_service | [Snap] SNAP (23.6500,87.0000) -> (23.6721,86.9891) 19 amenities in 500m
+2026-09-28 17:52:41 | INFO     | scoring_service | [Snap] DROP (27.0000,88.5000) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:52:41 | INFO     | scoring_service | [Snap] DROP (23.9500,87.5500) - densest cluster only 4 amenities (need 5)
+2026-09-28 17:52:41 | INFO     | scoring_service | [Snap] DROP (26.9500,88.3000) - densest cluster only 1 amenities (need 5)
+2026-09-28 17:52:41 | INFO     | scoring_service | [Snap] DROP (26.1500,88.2000) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:52:41 | INFO     | scoring_service | [Snap] DROP (26.3500,89.4000) - no amenities in hex
+2026-09-28 17:52:41 | INFO     | scoring_service | [Snap] DROP (27.1500,88.5000) - no amenities in hex
+2026-09-28 17:52:41 | INFO     | scoring_service | [Snap] DROP (26.5000,89.4500) - no amenities in hex
+2026-09-28 17:52:41 | INFO     | scoring_service | [Snap] DROP (27.1000,88.3000) - no amenities in hex
+2026-09-28 17:52:41 | INFO     | scoring_service | [Snap] DROP (22.5000,86.9000) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:52:41 | INFO     | scoring_service | [Snap] DROP (25.3000,88.7500) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:52:41 | INFO     | scoring_service | [Snap] DROP (23.2000,87.1500) - densest cluster only 1 amenities (need 5)
+2026-09-28 17:52:41 | INFO     | scoring_service | [Snap] DROP (25.1500,88.7500) - no amenities in hex
+2026-09-28 17:52:41 | INFO     | scoring_service | [Snap] SNAP (23.2000,87.0000) -> (23.2063,87.0208) 5 amenities in 500m
+2026-09-28 17:52:41 | INFO     | scoring_service | [Snap] DROP (25.0500,88.2000) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:52:41 | INFO     | scoring_service | [Snap] DROP (25.0500,88.0500) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:52:41 | INFO     | scoring_service | [Snap] DROP (23.3000,86.4500) - densest cluster only 1 amenities (need 5)
+2026-09-28 17:52:41 | INFO     | scoring_service | [Snap] DROP (23.4000,86.3500) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:52:41 | INFO     | scoring_service | [Snap] 11 snapped, 21 dropped (threshold=5)
+2026-09-28 17:52:41 | INFO     | amenities_service | [Amenities] Counting within 10000m for 11 points
+2026-09-28 17:52:47 | INFO     | clustering_service | [Clustering] Assigning 11 locations → 3 BUs
+2026-09-28 17:52:47 | INFO     | scoring_service | [Guardrail] 0/11 candidates flagged for nearby-store underperformance (>= 3 stores within 5km averaging < ₹9,835,577), Final_Score penalized ×0.55
+2026-09-28 17:52:47 | INFO     | scoring_service | [Pipeline] Excluded 5 'Not Recommended' candidate(s) from predictions
+2026-09-28 17:52:47 | INFO     | scoring_service | [Diversity] requested n=6, min_distance_km=15.0, picked=5 from 6 ranked candidates
+2026-09-28 17:52:47 | INFO     | scoring_service | [Pipeline] min spacing 15 km -> 5 recommended picks
+2026-09-28 17:52:47 | INFO     | scoring_service | [Diversity] requested n=231, min_distance_km=10.0, picked=65 from 231 ranked candidates
+2026-09-28 17:52:47 | INFO     | scoring_service | [Snap] SNAP (22.5500,88.4500) -> (22.5723,88.4329) 77 amenities in 500m
+2026-09-28 17:52:47 | INFO     | scoring_service | [Snap] SNAP (22.6500,88.3000) -> (22.6551,88.3247) 23 amenities in 500m
+2026-09-28 17:52:47 | INFO     | scoring_service | [Snap] SNAP (22.5500,88.2500) -> (22.5274,88.2710) 30 amenities in 500m
+2026-09-28 17:52:47 | INFO     | scoring_service | [Snap] SNAP (22.7500,88.4500) -> (22.7247,88.4743) 27 amenities in 500m
+2026-09-28 17:52:47 | INFO     | scoring_service | [Snap] SNAP (22.6500,88.5000) -> (22.6281,88.4864) 31 amenities in 500m
+2026-09-28 17:52:49 | INFO     | scoring_service | [Snap] SNAP (22.5500,88.3500) -> (22.5545,88.3543) 63 amenities in 500m
+2026-09-28 17:52:49 | INFO     | scoring_service | [Snap] SNAP (22.8500,88.4500) -> (22.8591,88.4293) 11 amenities in 500m
+2026-09-28 17:52:49 | INFO     | scoring_service | [Snap] DROP (22.6500,88.2000) - densest cluster only 3 amenities (need 5)
+2026-09-28 17:52:49 | INFO     | scoring_service | [Snap] DROP (26.5500,88.7000) - densest cluster only 3 amenities (need 5)
+2026-09-28 17:52:49 | INFO     | scoring_service | [Snap] SNAP (22.9000,88.3500) -> (22.8904,88.3728) 33 amenities in 500m
+2026-09-28 17:52:49 | INFO     | scoring_service | [Snap] SNAP (22.3000,87.9500) -> (22.2925,87.9262) 63 amenities in 500m
+2026-09-28 17:52:49 | INFO     | scoring_service | [Snap] DROP (26.5000,88.8000) - no amenities in hex
+2026-09-28 17:52:49 | INFO     | scoring_service | [Snap] DROP (26.4500,88.7000) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:52:49 | INFO     | scoring_service | [Snap] DROP (22.3000,87.8500) - densest cluster only 4 amenities (need 5)
+2026-09-28 17:52:49 | INFO     | scoring_service | [Snap] DROP (22.2000,87.9500) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:52:49 | INFO     | scoring_service | [Snap] DROP (22.7500,88.5500) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:52:49 | INFO     | scoring_service | [Snap] DROP (22.1000,88.4000) - no amenities in hex
+2026-09-28 17:52:49 | INFO     | scoring_service | [Snap] SNAP (23.4000,88.4000) -> (23.4092,88.3769) 34 amenities in 500m
+2026-09-28 17:52:49 | INFO     | scoring_service | [Snap] SNAP (22.4500,87.3500) -> (22.4265,87.3258) 50 amenities in 500m
+2026-09-28 17:52:49 | INFO     | scoring_service | [Snap] SNAP (22.3500,87.2500) -> (22.3478,87.2741) 24 amenities in 500m
+2026-09-28 17:52:49 | INFO     | scoring_service | [Snap] DROP (23.3500,88.5000) - no amenities in hex
+2026-09-28 17:52:49 | INFO     | scoring_service | [Snap] DROP (22.4500,87.2500) - densest cluster only 2 amenities (need 5)
+2026-09-28 17:52:49 | INFO     | scoring_service | [Snap] DROP (22.4000,87.0000) - densest cluster only 3 amenities (need 5)
+2026-09-28 17:52:49 | INFO     | scoring_service | [Snap] DROP (22.5000,87.0000) - densest cluster only 4 amenities (need 5)
+2026-09-28 17:52:49 | INFO     | scoring_service | [Snap] SNAP (23.6500,87.0000) -> (23.6721,86.9891) 19 amenities in 500m
+2026-09-28 17:52:49 | INFO     | scoring_service | [Snap] DROP (23.4500,88.5000) - no amenities in hex
+2026-09-28 17:52:55 | INFO     | scoring_service | [Snap] SNAP (22.6500,88.4000) -> (22.6352,88.4143) 166 amenities in 500m
+2026-09-28 17:52:55 | INFO     | scoring_service | [Snap] SNAP (22.3500,87.3500) -> (22.3499,87.3356) 77 amenities in 500m
+2026-09-28 17:52:55 | INFO     | scoring_service | [Snap] DROP (27.0000,88.5000) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:52:55 | INFO     | scoring_service | [Snap] DROP (23.9500,87.5500) - densest cluster only 4 amenities (need 5)
+2026-09-28 17:52:55 | INFO     | scoring_service | [Snap] DROP (23.8500,87.5500) - densest cluster only 1 amenities (need 5)
+2026-09-28 17:52:55 | INFO     | scoring_service | [Snap] DROP (26.9500,88.3000) - densest cluster only 1 amenities (need 5)
+2026-09-28 17:52:55 | INFO     | scoring_service | [Snap] SNAP (23.7000,86.9000) -> (23.7065,86.9137) 8 amenities in 500m
+2026-09-28 17:52:55 | INFO     | scoring_service | [Snap] DROP (27.1000,88.5500) - densest cluster only 1 amenities (need 5)
+2026-09-28 17:52:55 | INFO     | scoring_service | [Snap] DROP (27.0500,88.4000) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:52:55 | INFO     | scoring_service | [Snap] DROP (26.1500,88.2000) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:52:55 | INFO     | scoring_service | [Snap] DROP (23.7500,87.0000) - no amenities in hex
+2026-09-28 17:52:55 | INFO     | scoring_service | [Snap] DROP (26.3500,89.4000) - no amenities in hex
+2026-09-28 17:52:55 | INFO     | scoring_service | [Snap] DROP (26.2000,88.1000) - densest cluster only 2 amenities (need 5)
+2026-09-28 17:52:55 | INFO     | scoring_service | [Snap] DROP (26.5000,89.4500) - no amenities in hex
+2026-09-28 17:52:55 | INFO     | scoring_service | [Snap] DROP (27.0000,88.2000) - no amenities in hex
+2026-09-28 17:52:55 | INFO     | scoring_service | [Snap] DROP (27.1500,88.4500) - no amenities in hex
+2026-09-28 17:52:55 | INFO     | scoring_service | [Snap] DROP (23.9000,87.4500) - densest cluster only 1 amenities (need 5)
+2026-09-28 17:52:55 | INFO     | scoring_service | [Snap] DROP (27.1000,88.3000) - no amenities in hex
+2026-09-28 17:52:58 | INFO     | scoring_service | [Snap] SNAP (22.9500,88.4500) -> (22.9462,88.4454) 167 amenities in 500m
+2026-09-28 17:52:58 | INFO     | scoring_service | [Snap] DROP (26.1000,88.1000) - no amenities in hex
+2026-09-28 17:52:59 | INFO     | scoring_service | [Snap] DROP (26.2500,89.4500) - no amenities in hex
+2026-09-28 17:52:59 | INFO     | scoring_service | [Snap] DROP (26.5500,89.5500) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:52:59 | INFO     | scoring_service | [Snap] DROP (26.4500,89.5500) - no amenities in hex
+2026-09-28 17:52:59 | INFO     | scoring_service | [Snap] DROP (22.4500,86.9000) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:52:59 | INFO     | scoring_service | [Snap] DROP (25.3000,88.7500) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:52:59 | INFO     | scoring_service | [Snap] DROP (25.2500,88.8500) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:52:59 | INFO     | scoring_service | [Snap] DROP (23.2000,87.1500) - densest cluster only 1 amenities (need 5)
+2026-09-28 17:52:59 | INFO     | scoring_service | [Snap] SNAP (25.2000,88.7500) -> (25.2232,88.7748) 47 amenities in 500m
+2026-09-28 17:52:59 | INFO     | scoring_service | [Snap] DROP (23.1500,87.0500) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:52:59 | INFO     | scoring_service | [Snap] DROP (23.3000,87.1000) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:52:59 | INFO     | scoring_service | [Snap] DROP (23.2500,87.0000) - densest cluster only 1 amenities (need 5)
+2026-09-28 17:52:59 | INFO     | scoring_service | [Snap] DROP (25.0500,88.2000) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:52:59 | INFO     | scoring_service | [Snap] DROP (25.0500,88.1000) - densest cluster only 3 amenities (need 5)
+2026-09-28 17:52:59 | INFO     | scoring_service | [Snap] DROP (24.9500,88.2000) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:52:59 | INFO     | scoring_service | [Snap] DROP (24.9500,88.1000) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:52:59 | INFO     | scoring_service | [Snap] DROP (23.3000,86.4500) - densest cluster only 1 amenities (need 5)
+2026-09-28 17:52:59 | INFO     | scoring_service | [Snap] DROP (23.2500,86.3500) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:52:59 | INFO     | scoring_service | [Snap] DROP (23.4000,86.4000) - densest cluster only 1 amenities (need 5)
+2026-09-28 17:52:59 | INFO     | scoring_service | [Snap] DROP (23.3500,86.3000) - densest cluster only 2 amenities (need 5)
+2026-09-28 17:52:59 | INFO     | scoring_service | [Snap] 18 snapped, 47 dropped (threshold=5)
+2026-09-28 17:52:59 | INFO     | amenities_service | [Amenities] Counting within 10000m for 18 points
+2026-09-28 17:53:04 | INFO     | clustering_service | [Clustering] Assigning 18 locations → 3 BUs
+2026-09-28 17:53:04 | INFO     | scoring_service | [Guardrail] 0/18 candidates flagged for nearby-store underperformance (>= 3 stores within 5km averaging < ₹9,835,577), Final_Score penalized ×0.55
+2026-09-28 17:53:04 | INFO     | scoring_service | [Pipeline] Excluded 7 'Not Recommended' candidate(s) from predictions
+2026-09-28 17:53:04 | INFO     | scoring_service | [Diversity] requested n=11, min_distance_km=10.0, picked=8 from 11 ranked candidates
+2026-09-28 17:53:04 | INFO     | scoring_service | [Pipeline] min spacing 10 km -> 8 recommended picks
+2026-09-28 17:53:04 | INFO     | scoring_service | [Diversity] requested n=231, min_distance_km=7.0, picked=104 from 231 ranked candidates
+2026-09-28 17:53:04 | INFO     | scoring_service | [Snap] SNAP (22.5500,88.4500) -> (22.5723,88.4329) 77 amenities in 500m
+2026-09-28 17:53:04 | INFO     | scoring_service | [Snap] SNAP (22.6500,88.3000) -> (22.6551,88.3247) 23 amenities in 500m
+2026-09-28 17:53:04 | INFO     | scoring_service | [Snap] SNAP (22.5500,88.2500) -> (22.5274,88.2710) 30 amenities in 500m
+2026-09-28 17:53:04 | INFO     | scoring_service | [Snap] SNAP (22.7500,88.4500) -> (22.7247,88.4743) 27 amenities in 500m
+2026-09-28 17:53:04 | INFO     | scoring_service | [Snap] SNAP (22.6500,88.5000) -> (22.6281,88.4864) 31 amenities in 500m
+2026-09-28 17:53:05 | INFO     | scoring_service | [Snap] SNAP (22.5000,88.3000) -> (22.4879,88.2837) 40 amenities in 500m
+2026-09-28 17:53:06 | INFO     | scoring_service | [Snap] SNAP (22.5500,88.3500) -> (22.5545,88.3543) 63 amenities in 500m
+2026-09-28 17:53:06 | INFO     | scoring_service | [Snap] SNAP (22.7000,88.5500) -> (22.7092,88.5451) 5 amenities in 500m
+2026-09-28 17:53:06 | INFO     | scoring_service | [Snap] SNAP (22.8500,88.4500) -> (22.8591,88.4293) 11 amenities in 500m
+2026-09-28 17:53:06 | INFO     | scoring_service | [Snap] DROP (22.6500,88.2000) - densest cluster only 3 amenities (need 5)
+2026-09-28 17:53:06 | INFO     | scoring_service | [Snap] DROP (22.8000,88.5000) - densest cluster only 2 amenities (need 5)
+2026-09-28 17:53:06 | INFO     | scoring_service | [Snap] DROP (26.5500,88.7000) - densest cluster only 3 amenities (need 5)
+2026-09-28 17:53:06 | INFO     | scoring_service | [Snap] SNAP (22.9000,88.3500) -> (22.8904,88.3728) 33 amenities in 500m
+2026-09-28 17:53:06 | INFO     | scoring_service | [Snap] SNAP (22.5000,88.4000) -> (22.4921,88.4010) 39 amenities in 500m
+2026-09-28 17:53:06 | INFO     | scoring_service | [Snap] DROP (26.5000,88.7500) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:53:11 | INFO     | scoring_service | [Snap] SNAP (22.6000,88.4000) -> (22.6023,88.4029) 122 amenities in 500m
+2026-09-28 17:53:11 | INFO     | scoring_service | [Snap] DROP (26.6000,88.7500) - no amenities in hex
+2026-09-28 17:53:11 | INFO     | scoring_service | [Snap] SNAP (22.3000,87.9500) -> (22.2925,87.9262) 63 amenities in 500m
+2026-09-28 17:53:11 | INFO     | scoring_service | [Snap] DROP (26.5500,88.8000) - no amenities in hex
+2026-09-28 17:53:12 | INFO     | scoring_service | [Snap] SNAP (22.9500,88.4000) -> (22.9550,88.4243) 69 amenities in 500m
+2026-09-28 17:53:12 | INFO     | scoring_service | [Snap] DROP (26.5000,88.6500) - no amenities in hex
+2026-09-28 17:53:12 | INFO     | scoring_service | [Snap] DROP (26.4500,88.7000) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:53:12 | INFO     | scoring_service | [Snap] SNAP (22.2500,87.9000) -> (22.2685,87.8926) 20 amenities in 500m
+2026-09-28 17:53:12 | INFO     | scoring_service | [Snap] DROP (22.3000,87.8500) - densest cluster only 4 amenities (need 5)
+2026-09-28 17:53:12 | INFO     | scoring_service | [Snap] DROP (22.2500,88.0000) - no amenities in hex
+2026-09-28 17:53:12 | INFO     | scoring_service | [Snap] DROP (22.2000,87.9500) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:53:12 | INFO     | scoring_service | [Snap] DROP (22.1000,88.4000) - no amenities in hex
+2026-09-28 17:53:12 | INFO     | scoring_service | [Snap] SNAP (23.4000,88.4000) -> (23.4092,88.3769) 34 amenities in 500m
+2026-09-28 17:53:12 | INFO     | scoring_service | [Snap] DROP (22.1500,88.4500) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:53:12 | INFO     | scoring_service | [Snap] SNAP (22.4500,87.3500) -> (22.4265,87.3258) 50 amenities in 500m
+2026-09-28 17:53:12 | INFO     | scoring_service | [Snap] DROP (22.3500,87.9000) - densest cluster only 3 amenities (need 5)
+2026-09-28 17:53:13 | INFO     | scoring_service | [Snap] SNAP (22.4000,87.3000) -> (22.4224,87.3207) 214 amenities in 500m
+2026-09-28 17:53:13 | INFO     | scoring_service | [Snap] SNAP (22.3500,87.2500) -> (22.3478,87.2741) 24 amenities in 500m
+2026-09-28 17:53:13 | INFO     | scoring_service | [Snap] DROP (23.3500,88.5000) - no amenities in hex
+2026-09-28 17:53:13 | INFO     | scoring_service | [Snap] DROP (22.4000,87.4000) - densest cluster only 1 amenities (need 5)
+2026-09-28 17:53:13 | INFO     | scoring_service | [Snap] DROP (23.4500,88.4500) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:53:13 | INFO     | scoring_service | [Snap] DROP (22.4500,87.2500) - densest cluster only 2 amenities (need 5)
+2026-09-28 17:53:13 | INFO     | scoring_service | [Snap] DROP (22.5000,87.3000) - densest cluster only 2 amenities (need 5)
+2026-09-28 17:53:13 | INFO     | scoring_service | [Snap] DROP (22.4000,87.0000) - densest cluster only 3 amenities (need 5)
+2026-09-28 17:53:13 | INFO     | scoring_service | [Snap] DROP (22.4500,86.9500) - densest cluster only 1 amenities (need 5)
+2026-09-28 17:53:13 | INFO     | scoring_service | [Snap] DROP (22.4500,87.0500) - densest cluster only 1 amenities (need 5)
+2026-09-28 17:53:13 | INFO     | scoring_service | [Snap] DROP (22.5000,87.0000) - densest cluster only 4 amenities (need 5)
+2026-09-28 17:53:13 | INFO     | scoring_service | [Snap] SNAP (23.6500,87.0000) -> (23.6721,86.9891) 19 amenities in 500m
+2026-09-28 17:53:14 | INFO     | scoring_service | [Snap] SNAP (22.3500,87.3500) -> (22.3499,87.3356) 77 amenities in 500m
+2026-09-28 17:53:14 | INFO     | scoring_service | [Snap] DROP (27.0000,88.5000) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:53:14 | INFO     | scoring_service | [Snap] DROP (23.9500,87.5500) - densest cluster only 4 amenities (need 5)
+2026-09-28 17:53:14 | INFO     | scoring_service | [Snap] DROP (23.8500,87.5500) - densest cluster only 1 amenities (need 5)
+2026-09-28 17:53:14 | INFO     | scoring_service | [Snap] DROP (27.0500,88.5500) - densest cluster only 1 amenities (need 5)
+2026-09-28 17:53:14 | INFO     | scoring_service | [Snap] DROP (27.0000,88.4000) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:53:14 | INFO     | scoring_service | [Snap] DROP (26.9500,88.3000) - densest cluster only 1 amenities (need 5)
+2026-09-28 17:53:14 | INFO     | scoring_service | [Snap] SNAP (27.0500,88.4500) -> (27.0700,88.4730) 234 amenities in 500m
+2026-09-28 17:53:14 | INFO     | scoring_service | [Snap] SNAP (23.7000,86.9000) -> (23.7065,86.9137) 8 amenities in 500m
+2026-09-28 17:53:14 | INFO     | scoring_service | [Snap] SNAP (27.1000,88.5000) -> (27.0750,88.4778) 46 amenities in 500m
+2026-09-28 17:53:14 | INFO     | scoring_service | [Snap] DROP (23.9000,87.6000) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:53:14 | INFO     | scoring_service | [Snap] DROP (23.7500,86.9500) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:53:14 | INFO     | scoring_service | [Snap] DROP (27.0500,88.3500) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:53:14 | INFO     | scoring_service | [Snap] DROP (26.1500,88.2000) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:53:14 | INFO     | scoring_service | [Snap] DROP (26.2000,88.1500) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:53:14 | INFO     | scoring_service | [Snap] DROP (27.0000,88.2500) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:53:14 | INFO     | scoring_service | [Snap] DROP (27.1000,88.4000) - no amenities in hex
+2026-09-28 17:53:14 | INFO     | scoring_service | [Snap] DROP (23.7000,87.0500) - densest cluster only 1 amenities (need 5)
+2026-09-28 17:53:14 | INFO     | scoring_service | [Snap] DROP (26.3500,89.4000) - no amenities in hex
+2026-09-28 17:53:14 | INFO     | scoring_service | [Snap] DROP (26.5000,89.4500) - no amenities in hex
+2026-09-28 17:53:14 | INFO     | scoring_service | [Snap] DROP (27.1500,88.4500) - no amenities in hex
+2026-09-28 17:53:14 | INFO     | scoring_service | [Snap] DROP (23.9000,87.4500) - densest cluster only 1 amenities (need 5)
+2026-09-28 17:53:14 | INFO     | scoring_service | [Snap] DROP (26.4000,89.4500) - no amenities in hex
+2026-09-28 17:53:14 | INFO     | scoring_service | [Snap] DROP (27.1000,88.3000) - no amenities in hex
+2026-09-28 17:53:14 | INFO     | scoring_service | [Snap] DROP (26.1500,88.1000) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:53:14 | INFO     | scoring_service | [Snap] DROP (27.0500,88.2000) - no amenities in hex
+2026-09-28 17:53:14 | INFO     | scoring_service | [Snap] DROP (26.3000,89.4500) - densest cluster only 1 amenities (need 5)
+2026-09-28 17:53:14 | INFO     | scoring_service | [Snap] DROP (26.5500,89.5000) - no amenities in hex
+2026-09-28 17:53:14 | INFO     | scoring_service | [Snap] DROP (26.4500,89.5000) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:53:14 | INFO     | scoring_service | [Snap] DROP (26.3500,89.5000) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:53:14 | INFO     | scoring_service | [Snap] DROP (26.5000,89.5500) - densest cluster only 2 amenities (need 5)
+2026-09-28 17:53:14 | INFO     | scoring_service | [Snap] DROP (26.2500,89.5000) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:53:14 | INFO     | scoring_service | [Snap] DROP (23.6000,86.9500) - no amenities in hex
+2026-09-28 17:53:14 | INFO     | scoring_service | [Snap] DROP (22.4000,86.9000) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:53:14 | INFO     | scoring_service | [Snap] DROP (22.5000,86.9000) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:53:14 | INFO     | scoring_service | [Snap] DROP (25.3000,88.7500) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:53:14 | INFO     | scoring_service | [Snap] DROP (24.0000,87.5000) - no amenities in hex
+2026-09-28 17:53:14 | INFO     | scoring_service | [Snap] DROP (25.2500,88.7000) - no amenities in hex
+2026-09-28 17:53:15 | INFO     | scoring_service | [Snap] SNAP (25.2500,88.8000) -> (25.2287,88.7796) 163 amenities in 500m
+2026-09-28 17:53:15 | INFO     | scoring_service | [Snap] DROP (23.2000,87.1500) - densest cluster only 1 amenities (need 5)
+2026-09-28 17:53:15 | INFO     | scoring_service | [Snap] SNAP (25.2000,88.7500) -> (25.2232,88.7748) 47 amenities in 500m
+2026-09-28 17:53:15 | INFO     | scoring_service | [Snap] DROP (25.2000,88.8500) - no amenities in hex
+2026-09-28 17:53:15 | INFO     | scoring_service | [Snap] DROP (23.1500,87.1000) - no amenities in hex
+2026-09-28 17:53:15 | INFO     | scoring_service | [Snap] DROP (25.1500,88.8000) - no amenities in hex
+2026-09-28 17:53:15 | INFO     | scoring_service | [Snap] SNAP (23.2500,87.1000) -> (23.2316,87.0774) 53 amenities in 500m
+2026-09-28 17:53:15 | INFO     | scoring_service | [Snap] SNAP (23.2000,87.0500) -> (23.2243,87.0750) 18 amenities in 500m
+2026-09-28 17:53:15 | INFO     | scoring_service | [Snap] DROP (23.3000,87.0500) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:53:15 | INFO     | scoring_service | [Snap] DROP (23.2500,87.0000) - densest cluster only 1 amenities (need 5)
+2026-09-28 17:53:15 | INFO     | scoring_service | [Snap] DROP (25.0500,88.2000) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:53:15 | INFO     | scoring_service | [Snap] DROP (25.0500,88.1000) - densest cluster only 3 amenities (need 5)
+2026-09-28 17:53:17 | INFO     | scoring_service | [Snap] SNAP (25.0000,88.1500) -> (24.9963,88.1421) 209 amenities in 500m
+2026-09-28 17:53:21 | INFO     | scoring_service | [Snap] SNAP (22.7000,88.4000) -> (22.6945,88.4011) 109 amenities in 500m
+2026-09-28 17:53:21 | INFO     | scoring_service | [Snap] DROP (25.0000,88.0500) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:53:21 | INFO     | scoring_service | [Snap] DROP (24.9500,88.2000) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:53:21 | INFO     | scoring_service | [Snap] DROP (24.9500,88.1000) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:53:21 | INFO     | scoring_service | [Snap] DROP (23.3000,86.4500) - densest cluster only 1 amenities (need 5)
+2026-09-28 17:53:21 | INFO     | scoring_service | [Snap] DROP (23.2500,86.4000) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:53:21 | INFO     | scoring_service | [Snap] SNAP (23.3500,86.4000) -> (23.3282,86.3761) 49 amenities in 500m
+2026-09-28 17:53:21 | INFO     | scoring_service | [Snap] SNAP (23.3000,86.3500) -> (23.3265,86.3618) 34 amenities in 500m
+2026-09-28 17:53:21 | INFO     | scoring_service | [Snap] DROP (23.4000,86.3500) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:53:21 | INFO     | scoring_service | [Snap] DROP (23.3500,86.3000) - densest cluster only 2 amenities (need 5)
+2026-09-28 17:53:21 | INFO     | scoring_service | [Snap] 32 snapped, 72 dropped (threshold=5)
+2026-09-28 17:53:21 | INFO     | amenities_service | [Amenities] Counting within 10000m for 32 points
+2026-09-28 17:53:26 | INFO     | clustering_service | [Clustering] Assigning 32 locations → 3 BUs
+2026-09-28 17:53:26 | INFO     | scoring_service | [Guardrail] 0/32 candidates flagged for nearby-store underperformance (>= 3 stores within 5km averaging < ₹9,835,577), Final_Score penalized ×0.55
+2026-09-28 17:53:26 | INFO     | scoring_service | [Pipeline] Excluded 14 'Not Recommended' candidate(s) from predictions
+2026-09-28 17:53:26 | INFO     | scoring_service | [Diversity] requested n=18, min_distance_km=7.0, picked=13 from 18 ranked candidates
+2026-09-28 17:53:26 | INFO     | scoring_service | [Pipeline] min spacing 7 km -> 10 recommended picks
+2026-09-28 17:53:54 | INFO     | routes.predict | [Predict] user=test@switzgroup.com session=e5c8e531-cb5a-46a2-a3be-c49f5934b259 top_picks=10
+2026-09-28 17:54:14 | INFO     | routes.auth | [Auth] login success: divyaT@switzgroup.com
+2026-09-28 17:54:18 | INFO     | routes.country | [Country] session=2b996e18-1986-41be-9f4f-2564f37c82b2 country=Sri Lanka
+2026-09-28 17:54:18 | INFO     | routes.country | [State] session=2b996e18-1986-41be-9f4f-2564f37c82b2 state=Sri Lanka
+2026-09-28 17:54:18 | INFO     | demographics_service | [Demographics] Loading: D:\Franchise_IQ\data\srilanka\demographics.xlsx
+2026-09-28 17:54:18 | INFO     | demographics_service | [Demographics] Loaded 175 rows from demographics.xlsx
+2026-09-28 17:54:18 | INFO     | routes.data | [Data Preloaded] session=2b996e18-1986-41be-9f4f-2564f37c82b2 stores=77 requests=0 bu=1
+2026-09-28 17:54:18 | INFO     | amenities_service | [Amenities] GeoJSON cache hit → D:\Franchise_IQ\amenities_cache\sri_lanka_sri_lanka.geojson
+2026-09-28 17:54:21 | INFO     | routes.amenities | [Amenities] session=2b996e18-1986-41be-9f4f-2564f37c82b2 cached=True n=12079
+2026-09-28 17:54:21 | INFO     | scoring_service | [Pipeline] Sri Lanka/Sri Lanka | stores=77 | requests=0 | BU=True
+2026-09-28 17:54:21 | INFO     | real_estate_service | Loaded 78 real estate records with indices.
+2026-09-28 17:54:21 | INFO     | scoring_service | [Pipeline] ENABLE_OSM_GEO_FEATURES=false — skipping road/landuse enrichment, no network calls made
+2026-09-28 17:54:21 | INFO     | amenities_service | [Amenities] Counting within 10000m for 77 points
+2026-09-28 17:54:23 | INFO     | clustering_service | [Clustering] Assigning 77 locations → 1 BUs
+2026-09-28 17:54:28 | INFO     | amenities_service | [Amenities] Counting within 10000m for 992 points
+2026-09-28 17:54:31 | INFO     | clustering_service | [Clustering] Assigning 992 locations → 1 BUs
+2026-09-28 17:54:32 | INFO     | affinity_model | [AffinityModel] trained on 76 stores | archetype_n=19 | val=knn_lookalike_holdout_multisplit | R2_test=-0.118 | MAE_test=47285564 | median_rev=179396490
+2026-09-28 17:54:32 | INFO     | scoring_service | [Pipeline] Model R²=-0.11848448486871978 MAE=47285564.01822677 method=knn_lookalike_holdout_multisplit
+2026-09-28 17:54:32 | INFO     | scoring_service | [Guardrail] 2/992 candidates flagged for nearby-store underperformance (>= 3 stores within 5km averaging < ₹134,547,368), Final_Score penalized ×0.55
+2026-09-28 17:54:33 | INFO     | scoring_service | [Calibration] Mio store density (500m cluster) - n=77, median=8, p10=2, p25=5, mean=11.5
+2026-09-28 17:54:33 | INFO     | scoring_service | [Calibration] using min_cluster_threshold=5 (max of 5 floor and Mio p10)
+2026-09-28 17:54:33 | INFO     | scoring_service | [Viability] 992 candidates -> 953 viable (min_amenities=5, min_population=1000)
+2026-09-28 17:54:33 | INFO     | scoring_service | [Diversity] requested n=953, min_distance_km=15.0, picked=144 from 953 ranked candidates
+2026-09-28 17:54:33 | INFO     | scoring_service | [Snap] DROP (6.9500,79.9500) - densest cluster only 3 amenities (need 5)
+2026-09-28 17:54:33 | INFO     | scoring_service | [Snap] SNAP (6.8000,79.9000) -> (6.8022,79.9223) 17 amenities in 500m
+2026-09-28 17:54:33 | INFO     | scoring_service | [Snap] SNAP (7.1000,80.0500) -> (7.0867,80.0336) 20 amenities in 500m
+2026-09-28 17:54:33 | INFO     | scoring_service | [Snap] SNAP (7.1000,79.9000) -> (7.0858,79.8909) 16 amenities in 500m
+2026-09-28 17:54:33 | INFO     | scoring_service | [Snap] SNAP (6.6000,79.9500) -> (6.5784,79.9636) 11 amenities in 500m
+2026-09-28 17:54:33 | INFO     | scoring_service | [Snap] DROP (7.0000,79.8000) - no amenities in hex
+2026-09-28 17:54:33 | INFO     | scoring_service | [Snap] DROP (6.9500,80.1000) - densest cluster only 3 amenities (need 5)
+2026-09-28 17:54:33 | INFO     | scoring_service | [Snap] DROP (7.2000,79.8000) - no amenities in hex
+2026-09-28 17:54:33 | INFO     | scoring_service | [Snap] DROP (6.8000,80.0500) - densest cluster only 3 amenities (need 5)
+2026-09-28 17:54:33 | INFO     | scoring_service | [Snap] DROP (7.2500,79.9500) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:54:33 | INFO     | scoring_service | [Snap] DROP (7.0500,80.2000) - no amenities in hex
+2026-09-28 17:54:33 | INFO     | scoring_service | [Snap] DROP (7.2000,80.1500) - densest cluster only 2 amenities (need 5)
+2026-09-28 17:54:33 | INFO     | scoring_service | [Snap] DROP (6.8500,80.2000) - no amenities in hex
+2026-09-28 17:54:33 | INFO     | scoring_service | [Snap] SNAP (7.3500,79.8500) -> (7.3418,79.8420) 5 amenities in 500m
+2026-09-28 17:54:33 | INFO     | scoring_service | [Snap] DROP (7.3500,80.0500) - densest cluster only 3 amenities (need 5)
+2026-09-28 17:54:33 | INFO     | scoring_service | [Snap] DROP (6.7000,80.1500) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:54:33 | INFO     | scoring_service | [Snap] DROP (6.9500,80.3000) - no amenities in hex
+2026-09-28 17:54:33 | INFO     | scoring_service | [Snap] DROP (7.2000,80.3000) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:54:33 | INFO     | scoring_service | [Snap] DROP (7.4500,79.9500) - densest cluster only 1 amenities (need 5)
+2026-09-28 17:54:33 | INFO     | scoring_service | [Snap] SNAP (7.3500,80.2000) -> (7.3342,80.1771) 7 amenities in 500m
+2026-09-28 17:54:33 | INFO     | scoring_service | [Snap] DROP (7.4500,79.7500) - no amenities in hex
+2026-09-28 17:54:33 | INFO     | scoring_service | [Snap] DROP (6.5500,80.1000) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:54:33 | INFO     | scoring_service | [Snap] DROP (6.8000,80.3500) - densest cluster only 3 amenities (need 5)
+2026-09-28 17:54:33 | INFO     | scoring_service | [Snap] DROP (6.6500,80.3000) - densest cluster only 1 amenities (need 5)
+2026-09-28 17:54:33 | INFO     | scoring_service | [Snap] DROP (7.5000,80.1000) - no amenities in hex
+2026-09-28 17:54:33 | INFO     | scoring_service | [Snap] DROP (6.4500,79.9000) - no amenities in hex
+2026-09-28 17:54:33 | INFO     | scoring_service | [Snap] DROP (7.0000,80.4500) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:54:33 | INFO     | scoring_service | [Snap] DROP (7.5500,79.8500) - densest cluster only 1 amenities (need 5)
+2026-09-28 17:54:33 | INFO     | scoring_service | [Snap] DROP (7.3500,80.3500) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:54:33 | INFO     | scoring_service | [Snap] SNAP (7.2000,80.4500) -> (7.1774,80.4587) 8 amenities in 500m
+2026-09-28 17:54:33 | INFO     | scoring_service | [Snap] DROP (6.4000,80.0500) - densest cluster only 1 amenities (need 5)
+2026-09-28 17:54:33 | INFO     | scoring_service | [Snap] DROP (7.5000,80.2500) - no amenities in hex
+2026-09-28 17:54:33 | INFO     | scoring_service | [Snap] DROP (6.7000,80.4500) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:54:33 | INFO     | scoring_service | [Snap] DROP (6.9000,80.5500) - densest cluster only 2 amenities (need 5)
+2026-09-28 17:54:33 | INFO     | scoring_service | [Snap] DROP (7.1000,80.5500) - densest cluster only 2 amenities (need 5)
+2026-09-28 17:54:33 | INFO     | scoring_service | [Snap] DROP (7.6500,79.7500) - no amenities in hex
+2026-09-28 17:54:33 | INFO     | scoring_service | [Snap] DROP (6.5500,80.4000) - densest cluster only 2 amenities (need 5)
+2026-09-28 17:54:33 | INFO     | scoring_service | [Snap] SNAP (7.3500,80.5000) -> (7.3732,80.5231) 5 amenities in 500m
+2026-09-28 17:54:33 | INFO     | scoring_service | [Snap] DROP (7.5000,80.4000) - densest cluster only 3 amenities (need 5)
+2026-09-28 17:54:33 | INFO     | scoring_service | [Snap] DROP (6.3500,80.2000) - densest cluster only 4 amenities (need 5)
+2026-09-28 17:54:33 | INFO     | scoring_service | [Snap] DROP (7.6500,80.2000) - densest cluster only 1 amenities (need 5)
+2026-09-28 17:54:33 | INFO     | scoring_service | [Snap] SNAP (7.2500,80.6000) -> (7.2643,80.5979) 11 amenities in 500m
+2026-09-28 17:54:33 | INFO     | scoring_service | [Snap] DROP (7.0000,80.6500) - densest cluster only 3 amenities (need 5)
+2026-09-28 17:54:33 | INFO     | scoring_service | [Snap] DROP (6.2500,80.0000) - no amenities in hex
+2026-09-28 17:54:33 | INFO     | scoring_service | [Snap] DROP (6.7000,80.6000) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:54:33 | INFO     | scoring_service | [Snap] DROP (6.5500,80.5500) - densest cluster only 1 amenities (need 5)
+2026-09-28 17:54:33 | INFO     | scoring_service | [Snap] DROP (6.8500,80.7000) - densest cluster only 2 amenities (need 5)
+2026-09-28 17:54:33 | INFO     | scoring_service | [Snap] DROP (7.5000,80.5500) - no amenities in hex
+2026-09-28 17:54:33 | INFO     | scoring_service | [Snap] DROP (7.6500,80.4000) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:54:33 | INFO     | scoring_service | [Snap] DROP (6.2000,80.1500) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:54:33 | INFO     | scoring_service | [Snap] DROP (6.4000,80.5000) - densest cluster only 1 amenities (need 5)
+2026-09-28 17:54:33 | INFO     | scoring_service | [Snap] DROP (7.4000,80.6500) - densest cluster only 1 amenities (need 5)
+2026-09-28 17:54:33 | INFO     | scoring_service | [Snap] DROP (6.6000,80.7000) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:54:33 | INFO     | scoring_service | [Snap] DROP (7.0000,80.8000) - densest cluster only 1 amenities (need 5)
+2026-09-28 17:54:33 | INFO     | scoring_service | [Snap] DROP (6.1000,80.0500) - no amenities in hex
+2026-09-28 17:54:33 | INFO     | scoring_service | [Snap] DROP (7.9500,79.8500) - no amenities in hex
+2026-09-28 17:54:33 | INFO     | scoring_service | [Snap] DROP (7.7000,80.5500) - densest cluster only 1 amenities (need 5)
+2026-09-28 17:54:33 | INFO     | scoring_service | [Snap] DROP (6.1000,80.2500) - densest cluster only 4 amenities (need 5)
+2026-09-28 17:54:33 | INFO     | scoring_service | [Snap] DROP (7.5500,80.7000) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:54:33 | INFO     | scoring_service | [Snap] DROP (7.9500,80.1500) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:54:33 | INFO     | scoring_service | [Snap] DROP (6.3000,80.6000) - no amenities in hex
+2026-09-28 17:54:33 | INFO     | scoring_service | [Snap] DROP (7.4500,80.8000) - no amenities in hex
+2026-09-28 17:54:34 | INFO     | scoring_service | [Snap] DROP (6.1500,80.4500) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:54:34 | INFO     | scoring_service | [Snap] DROP (6.8500,80.9000) - densest cluster only 3 amenities (need 5)
+2026-09-28 17:54:34 | INFO     | scoring_service | [Snap] DROP (6.0000,80.1500) - no amenities in hex
+2026-09-28 17:54:34 | INFO     | scoring_service | [Snap] DROP (6.7000,80.9000) - no amenities in hex
+2026-09-28 17:54:34 | INFO     | scoring_service | [Snap] DROP (7.0000,80.9500) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:54:34 | INFO     | scoring_service | [Snap] DROP (8.0500,79.7500) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:54:34 | INFO     | scoring_service | [Snap] DROP (7.2500,80.9500) - no amenities in hex
+2026-09-28 17:54:34 | INFO     | scoring_service | [Snap] SNAP (6.4000,80.8000) -> (6.4253,80.8162) 5 amenities in 500m
+2026-09-28 17:54:34 | INFO     | scoring_service | [Snap] SNAP (6.0000,80.3500) -> (5.9753,80.3696) 9 amenities in 500m
+2026-09-28 17:54:34 | INFO     | scoring_service | [Snap] DROP (7.8000,80.6500) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:54:34 | INFO     | scoring_service | [Snap] DROP (8.0500,80.2500) - densest cluster only 1 amenities (need 5)
+2026-09-28 17:54:34 | INFO     | scoring_service | [Snap] DROP (7.4000,80.9500) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:54:34 | INFO     | scoring_service | [Snap] DROP (6.0500,80.5500) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:54:34 | INFO     | scoring_service | [Snap] SNAP (6.9000,81.0500) -> (6.8733,81.0491) 61 amenities in 500m
+2026-09-28 17:54:34 | INFO     | scoring_service | [Snap] DROP (7.9500,80.5500) - no amenities in hex
+2026-09-28 17:54:34 | INFO     | scoring_service | [Snap] DROP (6.7500,81.0500) - densest cluster only 1 amenities (need 5)
+2026-09-28 17:54:34 | INFO     | scoring_service | [Snap] DROP (7.0500,81.1000) - densest cluster only 1 amenities (need 5)
+2026-09-28 17:54:34 | INFO     | scoring_service | [Snap] DROP (6.2500,80.8500) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:54:34 | INFO     | scoring_service | [Snap] DROP (5.9000,80.4500) - no amenities in hex
+2026-09-28 17:54:34 | INFO     | scoring_service | [Snap] DROP (6.1000,80.7500) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:54:34 | INFO     | scoring_service | [Snap] SNAP (7.9500,80.7000) -> (7.9390,80.7243) 8 amenities in 500m
+2026-09-28 17:54:34 | INFO     | scoring_service | [Snap] DROP (8.1500,80.4000) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:54:34 | INFO     | scoring_service | [Snap] DROP (8.1000,80.5500) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:54:34 | INFO     | scoring_service | [Snap] SNAP (5.9500,80.6500) -> (5.9488,80.6270) 8 amenities in 500m
+2026-09-28 17:54:34 | INFO     | scoring_service | [Snap] DROP (6.6500,81.1500) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:54:34 | INFO     | scoring_service | [Snap] DROP (6.9500,81.2000) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:54:34 | INFO     | scoring_service | [Snap] DROP (6.8000,81.2000) - no amenities in hex
+2026-09-28 17:54:34 | INFO     | scoring_service | [Snap] DROP (6.1500,80.9500) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:54:34 | INFO     | scoring_service | [Snap] DROP (7.8500,80.9500) - no amenities in hex
+2026-09-28 17:54:34 | INFO     | scoring_service | [Snap] DROP (6.0000,80.8500) - no amenities in hex
+2026-09-28 17:54:34 | INFO     | scoring_service | [Snap] DROP (8.3000,80.3500) - no amenities in hex
+2026-09-28 17:54:34 | INFO     | scoring_service | [Snap] DROP (8.2500,80.5000) - no amenities in hex
+2026-09-28 17:54:34 | INFO     | scoring_service | [Snap] DROP (8.0000,80.9000) - no amenities in hex
+2026-09-28 17:54:34 | INFO     | scoring_service | [Snap] DROP (6.7000,81.3000) - no amenities in hex
+2026-09-28 17:54:34 | INFO     | scoring_service | [Snap] DROP (6.2000,81.1000) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:54:34 | INFO     | scoring_service | [Snap] DROP (6.9500,81.3500) - no amenities in hex
+2026-09-28 17:54:34 | INFO     | scoring_service | [Snap] DROP (7.8500,81.1000) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:54:34 | INFO     | scoring_service | [Snap] DROP (6.3000,81.2000) - no amenities in hex
+2026-09-28 17:54:34 | INFO     | scoring_service | [Snap] DROP (6.0500,81.0500) - no amenities in hex
+2026-09-28 17:54:34 | INFO     | scoring_service | [Snap] DROP (6.8000,81.4000) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:54:34 | INFO     | scoring_service | [Snap] DROP (8.0000,81.0500) - no amenities in hex
+2026-09-28 17:54:34 | INFO     | scoring_service | [Snap] DROP (8.1500,80.9000) - no amenities in hex
+2026-09-28 17:54:34 | INFO     | scoring_service | [Snap] DROP (6.1000,81.2000) - no amenities in hex
+2026-09-28 17:54:34 | INFO     | scoring_service | [Snap] DROP (6.3500,81.3500) - no amenities in hex
+2026-09-28 17:54:34 | INFO     | scoring_service | [Snap] DROP (6.2000,81.3000) - no amenities in hex
+2026-09-28 17:54:34 | INFO     | scoring_service | [Snap] DROP (7.2500,81.6000) - no amenities in hex
+2026-09-28 17:54:34 | INFO     | scoring_service | [Snap] DROP (8.6500,80.4500) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:54:34 | INFO     | scoring_service | [Snap] DROP (8.7500,79.9000) - no amenities in hex
+2026-09-28 17:54:34 | INFO     | scoring_service | [Snap] DROP (7.7000,81.5500) - densest cluster only 3 amenities (need 5)
+2026-09-28 17:54:34 | INFO     | scoring_service | [Snap] DROP (7.8500,81.5000) - densest cluster only 2 amenities (need 5)
+2026-09-28 17:54:34 | INFO     | scoring_service | [Snap] DROP (7.3500,81.7000) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:54:34 | INFO     | scoring_service | [Snap] DROP (8.8500,80.0000) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:54:34 | INFO     | scoring_service | [Snap] DROP (8.7500,80.5500) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:54:34 | INFO     | scoring_service | [Snap] DROP (7.6000,81.7000) - densest cluster only 3 amenities (need 5)
+2026-09-28 17:54:34 | INFO     | scoring_service | [Snap] DROP (7.1500,81.8000) - no amenities in hex
+2026-09-28 17:54:34 | INFO     | scoring_service | [Snap] DROP (8.4500,81.1500) - no amenities in hex
+2026-09-28 17:54:34 | INFO     | scoring_service | [Snap] DROP (7.8000,81.6500) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:54:34 | INFO     | scoring_service | [Snap] DROP (8.0000,81.5500) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:54:34 | INFO     | scoring_service | [Snap] DROP (7.4500,81.8000) - densest cluster only 2 amenities (need 5)
+2026-09-28 17:54:34 | INFO     | scoring_service | [Snap] DROP (8.9500,79.8500) - no amenities in hex
+2026-09-28 17:54:34 | INFO     | scoring_service | [Snap] SNAP (7.3000,81.8500) -> (7.2759,81.8486) 7 amenities in 500m
+2026-09-28 17:54:34 | INFO     | scoring_service | [Snap] DROP (8.4000,81.3000) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:54:34 | INFO     | scoring_service | [Snap] DROP (9.0000,80.0000) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:54:34 | INFO     | scoring_service | [Snap] DROP (7.7000,81.8000) - no amenities in hex
+2026-09-28 17:54:34 | INFO     | scoring_service | [Snap] DROP (8.9500,80.4500) - no amenities in hex
+2026-09-28 17:54:34 | INFO     | scoring_service | [Snap] DROP (8.6000,81.1500) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:54:34 | INFO     | scoring_service | [Snap] DROP (8.5500,81.3000) - no amenities in hex
+2026-09-28 17:54:34 | INFO     | scoring_service | [Snap] DROP (9.0500,80.5500) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:54:34 | INFO     | scoring_service | [Snap] DROP (9.1000,80.4000) - no amenities in hex
+2026-09-28 17:54:34 | INFO     | scoring_service | [Snap] DROP (9.2000,80.5000) - densest cluster only 1 amenities (need 5)
+2026-09-28 17:54:34 | INFO     | scoring_service | [Snap] DROP (9.3000,80.4000) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:54:34 | INFO     | scoring_service | [Snap] DROP (9.2000,80.7500) - densest cluster only 1 amenities (need 5)
+2026-09-28 17:54:34 | INFO     | scoring_service | [Snap] DROP (9.3500,80.2500) - densest cluster only 1 amenities (need 5)
+2026-09-28 17:54:34 | INFO     | scoring_service | [Snap] DROP (9.2500,80.9000) - no amenities in hex
+2026-09-28 17:54:34 | INFO     | scoring_service | [Snap] DROP (9.4500,80.3500) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:54:34 | INFO     | scoring_service | [Snap] DROP (9.3500,80.8000) - no amenities in hex
+2026-09-28 17:54:34 | INFO     | scoring_service | [Snap] DROP (9.6000,79.9500) - densest cluster only 1 amenities (need 5)
+2026-09-28 17:54:34 | INFO     | scoring_service | [Snap] DROP (9.6000,80.1000) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:54:34 | INFO     | scoring_service | [Snap] DROP (9.6500,80.2500) - densest cluster only 1 amenities (need 5)
+2026-09-28 17:54:34 | INFO     | scoring_service | [Snap] SNAP (9.7500,80.0000) -> (9.7254,79.9979) 5 amenities in 500m
+2026-09-28 17:54:34 | INFO     | scoring_service | [Snap] DROP (9.7500,80.1500) - densest cluster only 0 amenities (need 5)
+2026-09-28 17:54:34 | INFO     | scoring_service | [Snap] DROP (9.8000,80.3000) - no amenities in hex
+2026-09-28 17:54:34 | INFO     | scoring_service | [Snap] 16 snapped, 128 dropped (threshold=5)
+2026-09-28 17:54:34 | INFO     | amenities_service | [Amenities] Counting within 10000m for 16 points
+2026-09-28 17:54:36 | INFO     | clustering_service | [Clustering] Assigning 16 locations → 1 BUs
+2026-09-28 17:54:36 | INFO     | scoring_service | [Guardrail] 0/16 candidates flagged for nearby-store underperformance (>= 3 stores within 5km averaging < ₹134,547,368), Final_Score penalized ×0.55
+2026-09-28 17:54:36 | INFO     | scoring_service | [Pipeline] Excluded 4 'Not Recommended' candidate(s) from predictions
+2026-09-28 17:54:36 | INFO     | scoring_service | [Diversity] requested n=12, min_distance_km=15.0, picked=11 from 12 ranked candidates
+2026-09-28 17:54:36 | INFO     | scoring_service | [Pipeline] min spacing 15 km -> 10 recommended picks
+2026-09-28 17:54:44 | INFO     | routes.predict | [Predict] user=divyaT@switzgroup.com session=2b996e18-1986-41be-9f4f-2564f37c82b2 top_picks=10
+2026-09-28 19:01:10 | INFO     | session_store | [Session] Purged 2 expired sessions
+2026-09-28 19:21:07 | INFO     | main | 👋 FranchiseIQ shutting down
+2026-09-28 19:21:29 | INFO     | main | 🚀 FranchiseIQ v5.0.0 starting up
+2026-09-28 19:21:29 | INFO     | main | ✅ Database tables ready
+2026-09-28 19:21:29 | INFO     | routes.country | [Country] session=ebaa833e-db79-4899-bba5-1787751e31d5 country=Sri Lanka
+2026-09-28 19:21:29 | INFO     | routes.country | [State] session=ebaa833e-db79-4899-bba5-1787751e31d5 state=Sri Lanka
+2026-09-28 19:21:29 | INFO     | demographics_service | [Demographics] Loading: D:\Franchise_IQ\data\srilanka\demographics.xlsx
+2026-09-28 19:21:31 | INFO     | demographics_service | [Demographics] Loaded 175 rows from demographics.xlsx
+2026-09-28 19:21:31 | INFO     | routes.data | [Data Preloaded] session=ebaa833e-db79-4899-bba5-1787751e31d5 stores=77 requests=0 bu=1
+2026-09-28 19:21:31 | INFO     | amenities_service | [Amenities] GeoJSON cache hit → D:\Franchise_IQ\amenities_cache\sri_lanka_sri_lanka.geojson
+2026-09-28 19:21:33 | INFO     | routes.amenities | [Amenities] session=ebaa833e-db79-4899-bba5-1787751e31d5 cached=True n=12079
+2026-09-28 19:21:33 | INFO     | scoring_service | [Pipeline] Sri Lanka/Sri Lanka | stores=77 | requests=0 | BU=True
+2026-09-28 19:21:34 | INFO     | real_estate_service | Loaded 78 real estate records with indices.
+2026-09-28 19:21:34 | INFO     | local_competitor_service | [Competitors] Loaded 127 usable competitor locations from Bhilai_validation1_1.xlsx
+2026-09-28 19:21:34 | INFO     | local_competitor_service | [Competitors] Loaded 116 usable competitor locations from Bilaspur_1.xlsx
+2026-09-28 19:21:34 | INFO     | local_competitor_service | [Competitors] Loaded 17 usable competitor locations from Dhamtari_1.xlsx
+2026-09-28 19:21:35 | INFO     | local_competitor_service | [Competitors] Loaded 6250 usable competitor locations from Mio_competitor.xlsx
+2026-09-28 19:21:35 | INFO     | local_competitor_service | [Competitors] Loaded 168 usable competitor locations from Raipur_Bakery_In-scope_188.xlsx
+2026-09-28 19:21:35 | INFO     | local_competitor_service | [Competitors] Combined 6678 total competitor locations from 5 file(s): ['Bhilai_validation1_1.xlsx', 'Bilaspur_1.xlsx', 'Dhamtari_1.xlsx', 'Mio_competitor.xlsx', 'Raipur_Bakery_In-scope_188.xlsx']
+2026-09-28 19:21:35 | INFO     | scoring_service | [Pipeline] ENABLE_OSM_GEO_FEATURES=false — skipping road/landuse enrichment, no network calls made
+2026-09-28 19:21:35 | INFO     | amenities_service | [Amenities] Counting within 10000m for 77 points
+2026-09-28 19:21:37 | INFO     | clustering_service | [Clustering] Assigning 77 locations → 1 BUs
+2026-09-28 19:21:42 | INFO     | amenities_service | [Amenities] Counting within 10000m for 992 points
+2026-09-28 19:21:44 | INFO     | clustering_service | [Clustering] Assigning 992 locations → 1 BUs
+2026-09-28 19:21:44 | INFO     | affinity_model | [AffinityModel] trained on 76 stores | archetype_n=19 | val=knn_lookalike_holdout_multisplit | R2_test=-0.035 | MAE_test=45269962 | median_rev=179396490
+2026-09-28 19:21:44 | INFO     | scoring_service | [Pipeline] Model R²=-0.03486048826580476 MAE=45269961.764540374 method=knn_lookalike_holdout_multisplit
+2026-09-28 19:21:44 | INFO     | scoring_service | [Guardrail] 7/992 candidates flagged for a weak store within 2 km (< 70% of median)
+2026-09-28 19:21:44 | INFO     | scoring_service | [Guardrail] 9/992 candidates flagged for nearby-store underperformance (>= 3 stores within 5km averaging < ₹134,547,368), Final_Score penalized ×0.55
+2026-09-28 19:21:45 | INFO     | scoring_service | [Calibration] Mio store density (500m cluster) - n=77, median=8, p10=2, p25=5, mean=11.5
+2026-09-28 19:21:45 | INFO     | scoring_service | [Calibration] using min_cluster_threshold=5 (max of 5 floor and Mio p10)
+2026-09-28 19:21:45 | INFO     | scoring_service | [Viability] 13 candidates dropped for sitting within 1.5 km of an existing store
+2026-09-28 19:21:45 | INFO     | scoring_service | [Viability] 992 candidates -> 940 viable (min_amenities=5, min_population=1000)
+2026-09-28 19:21:45 | INFO     | scoring_service | [Diversity] requested n=940, min_distance_km=15.0, picked=144 from 940 ranked candidates
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (6.9500,79.9500) - densest cluster only 2 amenities (need 5)
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] SNAP (7.1000,79.9000) -> (7.1219,79.9220) 9 amenities in 500m
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] SNAP (7.1000,80.0500) -> (7.1091,80.0486) 8 amenities in 500m
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] SNAP (6.8000,79.9000) -> (6.8021,79.8884) 5 amenities in 500m
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] SNAP (6.6000,79.9500) -> (6.6094,79.9497) 8 amenities in 500m
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (7.0000,79.8000) - no amenities in hex
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (6.9500,80.1000) - densest cluster only 3 amenities (need 5)
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (7.2000,79.8000) - no amenities in hex
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (6.8000,80.0500) - densest cluster only 3 amenities (need 5)
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (7.2500,79.9500) - densest cluster only 0 amenities (need 5)
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (7.0500,80.2000) - no amenities in hex
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (7.2500,80.1000) - densest cluster only 4 amenities (need 5)
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (6.8500,80.2000) - no amenities in hex
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] SNAP (7.3500,79.8500) -> (7.3418,79.8420) 5 amenities in 500m
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (6.7000,80.1500) - densest cluster only 0 amenities (need 5)
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (6.9500,80.3000) - no amenities in hex
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (7.2000,80.2500) - densest cluster only 1 amenities (need 5)
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (7.4000,80.0000) - densest cluster only 0 amenities (need 5)
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (7.1000,80.3500) - densest cluster only 0 amenities (need 5)
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] SNAP (7.3500,80.2000) -> (7.3342,80.1771) 7 amenities in 500m
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (7.4500,79.7500) - no amenities in hex
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (6.5500,80.1000) - densest cluster only 0 amenities (need 5)
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (6.8000,80.3500) - densest cluster only 3 amenities (need 5)
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (6.6500,80.3000) - densest cluster only 1 amenities (need 5)
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (7.5000,80.1000) - no amenities in hex
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (6.4500,79.9000) - no amenities in hex
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (7.3000,80.3500) - densest cluster only 1 amenities (need 5)
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (7.0000,80.4500) - densest cluster only 0 amenities (need 5)
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (7.5500,79.8500) - densest cluster only 1 amenities (need 5)
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] SNAP (7.2000,80.4500) -> (7.1774,80.4587) 8 amenities in 500m
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (7.4500,80.3000) - densest cluster only 0 amenities (need 5)
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (6.4000,80.0500) - densest cluster only 1 amenities (need 5)
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (6.7000,80.4500) - densest cluster only 0 amenities (need 5)
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (6.9000,80.5500) - densest cluster only 2 amenities (need 5)
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (7.1000,80.5500) - densest cluster only 2 amenities (need 5)
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (7.6500,79.7500) - no amenities in hex
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (6.5500,80.4000) - densest cluster only 2 amenities (need 5)
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (7.6000,80.2000) - densest cluster only 0 amenities (need 5)
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] SNAP (7.3500,80.5000) -> (7.3732,80.5231) 5 amenities in 500m
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (6.3500,80.2000) - densest cluster only 4 amenities (need 5)
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] SNAP (7.2500,80.6000) -> (7.2643,80.5979) 11 amenities in 500m
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (7.5000,80.4500) - densest cluster only 0 amenities (need 5)
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (7.0000,80.6500) - densest cluster only 3 amenities (need 5)
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (6.2500,80.0000) - no amenities in hex
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (7.6000,80.3500) - no amenities in hex
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (6.7000,80.6000) - densest cluster only 0 amenities (need 5)
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (6.5500,80.5500) - densest cluster only 1 amenities (need 5)
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (6.8500,80.7000) - densest cluster only 2 amenities (need 5)
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (6.2000,80.1500) - densest cluster only 0 amenities (need 5)
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] SNAP (7.4500,80.6000) -> (7.4714,80.6229) 8 amenities in 500m
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (6.4000,80.5000) - densest cluster only 1 amenities (need 5)
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (7.3500,80.7000) - densest cluster only 1 amenities (need 5)
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (7.6500,80.5000) - densest cluster only 0 amenities (need 5)
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (6.6000,80.7000) - densest cluster only 0 amenities (need 5)
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (7.0000,80.8000) - densest cluster only 1 amenities (need 5)
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (6.1000,80.0500) - no amenities in hex
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (7.9500,79.8500) - no amenities in hex
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (6.1000,80.2500) - densest cluster only 4 amenities (need 5)
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (7.5500,80.7000) - densest cluster only 0 amenities (need 5)
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (7.9500,80.1500) - densest cluster only 0 amenities (need 5)
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (6.3000,80.6000) - no amenities in hex
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (7.8000,80.5000) - densest cluster only 0 amenities (need 5)
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (7.4500,80.8000) - no amenities in hex
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (6.1500,80.4500) - densest cluster only 0 amenities (need 5)
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (6.8500,80.9000) - densest cluster only 3 amenities (need 5)
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (6.0000,80.1500) - no amenities in hex
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (7.7000,80.6500) - densest cluster only 3 amenities (need 5)
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (6.7000,80.9000) - no amenities in hex
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (7.0000,80.9500) - densest cluster only 0 amenities (need 5)
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (8.0500,79.7500) - densest cluster only 0 amenities (need 5)
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (7.2500,80.9500) - no amenities in hex
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] SNAP (6.4000,80.8000) -> (6.4253,80.8162) 5 amenities in 500m
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] SNAP (6.0000,80.3500) -> (5.9753,80.3696) 9 amenities in 500m
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (8.0500,80.2500) - densest cluster only 1 amenities (need 5)
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (7.4000,80.9500) - densest cluster only 0 amenities (need 5)
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] SNAP (7.8500,80.6500) -> (7.8728,80.6505) 16 amenities in 500m
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (6.0500,80.5500) - densest cluster only 0 amenities (need 5)
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] SNAP (6.9000,81.0500) -> (6.8733,81.0491) 61 amenities in 500m
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (7.9500,80.5500) - no amenities in hex
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (6.7500,81.0500) - densest cluster only 1 amenities (need 5)
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (7.0500,81.1000) - densest cluster only 1 amenities (need 5)
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (6.2500,80.8500) - densest cluster only 0 amenities (need 5)
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (5.9000,80.4500) - no amenities in hex
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (6.1000,80.7500) - densest cluster only 0 amenities (need 5)
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (8.1500,80.4000) - densest cluster only 0 amenities (need 5)
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (8.1000,80.5500) - densest cluster only 0 amenities (need 5)
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] SNAP (5.9500,80.6500) -> (5.9488,80.6270) 8 amenities in 500m
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (6.6500,81.1500) - densest cluster only 0 amenities (need 5)
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (6.9500,81.2000) - densest cluster only 0 amenities (need 5)
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (6.8000,81.2000) - no amenities in hex
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (6.1500,80.9500) - densest cluster only 0 amenities (need 5)
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (7.8500,80.9500) - no amenities in hex
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (6.0000,80.8500) - no amenities in hex
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (8.3000,80.3500) - no amenities in hex
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (8.2500,80.5000) - no amenities in hex
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (8.0000,80.9000) - no amenities in hex
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (6.7000,81.3000) - no amenities in hex
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (6.2000,81.1000) - densest cluster only 0 amenities (need 5)
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (6.9500,81.3500) - no amenities in hex
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (7.8500,81.1000) - densest cluster only 0 amenities (need 5)
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (6.3000,81.2000) - no amenities in hex
+2026-09-28 19:21:45 | INFO     | scoring_service | [Snap] DROP (6.0500,81.0500) - no amenities in hex
+2026-09-28 19:21:46 | INFO     | scoring_service | [Snap] DROP (6.8000,81.4000) - densest cluster only 0 amenities (need 5)
+2026-09-28 19:21:46 | INFO     | scoring_service | [Snap] DROP (8.0000,81.0500) - no amenities in hex
+2026-09-28 19:21:46 | INFO     | scoring_service | [Snap] DROP (8.1500,80.9000) - no amenities in hex
+2026-09-28 19:21:46 | INFO     | scoring_service | [Snap] DROP (6.1000,81.2000) - no amenities in hex
+2026-09-28 19:21:46 | INFO     | scoring_service | [Snap] DROP (6.3500,81.3500) - no amenities in hex
+2026-09-28 19:21:46 | INFO     | scoring_service | [Snap] DROP (6.2000,81.3000) - no amenities in hex
+2026-09-28 19:21:46 | INFO     | scoring_service | [Snap] DROP (7.2500,81.6000) - no amenities in hex
+2026-09-28 19:21:46 | INFO     | scoring_service | [Snap] DROP (8.6500,80.4500) - densest cluster only 0 amenities (need 5)
+2026-09-28 19:21:46 | INFO     | scoring_service | [Snap] DROP (8.7500,79.9000) - no amenities in hex
+2026-09-28 19:21:46 | INFO     | scoring_service | [Snap] DROP (7.7000,81.5500) - densest cluster only 3 amenities (need 5)
+2026-09-28 19:21:46 | INFO     | scoring_service | [Snap] DROP (7.8500,81.5000) - densest cluster only 2 amenities (need 5)
+2026-09-28 19:21:46 | INFO     | scoring_service | [Snap] DROP (7.3500,81.7000) - densest cluster only 0 amenities (need 5)
+2026-09-28 19:21:46 | INFO     | scoring_service | [Snap] DROP (8.8500,80.0000) - densest cluster only 0 amenities (need 5)
+2026-09-28 19:21:46 | INFO     | scoring_service | [Snap] DROP (8.7500,80.5500) - densest cluster only 0 amenities (need 5)
+2026-09-28 19:21:46 | INFO     | scoring_service | [Snap] DROP (7.6000,81.7000) - densest cluster only 3 amenities (need 5)
+2026-09-28 19:21:46 | INFO     | scoring_service | [Snap] DROP (7.1500,81.8000) - no amenities in hex
+2026-09-28 19:21:46 | INFO     | scoring_service | [Snap] DROP (8.4500,81.1500) - no amenities in hex
+2026-09-28 19:21:46 | INFO     | scoring_service | [Snap] DROP (7.8000,81.6500) - densest cluster only 0 amenities (need 5)
+2026-09-28 19:21:46 | INFO     | scoring_service | [Snap] DROP (8.0000,81.5500) - densest cluster only 0 amenities (need 5)
+2026-09-28 19:21:46 | INFO     | scoring_service | [Snap] DROP (7.4500,81.8000) - densest cluster only 2 amenities (need 5)
+2026-09-28 19:21:46 | INFO     | scoring_service | [Snap] DROP (8.9500,79.9000) - densest cluster only 2 amenities (need 5)
+2026-09-28 19:21:46 | INFO     | scoring_service | [Snap] SNAP (7.3000,81.8500) -> (7.2759,81.8486) 7 amenities in 500m
+2026-09-28 19:21:46 | INFO     | scoring_service | [Snap] DROP (8.4000,81.3000) - densest cluster only 0 amenities (need 5)
+2026-09-28 19:21:46 | INFO     | scoring_service | [Snap] DROP (7.7000,81.8000) - no amenities in hex
+2026-09-28 19:21:46 | INFO     | scoring_service | [Snap] DROP (8.9500,80.4500) - no amenities in hex
+2026-09-28 19:21:46 | INFO     | scoring_service | [Snap] DROP (8.6000,81.1500) - densest cluster only 0 amenities (need 5)
+2026-09-28 19:21:46 | INFO     | scoring_service | [Snap] DROP (8.5500,81.3000) - no amenities in hex
+2026-09-28 19:21:46 | INFO     | scoring_service | [Snap] DROP (9.0500,80.5500) - densest cluster only 0 amenities (need 5)
+2026-09-28 19:21:46 | INFO     | scoring_service | [Snap] DROP (9.1000,80.4000) - no amenities in hex
+2026-09-28 19:21:46 | INFO     | scoring_service | [Snap] DROP (9.2000,80.5000) - densest cluster only 1 amenities (need 5)
+2026-09-28 19:21:46 | INFO     | scoring_service | [Snap] DROP (9.3000,80.4000) - densest cluster only 0 amenities (need 5)
+2026-09-28 19:21:46 | INFO     | scoring_service | [Snap] DROP (9.2000,80.7500) - densest cluster only 1 amenities (need 5)
+2026-09-28 19:21:46 | INFO     | scoring_service | [Snap] DROP (9.3500,80.2500) - densest cluster only 1 amenities (need 5)
+2026-09-28 19:21:46 | INFO     | scoring_service | [Snap] DROP (9.2500,80.9000) - no amenities in hex
+2026-09-28 19:21:46 | INFO     | scoring_service | [Snap] DROP (9.4500,80.3500) - densest cluster only 0 amenities (need 5)
+2026-09-28 19:21:46 | INFO     | scoring_service | [Snap] DROP (9.3500,80.8000) - no amenities in hex
+2026-09-28 19:21:46 | INFO     | scoring_service | [Snap] DROP (9.6000,79.9500) - densest cluster only 1 amenities (need 5)
+2026-09-28 19:21:46 | INFO     | scoring_service | [Snap] DROP (9.6000,80.1000) - densest cluster only 0 amenities (need 5)
+2026-09-28 19:21:46 | INFO     | scoring_service | [Snap] DROP (9.6500,80.2500) - densest cluster only 1 amenities (need 5)
+2026-09-28 19:21:46 | INFO     | scoring_service | [Snap] SNAP (9.7500,80.0000) -> (9.7254,79.9979) 5 amenities in 500m
+2026-09-28 19:21:46 | INFO     | scoring_service | [Snap] DROP (9.7500,80.1500) - densest cluster only 0 amenities (need 5)
+2026-09-28 19:21:46 | INFO     | scoring_service | [Snap] DROP (9.8000,80.3000) - no amenities in hex
+2026-09-28 19:21:46 | INFO     | scoring_service | [Snap] 17 snapped, 127 dropped (threshold=5)
+2026-09-28 19:21:46 | INFO     | amenities_service | [Amenities] Counting within 10000m for 17 points
+2026-09-28 19:21:47 | INFO     | clustering_service | [Clustering] Assigning 17 locations → 1 BUs
+2026-09-28 19:21:47 | INFO     | scoring_service | [Guardrail] 0/17 candidates flagged for a weak store within 2 km (< 70% of median)
+2026-09-28 19:21:47 | INFO     | scoring_service | [Guardrail] 0/17 candidates flagged for nearby-store underperformance (>= 3 stores within 5km averaging < ₹134,547,368), Final_Score penalized ×0.55
+2026-09-28 19:21:47 | INFO     | scoring_service | [Pipeline] Excluded 3 'Not Recommended' candidate(s) from predictions
+2026-09-28 19:21:47 | INFO     | scoring_service | [Diversity] requested n=14, min_distance_km=15.0, picked=12 from 14 ranked candidates
+2026-09-28 19:21:47 | INFO     | scoring_service | [Pipeline] min spacing 15 km -> 10 recommended picks
+2026-09-28 19:21:52 | INFO     | routes.predict | [Predict] user=divyaT@switzgroup.com session=ebaa833e-db79-4899-bba5-1787751e31d5 top_picks=10
+2026-09-28 19:45:48 | INFO     | services.district_aggregation | district rollup: 3 districts, 77 stores, net avg 183655163.53
+2026-09-28 20:31:29 | INFO     | session_store | [Session] Purged 1 expired sessions
+2026-09-28 21:44:21 | INFO     | main | 👋 FranchiseIQ shutting down

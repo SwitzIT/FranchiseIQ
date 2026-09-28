@@ -51,6 +51,8 @@ FEATURE_COLS = [
     "Nearest_Store_km", "stores_2km", "stores_5km",
     "Cannibalization_Score",
     "Nearby_Store_Avg_Sales",  # v6.1 — actual sales of nearby stores, not just their count/distance
+    "Nearby_Store_Avg_Sales_2km",  # v11 — same signal at 2 km, so a weak next-door store is not averaged away
+    "Nearby_Store_Min_Sales_2km",  # v11 — the weakest store within 2 km
     "Competitor_2km", "Competitor_5km",  # v5.0 — from local Mio_competitor.xlsx
     "dist_to_nearest_road_m",
     "is_commercial", "is_residential",

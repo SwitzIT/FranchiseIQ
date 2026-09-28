@@ -263,9 +263,10 @@ function MobileBottomSheet({ children }) {
   );
 }
 
-// Reporting period shown in the header. Change these two lines when the
-// sales data covers a different span.
-const PERIOD_LABEL = 'June 2025 – June 2026';
+// Reporting period shown in the header. It comes from the From Date / To Date
+// columns on the store file (results.period); this is only the fallback for a
+// file that carries no dates.
+const PERIOD_FALLBACK = '';
 
 // ─── Main Dashboard ────────────────────────────────────────────
 export default function DashboardPage() {
@@ -278,6 +279,8 @@ export default function DashboardPage() {
   const { user, logout } = useAuth();
 
   const kpis = results?.kpis || {};
+  // Sales period, taken from the store file's From Date / To Date columns.
+  const periodLabel = results?.period?.label || PERIOD_FALLBACK;
   const stores = results?.stores || [];
   const predictions = (results?.top_picks || []).filter(p => p.verdict !== 'Not Recommended');
 
@@ -338,11 +341,16 @@ export default function DashboardPage() {
               )}
             </div>
 
-            <span className="hidden sm:inline-flex items-center gap-1.5 text-[11px] font-semibold text-ink-muted
-                             px-2.5 py-1 rounded-lg bg-app-bg border border-border shrink-0">
-              <CalendarRange size={12} className="text-ink-subtle" />
-              {PERIOD_LABEL}
-            </span>
+            {periodLabel && (
+              <span
+                className="hidden sm:inline-flex items-center gap-1.5 text-[11px] font-semibold text-ink-muted
+                           px-2.5 py-1 rounded-lg bg-app-bg border border-border shrink-0"
+                title={results?.period?.from ? `${results.period.from} to ${results.period.to}` : undefined}
+              >
+                <CalendarRange size={12} className="text-ink-subtle" />
+                {periodLabel}
+              </span>
+            )}
 
             <div className="flex-1" />
 
